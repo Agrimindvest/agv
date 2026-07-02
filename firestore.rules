@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can only read and write their own data.
+    match /users/{userId} {
+      allow read, update: if request.auth.uid == userId;
+      // Deny creating or deleting user documents from the client.
+      allow create, delete: if false;
+    }
+
+    // Settings (like plans) are publicly readable.
+    match /settings/{docId} {
+        allow read: if true;
+        // Should only be writable from a backend/admin SDK.
+        allow write: if false;
+    }
+
+    // Users can read their own deposits, but only create/update via backend.
+    match /deposits/{depositId} {
+      allow read: if get(/databases/$(database)/documents/deposits/$(depositId)).data.userId == request.auth.uid;
+      allow list: if request.auth.uid == request.query.filters[0][2]; // Allow querying by userId
+      allow create, update, delete: if false; // Should be handled by a backend
+    }
+
+    // Users can read their own withdrawals, but only create/update via backend.
+    match /withdrawals/{withdrawalId} {
+      allow read: if get(/databases/$(database)/documents/withdrawals/$(withdrawalId)).data.userId == request.auth.uid;
+      allow list: if request.auth.uid == request.query.filters[0][2]; // Allow querying by userId
+      allow create, update, delete: if false; // Should be handled by a backend
+    }
+
+    // Users can manage their own saved bank accounts.
+    match /banks/{bankId} {
+        allow read, create, update, delete: if request.auth.uid == resource.data.userId;
+        allow list: if request.auth.uid == request.query.filters[0][2];
+    }
+    
+    // Users can read their own referral records.
+    match /referrals/{referralId} {
+        allow read: if get(/databases/$(database)/documents/referrals/$(referralId)).data.referrerId == request.auth.uid ||
+                       get(/databases/$(database)/documents/referrals/$(referralId)).data.refereeId == request.auth.uid;
+        allow list: if request.auth.uid == request.query.filters[0][2]; // by referrerId
+        allow create: if request.auth.uid == request.resource.data.refereeId;
+        allow update, delete: if false;
+    }
+
+    // Users can read their own payment records for plans.
+    match /payments/{paymentId} {
+        allow read: if get(/databases/$(database)/documents/payments/$(paymentId)).data.userId == request.auth.uid;
+        allow list: if request.auth.uid == request.query.filters[0][2]; // by userId
+        allow create: if request.auth.uid == request.resource.data.userId;
+        allow update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Referral System - Agrimindvest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .referral-container { max-width: 600px; margin: 0 auto; }
+
+        .referral-page-header {
+            text-align: center;
+            margin-bottom: 25px;
+            animation: fadeSlideIn 0.5s ease;
+        }
+
+        .referral-title {
+            color: var(--accent-light);
+            font-size: 1.6em;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .referral-subtitle {
+            color: var(--text-dim);
+            font-size: 0.9em;
+        }
+
+        /* ============ METRICS SECTION ============ */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(255, 193, 7, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            animation: slideUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .metric-card:nth-child(1) { animation-delay: 0.05s; }
+        .metric-card:nth-child(2) { animation-delay: 0.1s; }
+        .metric-card:nth-child(3) { animation-delay: 0.15s; }
+        .metric-card:nth-child(4) { animation-delay: 0.2s; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(76, 175, 80, 0.2);
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: var(--accent-light);
+            margin-bottom: 6px;
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============ EARNINGS HIGHLIGHT ============ */
+        .earnings-highlight {
+            background: linear-gradient(135deg, var(--primary), rgba(76, 175, 80, 0.2));
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 20px rgba(76, 175, 80, 0.1);
+            animation: fadeSlideIn 0.5s ease 0.1s both;
+        }
+
+        .earnings-label {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .earnings-amount {
+            font-size: 2.8em;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        /* ============ REFERRAL LINK SECTION ============ */
+        .referral-link-card {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            animation: fadeSlideIn 0.5s ease 0.2s both;
+        }
+
+        .referral-link-card h4 {
+            color: var(--accent-light);
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ref-link-display {
+            background: var(--dark);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .ref-link-display:hover {
+            border-color: var(--accent);
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .ref-link-text {
+            flex: 1;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--gold);
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: 700;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .copy-btn:active { transform: scale(0.95); }
+
+        .share-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .share-btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.85em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+        }
+
+        .share-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); }
+        .share-btn:active { transform: translateY(0); }
+
+        .share-whatsapp { background: #25D366; }
+        .share-copy { background: var(--accent); color: var(--dark); }
+
+        /* ============ INVITE SECTION ============ */
+        .invite-card {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(76, 175, 80, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            animation: fadeSlideIn 0.5s ease 0.3s both;
+        }
+
+        .invite-card h4 {
+            color: var(--accent-light);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+
+        .invite-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .invite-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .invite-input {
+            flex: 1;
+            padding: 12px 14px;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .invite-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+        }
+
+        .invite-btn {
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85em;
+        }
+
+        .invite-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3); }
+        .invite-btn:active { transform: translateY(0); }
+
+        /* ============ RULES SECTION ============ */
+        .rules-card {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            animation: fadeSlideIn 0.5s ease 0.25s both;
+        }
+
+        .rules-card h4 {
+            color: var(--warning);
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rules-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rules-card li {
+            padding: 8px 0;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .rules-card li i {
+            color: var(--accent);
+            font-size: 0.75em;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ============ REFERRAL USERS LIST ============ */
+        .users-section {
+            animation: fadeSlideIn 0.5s ease 0.35s both;
+        }
+
+        .users-section h4 {
+            color: var(--accent-light);
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ref-user-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            animation: fadeSlideIn 0.3s ease forwards;
+        }
+
+        .ref-user-card:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+        }
+
+        .ref-user-info strong { color: var(--accent-light); }
+        .ref-user-info small { display: block; margin-top: 4px; }
+
+        .ref-user-status {
+            font-size: 0.7em;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .ref-status-active {
+            background: rgba(0, 200, 83, 0.2);
+            color: var(--success);
+        }
+
+        .ref-status-inactive {
+            background: rgba(158, 158, 158, 0.2);
+            color: #9e9e9e;
+        }
+
+        .ref-user-earnings {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .ref-user-earnings .amount {
+            color: var(--gold);
+            font-size: 1.1em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+            animation: fadeSlideIn 0.5s ease;
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            color: var(--border);
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p { margin: 8px 0; }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="home.html" class="logo"><i class="fas fa-seedling"></i> Agrimindvest</a>
+        <div class="icons">
+            <a href="profile.html"><i class="fas fa-user-circle"></i></a>
+        </div>
+    </header>
+
+    <div class="main-content">
+        
+        <a href="home.html" style="color:var(--accent-light);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:20px;">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <div class="referral-container">
+            
+            <!-- Page Header -->
+            <div class="referral-page-header">
+                <h2 class="referral-title">👥 Referral Program</h2>
+                <p class="referral-subtitle">Build your team and earn sustainable income</p>
+            </div>
+
+            <!-- Earnings Highlight -->
+            <div class="earnings-highlight">
+                <div class="earnings-label">💰 YOUR REFERRAL EARNINGS</div>
+                <div class="earnings-amount" id="refEarnings">₦0</div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="refTotal">0</div>
+                    <div class="metric-label">Total Referrals</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="refActive">0</div>
+                    <div class="metric-label">Active Members</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="refInactive">0</div>
+                    <div class="metric-label">Pending Members</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="pendingEarnings">₦0</div>
+                    <div class="metric-label">Potential Earnings</div>
+                </div>
+            </div>
+
+            <!-- Referral Link Section -->
+            <div class="referral-link-card">
+                <h4><i class="fas fa-link"></i> YOUR REFERRAL LINK</h4>
+                <div class="ref-link-display">
+                    <span class="ref-link-text" id="refLink">Loading...</span>
+                    <button class="copy-btn" onclick="copyRefLink()"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+                <div class="share-buttons">
+                    <button class="share-btn share-whatsapp" onclick="shareWhatsApp()">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button class="share-btn share-copy" onclick="shareCopyAdvanced()">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Direct Invite Section -->
+            <div class="invite-card">
+                <h4><i class="fas fa-envelope"></i> DIRECT INVITE</h4>
+                <p style="font-size:0.85em;color:var(--text-dim);margin-bottom:12px;">Invite friends directly by email or phone</p>
+                <div class="invite-form">
+                    <div class="invite-input-group">
+                        <input type="text" class="invite-input" id="inviteInput" placeholder="Email or Phone Number">
+                        <button class="invite-btn" onclick="sendDirectInvite()"><i class="fas fa-paper-plane"></i> Invite</button>
+                    </div>
+                    <div id="inviteStatus" style="font-size:0.8em;text-align:center;"></div>
+                </div>
+            </div>
+
+            <!-- Referral Rules -->
+            <div class="rules-card">
+                <h4><i class="fas fa-info-circle"></i> HOW IT WORKS</h4>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Share your referral link with friends</li>
+                    <li><i class="fas fa-check-circle"></i> When they sign up, they become your referral</li>
+                    <li><i class="fas fa-check-circle"></i> You earn 10% from their FIRST investment</li>
+                    <li><i class="fas fa-check-circle"></i> No limit on referrals or earnings</li>
+                    <li><i class="fas fa-check-circle"></i> Earnings paid instantly to your account</li>
+                </ul>
+            </div>
+
+            <!-- Referral Users List -->
+            <div class="users-section">
+                <h4><i class="fas fa-users"></i> YOUR TEAM (<span id="userCount">0</span>)</h4>
+                <div id="refUsersList">
+                    <div class="empty-state"><div class="spinner"></div><p>Loading...</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="plans.html" class="nav-item"><i class="fas fa-layer-group"></i><span>Plans</span></a>
+        <a href="deposit.html" class="nav-item"><i class="fas fa-credit-card"></i><span>Deposit</span></a>
+        <a href="tasks.html" class="nav-item"><i class="fas fa-tasks"></i><span>Tasks</span></a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    <script>
+
+        const user = checkAuth();
+        if (!user) window.location.href = 'login.html';
+
+        let currentUser = user;
+
+        window.addEventListener('load', async () => {
+            currentUser = await refreshUser();
+            loadReferralData();
+        });
+
+        // ============ LOAD REFERRAL DATA ============
+        async function loadReferralData() {
+            try {
+                const refCode = currentUser.refCode || currentUser.id;
+                const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+                document.getElementById('refLink').textContent = refLink;
+                document.getElementById('refEarnings').textContent = fmt(currentUser.refEarnings || 0);
+
+                const snapshot = await db.collection('users').where('referredBy', '==', currentUser.id).get();
+
+                let totalRefs = snapshot.size;
+                let activeRefs = 0;
+                let inactiveRefs = 0;
+                let pendingEarnings = 0;
+                let usersHTML = '';
+
+                if (snapshot.empty) {
+                    usersHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-tie"></i>
+                        <p><strong>No team members yet</strong></p>
+                        <p style="font-size:0.85em;">Share your referral link above to start building your team!</p>
+                    </div>`;
+                } else {
+                    const refEarnings = await db.collection('referrals').where('referrerId', '==', currentUser.id).get();
+                    const earningsMap = {};
+                    refEarnings.forEach(d => {
+                        const data = d.data();
+                        earningsMap[data.refereeId] = (earningsMap[data.refereeId] || 0) + (data.earned || 0);
+                        if (!data.earned || data.earned === 0) {
+                            pendingEarnings += 0; // Calculate based on their plan
+                        }
+                    });
+
+                    snapshot.forEach((doc, i) => {
+                        const refUser = doc.data();
+                        const hasPlan = refUser.plan && refUser.plan !== 'none' && refUser.invested;
+                        const earned = earningsMap[refUser.id] || 0;
+                        if (hasPlan) activeRefs++; else inactiveRefs++;
+
+                        const joinDate = new Date(refUser.createdAt);
+                        const daysAgo = Math.floor((new Date() - joinDate) / (1000 * 60 * 60 * 24));
+                        const daysText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago';
+
+                        usersHTML += `
+                        <div class="ref-user-card" style="animation-delay:${i * 0.05}s;">
+                            <div>
+                                <strong>
+                                    ${hasPlan ? '🟢' : '⚪'} ${refUser.name}
+                                </strong>
+                                <small style="color:var(--text-dim);">
+                                    ${hasPlan ? '✅ ' + refUser.plan + ' Plan' : '⏳ No Active Plan'} • ${daysText}
+                                </small>
+                            </div>
+                            <div class="ref-user-earnings">
+                                <div class="amount">${earned > 0 ? '+ ' + fmt(earned) : '₦0'}</div>
+                                <span class="ref-user-status ${hasPlan ? 'ref-status-active' : 'ref-status-inactive'}">
+                                    ${hasPlan ? 'Active' : 'Pending'}
+                                </span>
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                document.getElementById('refTotal').textContent = totalRefs;
+                document.getElementById('refActive').textContent = activeRefs;
+                document.getElementById('refInactive').textContent = inactiveRefs;
+                document.getElementById('userCount').textContent = totalRefs;
+                document.getElementById('pendingEarnings').textContent = fmt(pendingEarnings);
+                document.getElementById('refUsersList').innerHTML = usersHTML;
+            } catch (error) {
+                console.error('Error loading referral data:', error);
+                toast('Error loading referral data');
+            }
+        }
+
+        // ============ COPY REFERRAL LINK ============
+        function copyRefLink() {
+            const refCode = currentUser.refCode || currentUser.id;
+            const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+            navigator.clipboard.writeText(refLink)
+                .then(() => toast('📋 Link copied to clipboard!'))
+                .catch(() => {
+                    // Fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = refLink;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    toast('📋 Link copied!');
+                });
+        }
+
+        // ============ SHARE VIA WHATSAPP ============
+        function shareWhatsApp() {
+            const refCode = currentUser.refCode || currentUser.id;
+            const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+            const message = encodeURIComponent(
+                '🌱 *Join Me on Agrimindvest!* 🌱\n\n' +
+                '💼 Read articles, answer questions, and earn daily\n' +
+                '💰 Get ₦300 welcome bonus instantly\n' +
+                '📈 Invest in agricultural plans and grow your wealth\n\n' +
+                '🔗 *Use my referral link:*\n' +
+                refLink + '\n\n' +
+                '✅ Free to join • 100% Secure • Instant Payouts\n' +
+                '👥 Join thousands of members earning daily!'
+            );
+            window.open('https://wa.me/?text=' + message, '_blank');
+        }
+
+        // ============ ADVANCED SHARE ============
+        function shareCopyAdvanced() {
+            const refCode = currentUser.refCode || currentUser.id;
+            const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join Agrimindvest',
+                    text: 'Join me on Agrimindvest! Use my referral link to get started.',
+                    url: refLink
+                }).catch(err => console.log('Share cancelled'));
+            } else {
+                copyRefLink();
+            }
+        }
+
+        // ============ SEND DIRECT INVITE ============
+        async function sendDirectInvite() {
+            const input = document.getElementById('inviteInput').value.trim();
+            const statusDiv = document.getElementById('inviteStatus');
+            
+            if (!input) {
+                statusDiv.innerHTML = '<span style="color:var(--warning);">Please enter email or phone</span>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<span style="color:var(--text-dim);">Sending invite...</span>';
+
+            try {
+                // Validate email or phone
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const phoneRegex = /^[\d+\-\s()]{7,}$/;
+                
+                if (!emailRegex.test(input) && !phoneRegex.test(input)) {
+                    statusDiv.innerHTML = '<span style="color:var(--danger);">Invalid email or phone</span>';
+                    return;
+                }
+
+                // Create invite record
+                const refCode = currentUser.refCode || currentUser.id;
+                const inviteLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+
+                await db.collection('invites').add({
+                    from: currentUser.id,
+                    fromName: currentUser.name,
+                    to: input,
+                    link: inviteLink,
+                    type: emailRegex.test(input) ? 'email' : 'phone',
+                    status: 'sent',
+                    createdAt: new Date().toISOString()
+                });
+
+                statusDiv.innerHTML = '<span style="color:var(--success);">✅ Invite sent successfully!</span>';
+                document.getElementById('inviteInput').value = '';
+                
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 4000);
+            } catch (error) {
+                console.error('Error sending invite:', error);
+                statusDiv.innerHTML = '<span style="color:var(--danger);">Failed to send invite</span>';
+            }
+        }
+
+        // ============ ALLOW ENTER KEY ON INVITE ============
+        document.getElementById('inviteInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendDirectInvite();
+            }
+        });
+    </script>
+</body>
+</html>

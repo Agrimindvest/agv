@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bank Accounts - Agrimindvest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .bank-container { max-width: 520px; margin: 0 auto; }
+        .bank-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 10px;
+        }
+        .bank-info { flex: 1; }
+        .bank-name { font-weight: 700; color: var(--accent-light); }
+        .bank-detail { font-size: 0.9em; color: var(--text-dim); margin-top: 4px; }
+        .delete-bank-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 6px;
+        }
+        .delete-bank-btn:hover { opacity: 0.75; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="home.html" class="logo"><i class="fas fa-seedling"></i> Agrimindvest</a>
+        <div class="icons">
+            <a href="profile.html"><i class="fas fa-user-circle"></i></a>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <a href="home.html" style="color:var(--accent-light);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:15px;">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+
+        <div class="bank-container">
+            <h3 style="color:var(--accent-light);margin-bottom:15px;">🏦 Bank Accounts</h3>
+            <div id="savedBanks" class="card" style="padding:14px;text-align:center;color:var(--text-dim);">
+                Loading bank accounts...
+            </div>
+
+            <button class="btn btn-primary btn-block" onclick="showAddBankForm()" style="margin-top:16px;">+ Add New Bank Account</button>
+
+            <div id="addBankForm" class="hidden" style="margin-top:16px;">
+                <div class="card">
+                    <h4 style="color:var(--accent-light);margin-bottom:12px;">Add Bank Account</h4>
+                    <div class="form-group">
+                        <label>🏦 Bank Name</label>
+                        <input type="text" class="form-input" id="bankName" placeholder="e.g., GTBank, Moniepoint, Palmpay...">
+                        <small style="color:var(--text-dim);margin-top:4px;display:block;">Please Enter your bank name correctly</small>
+                    </div>
+                    <div class="form-group"><label>🔢 Account Number</label><input type="text" class="form-input" id="bankAcctNo" maxlength="10" placeholder="10 digits"></div>
+                    <div class="form-group"><label>👤 Account Name</label><input type="text" class="form-input" id="bankAcctName" placeholder="Your account name"></div>
+                    <button class="btn btn-success btn-block" onclick="saveBank()">💾 Save Account</button>
+                    <button class="btn btn-outline btn-block" onclick="hideAddBankForm()" style="margin-top:10px;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="plans.html" class="nav-item"><i class="fas fa-layer-group"></i><span>Plans</span></a>
+        <a href="deposit.html" class="nav-item"><i class="fas fa-credit-card"></i><span>Deposit</span></a>
+        <a href="tasks.html" class="nav-item"><i class="fas fa-tasks"></i><span>Tasks</span></a>
+        <a href="profile.html" class="nav-item active"><i class="fas fa-user"></i><span>Profile</span></a>
+    </nav>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    <script>
+        const user = checkAuth();
+        if (!user) window.location.href = 'login.html';
+        let currentUser = user;
+
+        window.addEventListener('load', async () => {
+            currentUser = await refreshUser();
+            if (!currentUser || !currentUser.id) {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadBanks();
+        });
+
+        function showAddBankForm() {
+            document.getElementById('addBankForm').classList.remove('hidden');
+            document.getElementById('bankName').value = '';
+            document.getElementById('bankAcctNo').value = '';
+            document.getElementById('bankAcctName').value = '';
+        }
+
+        function hideAddBankForm() {
+            document.getElementById('addBankForm').classList.add('hidden');
+        }
+
+        async function loadBanks() {
+            const snapshot = await db.collection('banks').where('userId', '==', currentUser.id).get();
+            let html = '';
+            if (snapshot.empty) {
+                html = '<p style="color:var(--text-dim);text-align:center;">No bank accounts saved yet.</p>';
+            } else {
+                snapshot.forEach(doc => {
+                    const bank = doc.data();
+                    html += `<div class="bank-list-item"><div class="bank-info"><div class="bank-name">${bank.bankName}</div><div class="bank-detail">${bank.acctNo} • ${bank.acctName}</div></div><button class="delete-bank-btn" onclick="deleteBank('${doc.id}')"><i class="fas fa-trash"></i></button></div>`;
+                });
+            }
+            document.getElementById('savedBanks').innerHTML = html;
+        }
+
+
+
+        async function saveBank() {
+            const bn = document.getElementById('bankName').value.trim();
+            const no = document.getElementById('bankAcctNo').value.trim();
+            const na = document.getElementById('bankAcctName').value.trim();
+            if (!bn || !no || !na) return toast('❌ Fill all fields');
+            if (no.length !== 10 || !/^\d+$/.test(no)) return toast('❌ Account number must be 10 digits');
+            await db.collection('banks').add({ userId: currentUser.id, bankName: bn, acctNo: no, acctName: na, date: new Date().toISOString() });
+            toast('✅ Bank account saved!');
+            hideAddBankForm();
+            loadBanks();
+        }
+
+        async function deleteBank(id) {
+            if (!confirm('Delete this bank account?')) return;
+            await db.collection('banks').doc(id).delete();
+            toast('Removed');
+            loadBanks();
+        }
+    </script>
+</body>
+</html>
