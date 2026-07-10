@@ -211,7 +211,6 @@
 
         .btn-close-welcome:hover { color: var(--accent); }
 
-        /* ✅ FIXED: Added missing styles */
         .welcome-popup .btn-primary {
             flex: 1;
         }
@@ -318,7 +317,7 @@
             <div class="stat-mini"><div class="val" id="sToday">0/5</div><div class="lbl">Today</div></div>
         </div>
 
-        <!-- Footer - NO ADMIN SHIELD -->
+        <!-- Footer -->
         <div class="footer">
             <p>
                 <a href="#" class="group-link" id="footerGroupLink" target="_blank"><i class="fab fa-telegram"></i> Join Telegram</a> &nbsp;|&nbsp;
@@ -375,15 +374,12 @@
             setTimeout(welcomeTypewriter, speed);
         }
 
-        // ✅ FIXED: Use localStorage for persistent welcome dismissal
         function isWelcomeShown() {
             const shown = localStorage.getItem('agv_welcome_shown');
             if (shown) {
-                // Check if it's been more than 24 hours
                 const timestamp = parseInt(shown);
                 const now = Date.now();
                 if (now - timestamp > 24 * 60 * 60 * 1000) {
-                    // More than 24 hours, show again
                     localStorage.removeItem('agv_welcome_shown');
                     return false;
                 }
@@ -392,7 +388,6 @@
             return false;
         }
 
-        // Check if welcome should show (persistent with 24-hour cooldown)
         if (!isWelcomeShown()) {
             document.getElementById('welcomeOverlay').classList.remove('hidden');
             setTimeout(welcomeTypewriter, 400);
@@ -402,7 +397,6 @@
 
         function closeWelcome() {
             document.getElementById('welcomeOverlay').classList.add('hidden');
-            // ✅ FIXED: Store timestamp for 24-hour cooldown
             localStorage.setItem('agv_welcome_shown', Date.now().toString());
         }
 
@@ -451,11 +445,33 @@
                 }
             } catch (error) {
                 console.error('Load settings error:', error);
-                // Use defaults if settings fail
                 document.getElementById('footerGroupLink').href = '#';
                 document.getElementById('footerSupportLink').href = 'mailto:' + ADMIN_EMAIL;
                 document.getElementById('welcomeGroupLink').href = '#';
                 document.getElementById('welcomeSupportLink').href = 'mailto:' + ADMIN_EMAIL;
+            }
+        }
+
+        // ✅ ============ GET LOCAL DATE ============
+        function getLocalDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // ✅ ============ LOAD TASKS FROM FIRESTORE ============
+        async function loadUserTasksFromFirestore(userId, date) {
+            try {
+                const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
+                if (doc.exists) {
+                    return doc.data().tasks || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Load tasks from Firestore error:', error);
+                return [];
             }
         }
 
@@ -465,9 +481,9 @@
                 currentUser = await refreshUser();
                 animateCountUp(document.getElementById('homeBalance'), currentUser.balance || 0);
 
-                const today = new Date().toISOString().split('T')[0];
-                const saved = JSON.parse(localStorage.getItem('agv_t_' + today) || '{}');
-                const myTasks = saved[currentUser.id] || [];
+                // ✅ FIXED: Load tasks from Firestore instead of localStorage
+                const today = getLocalDate();
+                const myTasks = await loadUserTasksFromFirestore(currentUser.id, today);
                 const done = myTasks.filter(t => t.done).length;
                 const todayEarned = myTasks.reduce((s, t) => s + (t.earned || 0), 0);
 
@@ -489,7 +505,6 @@
                         <a href="plans.html" class="btn btn-gold btn-lg btn-block quick-action-btn">Subscribe to a Plan</a>`;
                 }
 
-                // ✅ FIXED: Only stagger if elements exist
                 const cards = document.querySelectorAll('.card');
                 if (cards.length > 0) staggerCards('.card', 0.08);
                 const stats = document.querySelectorAll('.stat-mini');
