@@ -224,13 +224,11 @@
             <div class="welcome-logo">🌱</div>
             <h3 style="color:var(--accent-light);font-size:1.2em;margin-bottom:2px;">Agrimindvest</h3>
             
-            <!-- Typewriter -->
             <div class="welcome-typewriter-box">
                 <span class="welcome-typewriter-text" id="welcomeTypewriter"></span>
                 <span class="welcome-cursor">|</span>
             </div>
 
-            <!-- Features -->
             <div class="welcome-features">
                 <div class="wf-item"><i class="fas fa-book-open"></i> Read daily agricultural articles</div>
                 <div class="wf-item"><i class="fas fa-question-circle"></i> Answer 5 questions - no penalties!</div>
@@ -239,7 +237,6 @@
                 <div class="wf-item"><i class="fas fa-wallet"></i> Withdraw to your bank account</div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="welcome-buttons">
                 <a href="#" class="btn btn-outline btn-sm" id="welcomeGroupLink" target="_blank">
                     <i class="fab fa-telegram"></i> Join Group
@@ -269,10 +266,8 @@
     <!-- Main Content -->
     <div class="main-content">
         
-        <!-- Notice Banner -->
         <div class="notice-banner" id="homeNotice">Welcome to Agrimindvest! Complete your daily tasks to earn.</div>
 
-        <!-- LIVE ACTIVITY TICKER -->
         <div class="live-ticker" id="liveTicker">
             <span class="ticker-label">🔴 LIVE</span>
             <div class="ticker-track" id="tickerTrack">
@@ -282,7 +277,6 @@
             </div>
         </div>
 
-        <!-- Balance Card -->
         <div class="card card-balance">
             <div style="font-size:0.85em;color:var(--accent-light);">💰 AVAILABLE BALANCE</div>
             <div class="amount" id="homeBalance">₦0</div>
@@ -293,7 +287,6 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
         <div class="card">
             <h4 style="color:var(--text-dim);margin-bottom:12px;">📋 QUICK ACTIONS</h4>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
@@ -306,10 +299,8 @@
             </div>
         </div>
 
-        <!-- Task Action Card -->
         <div class="card" id="taskActionCard"></div>
 
-        <!-- Stats Row -->
         <div class="stats-row">
             <div class="stat-mini"><div class="val" id="sTeam">0</div><div class="lbl">Team</div></div>
             <div class="stat-mini"><div class="val" id="sRef">₦0</div><div class="lbl">Referrals</div></div>
@@ -317,7 +308,6 @@
             <div class="stat-mini"><div class="val" id="sToday">0/5</div><div class="lbl">Today</div></div>
         </div>
 
-        <!-- Footer -->
         <div class="footer">
             <p>
                 <a href="#" class="group-link" id="footerGroupLink" target="_blank"><i class="fab fa-telegram"></i> Join Telegram</a> &nbsp;|&nbsp;
@@ -327,7 +317,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <a href="home.html" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="plans.html" class="nav-item"><i class="fas fa-layer-group"></i><span>Plans</span></a>
@@ -452,7 +441,7 @@
             }
         }
 
-        // ✅ ============ GET LOCAL DATE ============
+        // ============ GET LOCAL DATE ============
         function getLocalDate() {
             const now = new Date();
             const year = now.getFullYear();
@@ -461,7 +450,7 @@
             return year + '-' + month + '-' + day;
         }
 
-        // ✅ ============ LOAD TASKS FROM FIRESTORE ============
+        // ============ LOAD TASKS FROM FIRESTORE ============
         async function loadUserTasksFromFirestore(userId, date) {
             try {
                 const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
@@ -481,7 +470,7 @@
                 currentUser = await refreshUser();
                 animateCountUp(document.getElementById('homeBalance'), currentUser.balance || 0);
 
-                // ✅ FIXED: Load tasks from Firestore instead of localStorage
+                // ✅ FIXED: Load tasks from Firestore
                 const today = getLocalDate();
                 const myTasks = await loadUserTasksFromFirestore(currentUser.id, today);
                 const done = myTasks.filter(t => t.done).length;
