@@ -8,93 +8,53 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .task-container { max-width: 600px; margin: 0 auto; }
-
         .progress-section { text-align: center; margin-bottom: 20px; }
 
         .article-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-            max-height: 300px;
-            overflow-y: auto;
-            line-height: 1.8;
-            font-size: 0.95em;
+            background: var(--card); border-radius: 16px; padding: 20px;
+            margin-bottom: 20px; border: 1px solid var(--border);
+            max-height: 300px; overflow-y: auto; line-height: 1.8; font-size: 0.95em;
         }
-
         .article-card h4 { color: var(--accent-light); margin-bottom: 10px; }
 
         .timer-section { text-align: center; margin-bottom: 20px; }
 
         .timer-display {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: var(--gold);
-            margin: 10px 0;
-            transition: color 0.3s;
+            font-size: 2.5em; font-weight: 800; color: var(--gold);
+            margin: 10px 0; transition: color 0.3s;
         }
-
         .timer-display.warning { color: var(--warning); animation: timerPulse 0.5s infinite; }
         .timer-display.danger { color: var(--danger); animation: timerPulse 0.3s infinite; }
 
-        @keyframes timerPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+        @keyframes timerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
 
         .quiz-section { display: none; }
         .quiz-section.active { display: block; animation: fadeSlideUp 0.4s ease; }
 
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeSlideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
         .question-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid var(--accent);
+            background: var(--card); border-radius: 16px; padding: 20px;
+            margin-bottom: 15px; border: 1px solid var(--accent);
         }
-
-        .question-worth {
-            color: var(--gold);
-            font-weight: 700;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
+        .question-worth { color: var(--gold); font-weight: 700; font-size: 0.9em; margin-bottom: 10px; }
 
         .all-done-card { text-align: center; padding: 30px; }
-
         .all-done-card .done-icon {
-            font-size: 5em;
-            color: var(--success);
+            font-size: 5em; color: var(--success);
             animation: bounceIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .task-history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
+        .task-history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header class="header">
         <a href="home.html" class="logo"><i class="fas fa-seedling"></i> Agrimindvest</a>
-        <div class="icons">
-            <a href="profile.html"><i class="fas fa-user-circle"></i></a>
-        </div>
+        <div class="icons"><a href="profile.html"><i class="fas fa-user-circle"></i></a></div>
     </header>
 
-    <!-- Main Content -->
     <div class="main-content">
-        
         <a href="home.html" style="color:var(--accent-light);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:15px;">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
@@ -114,16 +74,12 @@
             <!-- TASK SECTION -->
             <div id="taskSection" class="hidden">
                 
-                <!-- Progress -->
                 <div class="progress-section">
                     <div class="progress-label">📊 Progress: <span id="progressText">0/5</span> Completed</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width:0%;"></div>
-                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
                     <p style="color:var(--text-dim);">💰 Earned Today: <strong style="color:var(--gold);" id="earnedToday">₦0</strong></p>
                 </div>
 
-                <!-- Instructions -->
                 <div class="info-box" id="taskInstructions">
                     <h4>📋 TASK INSTRUCTIONS</h4>
                     <ul>
@@ -134,32 +90,22 @@
                     </ul>
                 </div>
 
-                <!-- Reading Phase -->
                 <div id="readingPhase">
                     <div class="article-card" id="articleContent">
                         <h4 id="articleTitle">Loading article...</h4>
                         <p id="articleBody">Please wait...</p>
                     </div>
-
                     <div class="timer-section">
                         <p style="color:var(--text-dim);">⏰ Read for 10 seconds before quiz unlocks</p>
                         <div class="timer-display" id="timerDisplay">10</div>
-                        <div class="timer-bar">
-                            <div class="timer-fill" id="timerFill" style="width:100%;"></div>
-                        </div>
+                        <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%;"></div></div>
                     </div>
-
-                    <button class="btn btn-primary btn-block" id="startQuizBtn" disabled onclick="startQuiz()">
-                        🔒 START QUIZ (Wait for timer)
-                    </button>
+                    <button class="btn btn-primary btn-block" id="startQuizBtn" disabled onclick="startQuiz()">🔒 START QUIZ (Wait for timer)</button>
                 </div>
 
-                <!-- Quiz Phase -->
                 <div class="quiz-section" id="quizPhase">
                     <div class="question-card">
-                        <div class="question-worth">
-                            ❓ Question <span id="qNumber">1</span> of 5 • 💰 Worth: <span id="qWorth">₦0</span>
-                        </div>
+                        <div class="question-worth">❓ Question <span id="qNumber">1</span> of 5 • 💰 Worth: <span id="qWorth">₦0</span></div>
                         <p style="font-weight:600;margin-bottom:15px;font-size:1em;" id="questionText">Loading...</p>
                         <div class="options-list" id="optionsList"></div>
                         <button class="btn btn-primary btn-block" id="submitBtn" style="margin-top:15px;" onclick="submitAnswer()" disabled>Submit Answer</button>
@@ -167,13 +113,11 @@
                     <div id="quizFeedback" style="text-align:center;margin-top:15px;"></div>
                 </div>
 
-                <!-- All Done -->
                 <div id="allDonePhase" class="hidden">
                     <div class="card all-done-card">
                         <div class="done-icon">🎉</div>
                         <h3 style="color:var(--success);margin:10px 0;">ALL TASKS COMPLETED!</h3>
                         <p style="color:var(--text-dim);margin-bottom:15px;">Great job! You've completed all 5 questions for today.</p>
-                        
                         <div style="background:var(--dark);border-radius:12px;padding:15px;margin-bottom:15px;">
                             <h4 style="color:var(--accent-light);margin-bottom:10px;">📊 Today's Results</h4>
                             <div id="taskResults"></div>
@@ -189,7 +133,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="plans.html" class="nav-item"><i class="fas fa-layer-group"></i><span>Plans</span></a>
@@ -216,7 +159,7 @@
         let todayTasks = [];
         let totalEarnedToday = 0;
 
-           // ============ BUILT-IN ARTICLES ============
+        // ============ BUILT-IN ARTICLES ============
         const articles = [
     // ============ DAYS 1-5: CROP FARMING BASICS ============
     {
@@ -903,6 +846,71 @@
     }
 ];
 
+        // ============ GET LOCAL DATE ============
+        function getLocalDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // ✅ ============ SAVE TASKS TO FIRESTORE ============
+        async function saveTasksToFirestore(userId, date, tasks) {
+            try {
+                await db.collection('userTasks').doc(userId + '_' + date).set({
+                    userId: userId,
+                    date: date,
+                    tasks: tasks,
+                    completedCount: tasks.filter(t => t.done).length,
+                    totalEarned: tasks.reduce((sum, t) => sum + (t.earned || 0), 0),
+                    updatedAt: new Date().toISOString()
+                });
+                return true;
+            } catch (error) {
+                console.error('Save tasks to Firestore error:', error);
+                return false;
+            }
+        }
+
+        // ✅ ============ LOAD TASKS FROM FIRESTORE ============
+        async function loadTasksFromFirestore(userId, date) {
+            try {
+                const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
+                if (doc.exists) {
+                    return doc.data().tasks || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Load tasks from Firestore error:', error);
+                return [];
+            }
+        }
+
+        // ✅ ============ SYNC TASKS (Firestore + LocalStorage fallback) ============
+        async function syncTasks(userId, date) {
+            // Try Firestore first
+            let tasks = await loadTasksFromFirestore(userId, date);
+            
+            // If nothing in Firestore, check localStorage
+            if (!tasks || tasks.length === 0) {
+                const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+                tasks = saved[userId] || [];
+                
+                // Migrate to Firestore if found in localStorage
+                if (tasks.length > 0) {
+                    await saveTasksToFirestore(userId, date, tasks);
+                }
+            }
+            
+            // Update localStorage for offline access
+            const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+            saved[userId] = tasks;
+            localStorage.setItem('agv_t_' + date, JSON.stringify(saved));
+            
+            return tasks;
+        }
+
         window.addEventListener('load', async () => {
             try {
                 currentUser = await refreshUser();
@@ -917,30 +925,27 @@
                 activePlans = await getActivePlans();
                 perQuestionValue = calculatePerQuestion(currentUser, activePlans);
 
-                const today = new Date().toISOString().split('T')[0];
-                const saved = JSON.parse(localStorage.getItem('agv_t_' + today) || '{}');
-                todayTasks = saved[currentUser.id] || [];
+                // ✅ FIXED: Load from Firestore with localStorage fallback
+                const today = getLocalDate();
+                todayTasks = await syncTasks(currentUser.id, today);
                 totalEarnedToday = todayTasks.reduce((s, t) => s + (t.earned || 0), 0);
                 currentQuestionIndex = todayTasks.filter(t => t.done).length + 1;
 
-                if (currentQuestionIndex > 5) {
-                    showAllDone();
-                } else {
-                    updateProgress();
-                    loadNewQuestion();
+                if (currentQuestionIndex > 5) { 
+                    showAllDone(); 
+                } else { 
+                    updateProgress(); 
+                    loadNewQuestion(); 
                 }
             } catch (error) {
                 console.error("Error loading tasks:", error);
-                const taskSection = document.getElementById('taskSection');
-                taskSection.classList.remove('hidden');
-                taskSection.innerHTML = `
-                    <div class="card" style="text-align:center;">
-                        <i class="fas fa-exclamation-triangle" style="font-size:3em;color:var(--danger);margin-bottom:15px;"></i>
-                        <h3 style="color:var(--danger);">Error Loading Tasks</h3>
-                        <p style="color:var(--text-dim);margin-bottom:15px;">Could not load task data. Please check your internet connection and try again later.</p>
-                        <a href="javascript:location.reload()" class="btn btn-primary">Try Again</a>
-                    </div>
-                `;
+                document.getElementById('taskSection').classList.remove('hidden');
+                document.getElementById('taskSection').innerHTML = `<div class="card" style="text-align:center;">
+                    <i class="fas fa-exclamation-triangle" style="font-size:3em;color:var(--danger);"></i>
+                    <h3>Error Loading Tasks</h3>
+                    <p style="color:var(--text-dim);">Please check your connection and try again.</p>
+                    <a href="javascript:location.reload()" class="btn btn-primary">Try Again</a>
+                </div>`;
             }
         });
 
@@ -955,14 +960,12 @@
             const article = articles[Math.floor(Math.random() * articles.length)];
             currentArticle = article;
             currentQuestion = article.qs[currentQuestionIndex - 1];
-
             document.getElementById('readingPhase').style.display = 'block';
             document.getElementById('quizPhase').classList.remove('active');
             document.getElementById('articleTitle').textContent = article.title;
             document.getElementById('articleBody').textContent = article.content;
             document.getElementById('qNumber').textContent = currentQuestionIndex;
             document.getElementById('qWorth').textContent = fmt(perQuestionValue);
-
             secondsLeft = 10;
             document.getElementById('timerDisplay').textContent = secondsLeft;
             document.getElementById('timerDisplay').className = 'timer-display';
@@ -970,17 +973,13 @@
             document.getElementById('startQuizBtn').disabled = true;
             document.getElementById('startQuizBtn').textContent = '🔒 START QUIZ (Wait for timer)';
             document.getElementById('startQuizBtn').classList.remove('btn-pulse');
-
             if (timerInterval) clearInterval(timerInterval);
-            
             timerInterval = setInterval(() => {
                 secondsLeft--;
                 document.getElementById('timerDisplay').textContent = secondsLeft;
                 document.getElementById('timerFill').style.width = (secondsLeft / 10 * 100) + '%';
-
                 if (secondsLeft <= 3) document.getElementById('timerDisplay').className = 'timer-display warning';
                 if (secondsLeft <= 1) document.getElementById('timerDisplay').className = 'timer-display danger';
-
                 if (secondsLeft <= 0) {
                     clearInterval(timerInterval);
                     document.getElementById('timerDisplay').textContent = '0';
@@ -996,14 +995,10 @@
             document.getElementById('quizPhase').classList.add('active');
             document.getElementById('questionText').textContent = currentQuestion.q;
             document.getElementById('quizFeedback').innerHTML = '';
-
             let optionsHTML = '';
             currentQuestion.o.forEach((opt, i) => {
                 const isDisabled = currentQuestion._disabled && currentQuestion._disabled.includes(i);
-                optionsHTML += `
-                <div class="opt-btn ${isDisabled ? 'disabled' : ''}" id="opt-${i}" onclick="selectOption(${i})">
-                    <span class="opt-letter">${'ABC'[i]}</span> ${opt}
-                </div>`;
+                optionsHTML += `<div class="opt-btn ${isDisabled ? 'disabled' : ''}" id="opt-${i}" onclick="selectOption(${i})"><span class="opt-letter">${'ABC'[i]}</span> ${opt}</div>`;
             });
             document.getElementById('optionsList').innerHTML = optionsHTML;
             document.getElementById('submitBtn').disabled = true;
@@ -1020,54 +1015,46 @@
         async function submitAnswer() {
             const selected = document.querySelector('.opt-btn.selected');
             if (!selected) return;
-
             const selectedIndex = parseInt(selected.id.split('-')[1]);
             const isCorrect = selectedIndex === currentQuestion.a;
 
             if (isCorrect) {
                 document.getElementById('opt-' + selectedIndex).classList.add('correct');
-                document.getElementById('quizFeedback').innerHTML = `
-                    <div style="color:var(--success);font-weight:700;font-size:1.2em;animation:bounceIn 0.5s;">
-                        ✅ Correct! +${fmt(perQuestionValue)} earned!
-                    </div>`;
-
+                document.getElementById('quizFeedback').innerHTML = `<div style="color:var(--success);font-weight:700;font-size:1.2em;animation:bounceIn 0.5s;">✅ Correct! +${fmt(perQuestionValue)} earned!</div>`;
                 todayTasks.push({ q: currentQuestionIndex, earned: perQuestionValue, done: true, retries: currentQuestion._disabled.length });
                 totalEarnedToday += perQuestionValue;
-
-                const today = new Date().toISOString().split('T')[0];
+                
+                // ✅ FIXED: Save to Firestore
+                const today = getLocalDate();
+                await saveTasksToFirestore(currentUser.id, today, todayTasks);
+                
+                // Also save to localStorage for offline
                 const saved = JSON.parse(localStorage.getItem('agv_t_' + today) || '{}');
                 saved[currentUser.id] = todayTasks;
                 localStorage.setItem('agv_t_' + today, JSON.stringify(saved));
-
+                
                 await db.collection('users').doc(currentUser.id).update({
                     balance: firebase.firestore.FieldValue.increment(perQuestionValue),
                     totalEarned: firebase.firestore.FieldValue.increment(perQuestionValue),
                     tasksCompleted: firebase.firestore.FieldValue.increment(1)
                 });
-
                 currentUser.balance = (currentUser.balance || 0) + perQuestionValue;
                 localStorage.setItem('agv_u', JSON.stringify(currentUser));
                 updateProgress();
-
-                setTimeout(() => {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex > 5) { showAllDone(); }
-                    else { loadNewQuestion(); }
+                setTimeout(() => { 
+                    currentQuestionIndex++; 
+                    if (currentQuestionIndex > 5) { 
+                        showAllDone(); 
+                    } else { 
+                        loadNewQuestion(); 
+                    } 
                 }, 1500);
-
             } else {
                 if (!currentQuestion._disabled) currentQuestion._disabled = [];
                 currentQuestion._disabled.push(selectedIndex);
-
                 document.getElementById('opt-' + selectedIndex).classList.add('wrong');
                 document.getElementById('opt-' + selectedIndex).classList.add('disabled');
-                document.getElementById('quizFeedback').innerHTML = `
-                    <div style="color:var(--danger);font-weight:600;animation:shake 0.5s;">
-                        ❌ Wrong! Option ${'ABC'[selectedIndex]} disabled. Try again!
-                    </div>
-                    <div style="color:var(--text-dim);font-size:0.85em;margin-top:5px;">
-                        No penalty - full ₦${perQuestionValue} when correct!
-                    </div>`;
+                document.getElementById('quizFeedback').innerHTML = `<div style="color:var(--danger);font-weight:600;animation:shake 0.5s;">❌ Wrong! Option ${'ABC'[selectedIndex]} disabled. Try again!</div><div style="color:var(--text-dim);font-size:0.85em;margin-top:5px;">No penalty - full ₦${perQuestionValue} when correct!</div>`;
                 document.getElementById('submitBtn').disabled = true;
                 document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
             }
@@ -1080,11 +1067,8 @@
             updateProgress();
             document.getElementById('progressFill').style.width = '100%';
             document.getElementById('totalEarned').textContent = fmt(totalEarnedToday);
-
             let resultsHTML = '';
-            todayTasks.forEach(t => {
-                resultsHTML += `<div class="task-history-item"><span>Q${t.q}:</span><span style="color:var(--success);">✅ ₦${t.earned}</span></div>`;
-            });
+            todayTasks.forEach(t => { resultsHTML += `<div class="task-history-item"><span>Q${t.q}:</span><span style="color:var(--success);">✅ ₦${t.earned}</span></div>`; });
             document.getElementById('taskResults').innerHTML = resultsHTML;
         }
     </script>
