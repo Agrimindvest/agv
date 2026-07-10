@@ -15,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============ CONSTANTS ============
-const ADMIN_EMAIL = 'agrimindvest@gmail.com';
+const ADMIN_EMAIL = 'newmanmonopoly@gmail.com';
 const DEPOSIT_BANK = 'Safe Haven Microfinance Bank';
 const DEPOSIT_ACCOUNT = '5012552807';
 const DEPOSIT_NAME = 'PEERPURSETECHNO';
