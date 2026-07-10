@@ -9,7 +9,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header class="header">
         <a href="home.html" class="logo"><i class="fas fa-seedling"></i> Agrimindvest</a>
         <div class="icons">
@@ -17,17 +16,14 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <div class="main-content">
         
-        <!-- Back Button -->
         <a href="home.html" style="color:var(--accent-light);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:15px;">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
 
         <h3 style="color:var(--accent-light);margin-bottom:15px;">📋 Investment Plans</h3>
 
-        <!-- Your Active Plans -->
         <div id="myPlanSection" style="display:none;">
             <h4 style="color:var(--text-dim);margin-bottom:8px;">🌟 YOUR ACTIVE PLANS</h4>
             <div class="card" id="myPlanCard"></div>
@@ -42,7 +38,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <a href="home.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="plans.html" class="nav-item active"><i class="fas fa-layer-group"></i><span>Plans</span></a>
@@ -55,42 +50,40 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
     <script>
-        // ============ CHECK AUTH ============
         const user = checkAuth();
         if (!user) { window.location.href = 'login.html'; }
 
         let currentUser = user;
         let allPlans = {};
+        
+        // Plan limits - sproutplus = 1, others = 3
         const planLimits = {
             sproutplus: 1, sapling: 3, growth: 3,
             harvest: 3, farmer: 3, pro: 3, elite: 3,
             premier: 3, executive: 3, investor: 3, legend: 3
         };
 
+        // Default plans
         const defaultPlans = {
-            sproutplus: { name: 'Sprout+', price: 5000, perQ: 50, daily: 250, status: 'active' },
-            sapling: { name: 'Sapling', price: 10000, perQ: 100, daily: 500, status: 'active' },
-            growth: { name: 'Growth', price: 25000, perQ: 250, daily: 1250, status: 'active' },
-            harvest: { name: 'Harvest', price: 50000, perQ: 500, daily: 2500, status: 'active' },
-            farmer: { name: 'Farmer', price: 100000, perQ: 1000, daily: 5000, status: 'active' },
-            pro: { name: 'Pro', price: 200000, perQ: 2000, daily: 10000, status: 'active' },
-            elite: { name: 'Elite', price: 300000, perQ: 3000, daily: 15000, status: 'active' },
-            premier: { name: 'Premier', price: 500000, perQ: 5000, daily: 25000, status: 'active' },
-            executive: { name: 'Executive', price: 750000, perQ: 7500, daily: 37500, status: 'active' },
-            investor: { name: 'Investor', price: 1000000, perQ: 10000, daily: 50000, status: 'active' },
-            legend: { name: 'Legend', price: 2000000, perQ: 20000, daily: 100000, status: 'soldout' }
+            sproutplus: { name: 'AGV Sprout Plus', price: 5000, perQ: 45, daily: 225, status: 'active' },
+            sapling: { name: 'AGV Sapling', price: 7500, perQ: 67.5, daily: 337.5, status: 'active' },
+            growth: { name: 'AGV Growth', price: 10000, perQ: 90, daily: 450, status: 'active' },
+            harvest: { name: 'AGV Harvest', price: 15000, perQ: 135, daily: 675, status: 'active' },
+            farmer: { name: 'AGV Farmer', price: 20000, perQ: 180, daily: 900, status: 'active' },
+            pro: { name: 'AGV Pro', price: 30000, perQ: 270, daily: 1350, status: 'active' },
+            elite: { name: 'AGV Elite', price: 50000, perQ: 450, daily: 2250, status: 'active' },
+            premier: { name: 'AGV Premier', price: 75000, perQ: 675, daily: 3375, status: 'active' },
+            executive: { name: 'AGV Executive', price: 100000, perQ: 900, daily: 4500, status: 'active' },
+            investor: { name: 'AGV Investor', price: 125000, perQ: 1125, daily: 5625, status: 'active' },
+            legend: { name: 'AGV Legend', price: 200000, perQ: 1800, daily: 9000, status: 'soldout' }
         };
 
-        // ============ RENDER PAGE ============
         function renderPageContent() {
-            // Show active plans
+            // Show user's active plans
             if (currentUser.ownedPlans && currentUser.ownedPlans.length > 0) {
                 document.getElementById('myPlanSection').style.display = 'block';
-                
                 const planCounts = {};
-                (currentUser.ownedPlans || []).forEach(p => {
-                    planCounts[p] = (planCounts[p] || 0) + 1;
-                });
+                (currentUser.ownedPlans || []).forEach(p => { planCounts[p] = (planCounts[p] || 0) + 1; });
 
                 let activeHTML = '';
                 let totalPerQ = 0;
@@ -109,21 +102,25 @@
                 activeHTML += `<div style="display:flex;justify-content:space-between;padding-top:10px;font-weight:700;">
                     <span>💰 Total:</span><span style="color:var(--gold);">₦${totalPerQ}/Q • Daily: ₦${totalPerQ * 5}</span>
                 </div>`;
-                
                 document.getElementById('myPlanCard').innerHTML = activeHTML;
             } else {
                 document.getElementById('myPlanSection').style.display = 'none';
             }
 
-            // Show all plans sorted by price
-            const sortedPlans = Object.keys(allPlans).sort((a, b) => 
-                (allPlans[a].price || 0) - (allPlans[b].price || 0)
-            );
-
+            // Show all available plans
+            const sortedPlans = Object.keys(allPlans).sort((a, b) => (allPlans[a].price || 0) - (allPlans[b].price || 0));
             let plansHTML = '';
 
             if (sortedPlans.length === 0) {
-                plansHTML = '<p style="color:var(--text-dim);text-align:center;">No plans available yet.</p>';
+                plansHTML = `
+                <div class="card" style="text-align:center;padding:30px;">
+                    <i class="fas fa-exclamation-circle" style="font-size:3em;color:var(--warning);margin-bottom:15px;"></i>
+                    <h4 style="color:var(--warning);">No Plans Available</h4>
+                    <p style="color:var(--text-dim);">Please check back later or contact admin.</p>
+                    <button class="btn btn-primary btn-sm" onclick="loadPlans()" style="margin-top:10px;">
+                        <i class="fas fa-sync"></i> Refresh Plans
+                    </button>
+                </div>`;
             } else {
                 sortedPlans.forEach(key => {
                     const p = allPlans[key];
@@ -135,25 +132,20 @@
                     let statusIcon, statusClass, buttonHTML;
 
                     if (status === 'disabled') {
-                        statusIcon = '🔒';
-                        statusClass = 'locked';
+                        statusIcon = '🔒'; statusClass = 'locked';
                         buttonHTML = '<span class="plan-badge badge-locked">Coming Soon</span>';
                     } else if (status === 'soldout') {
-                        statusIcon = '🔴';
-                        statusClass = 'sold-out';
+                        statusIcon = '🔴'; statusClass = 'sold-out';
                         buttonHTML = '<span class="plan-badge badge-sold">Sold Out</span>';
                     } else if (isMaxed) {
-                        statusIcon = '✅';
-                        statusClass = '';
+                        statusIcon = '✅'; statusClass = '';
                         buttonHTML = `<span class="plan-badge badge-active">Maxed ${purchased}/${limit}</span>`;
                     } else if (purchased > 0) {
-                        statusIcon = '🟢';
-                        statusClass = '';
+                        statusIcon = '🟢'; statusClass = '';
                         buttonHTML = `<span style="font-size:0.75em;color:var(--text-dim);">Purchased: ${purchased}/${limit}</span>
-                                        <button class="btn btn-primary btn-sm" onclick="invest('${key}')">Invest Again</button>`;
+                                     <button class="btn btn-primary btn-sm" onclick="invest('${key}')">Invest Again</button>`;
                     } else {
-                        statusIcon = '🟢';
-                        statusClass = '';
+                        statusIcon = '🟢'; statusClass = '';
                         buttonHTML = `<button class="btn btn-primary btn-sm" onclick="invest('${key}')">Invest Now</button>`;
                     }
 
@@ -184,21 +176,61 @@
             staggerCards('.plan-card', 0.06);
         }
 
-        // ============ LOAD PLANS ============
+        // ✅ FIXED: Load Plans with proper error handling and default creation
         async function loadPlans() {
             try {
+                // Show loading state
+                document.getElementById('allPlansContainer').innerHTML = `
+                    <div style="text-align:center;padding:30px;">
+                        <div class="spinner"></div>
+                        <p style="color:var(--text-dim);margin-top:10px;">Loading plans...</p>
+                    </div>`;
+
                 currentUser = await refreshUser();
-                allPlans = await getAllPlans();
+                
+                // ✅ FIX 1: Check if plans exist in Firestore
+                const plansDoc = await db.collection('settings').doc('plans').get();
+                
+                if (!plansDoc.exists) {
+                    // ✅ FIX 2: Create default plans if they don't exist
+                    console.log('No plans found in Firestore. Creating default plans...');
+                    await db.collection('settings').doc('plans').set(defaultPlans);
+                    allPlans = defaultPlans;
+                    toast('✅ Default plans created successfully!');
+                } else {
+                    allPlans = plansDoc.data();
+                    
+                    // ✅ FIX 3: Ensure all default plans exist
+                    let needsUpdate = false;
+                    const updatedPlans = { ...allPlans };
+                    
+                    Object.keys(defaultPlans).forEach(key => {
+                        if (!updatedPlans[key]) {
+                            updatedPlans[key] = defaultPlans[key];
+                            needsUpdate = true;
+                            console.log('Adding missing plan:', key);
+                        }
+                    });
+                    
+                    if (needsUpdate) {
+                        await db.collection('settings').doc('plans').set(updatedPlans);
+                        allPlans = updatedPlans;
+                        toast('✅ Missing plans added!');
+                    }
+                }
+                
                 renderPageContent();
+                
             } catch (error) {
                 console.error('Load plans error:', error);
-                toast('Could not load live plan data. Showing default plans.');
+                // ✅ FIX 4: Use default plans as fallback
                 allPlans = defaultPlans;
                 renderPageContent();
+                toast('⚠️ Using default plans - check your connection');
             }
         }
 
-        // ============ INVEST ============
+        // ✅ FIXED: Invest with extra balance safety check
         async function invest(planKey) {
             const plan = allPlans[planKey];
             if (!plan) return toast('Plan not found');
@@ -209,27 +241,46 @@
             const purchased = (currentUser.ownedPlans || []).filter(x => x === planKey).length;
             if (purchased >= limit) return toast('You have reached the maximum purchases for this plan');
 
-            if ((currentUser.balance || 0) < plan.price) {
-                return toast('❌ Insufficient balance. Need: ' + fmt(plan.price) + '. Please deposit first.');
+            // ✅ Extra safety: Refresh user data before checking balance
+            currentUser = await refreshUser();
+            const userBalance = currentUser.balance || 0;
+            
+            if (userBalance < plan.price) {
+                return toast('❌ Insufficient balance. Need: ' + fmt(plan.price) + '. You have: ' + fmt(userBalance));
             }
 
-            if (!confirm(`Invest ${fmt(plan.price)} for ${plan.name}?
-
-Per Question: ${fmt(plan.perQ)}
-Daily Potential: ${fmt(plan.daily)}
-
-Your balance: ${fmt(currentUser.balance)}`)) return;
+            if (!confirm(`Invest ${fmt(plan.price)} for ${plan.name}?\n\nPer Question: ${fmt(plan.perQ)}\nDaily Potential: ${fmt(plan.daily)}\nCycle: 365 Days\nTotal Return: ${fmt(plan.daily * 365)}\n\nYour balance: ${fmt(userBalance)}`)) return;
 
             try {
-                await updateDoc('users', currentUser.id, {
-                    balance: firebase.firestore.FieldValue.increment(-plan.price)
+                // ✅ Extra safety: Use transaction to prevent race conditions
+                await db.runTransaction(async (transaction) => {
+                    const userRef = db.collection('users').doc(currentUser.id);
+                    const userDoc = await transaction.get(userRef);
+                    
+                    if (!userDoc.exists) {
+                        throw new Error('User not found');
+                    }
+                    
+                    const currentBalance = userDoc.data().balance || 0;
+                    
+                    // ✅ Double-check balance inside transaction
+                    if (currentBalance < plan.price) {
+                        throw new Error('Insufficient balance. Please refresh and try again.');
+                    }
+                    
+                    // Deduct balance
+                    transaction.update(userRef, {
+                        balance: firebase.firestore.FieldValue.increment(-plan.price)
+                    });
                 });
 
+                // Update local user data
                 const ownedPlans = [...(currentUser.ownedPlans || []), planKey];
                 const expiryDate = new Date();
-                expiryDate.setDate(expiryDate.getDate() + 60);
+                expiryDate.setDate(expiryDate.getDate() + 365);
 
-                await updateDoc('users', currentUser.id, {
+                // Update other user fields
+                await db.collection('users').doc(currentUser.id).update({
                     ownedPlans: ownedPlans,
                     plan: planKey,
                     expiryDate: expiryDate.toISOString(),
@@ -245,10 +296,10 @@ Your balance: ${fmt(currentUser.balance)}`)) return;
 
                 // Referral bonus
                 if (currentUser.referredBy && currentUser.referredBy !== 'ADMIN') {
-                    const referrer = await getDoc('users', currentUser.referredBy);
-                    if (referrer && hasActivePlan(referrer)) {
+                    const referrer = await db.collection('users').doc(currentUser.referredBy).get();
+                    if (referrer.exists && hasActivePlan(referrer.data())) {
                         const bonus = Math.floor(plan.price * 0.10);
-                        await updateDoc('users', currentUser.referredBy, {
+                        await db.collection('users').doc(currentUser.referredBy).update({
                             refEarnings: firebase.firestore.FieldValue.increment(bonus),
                             balance: firebase.firestore.FieldValue.increment(bonus)
                         });
@@ -261,6 +312,7 @@ Your balance: ${fmt(currentUser.balance)}`)) return;
                     }
                 }
 
+                // Update local storage
                 currentUser.balance = (currentUser.balance || 0) - plan.price;
                 currentUser.ownedPlans = ownedPlans;
                 localStorage.setItem('agv_u', JSON.stringify(currentUser));
@@ -270,11 +322,16 @@ Your balance: ${fmt(currentUser.balance)}`)) return;
 
             } catch (error) {
                 console.error('Invest error:', error);
-                toast('Investment failed. Please try again.');
+                toast(error.message || 'Investment failed. Please try again.');
             }
         }
 
-        // ============ INIT ============
+        // ✅ FIX 5: Add a manual refresh button function
+        function refreshPlans() {
+            toast('🔄 Refreshing plans...');
+            loadPlans();
+        }
+
         window.addEventListener('load', loadPlans);
     </script>
 </body>
