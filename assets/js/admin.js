@@ -39,6 +39,7 @@ function switchSection(section) {
     if (section === 'withdrawals') loadWithdrawals();
     if (section === 'content') loadContent();
     if (section === 'referrals') loadReferrals();
+    if (section === 'tasks') loadTaskReports();
     if (section === 'plans') loadPlansAdmin();
     if (section === 'notices') loadNotices();
     if (section === 'settings') loadSettingsData();
@@ -130,16 +131,12 @@ async function quickAdd(id, name) {
     }
 }
 
-// ============ EDIT USER (FIXED WITH FRESH BALANCE CHECK) ============
 async function editUser(id) {
     try {
-        // ✅ Get initial user data
         const u = await getDoc('users', id);
         if (!u) return toast('User not found');
-        
         const action = prompt(`Edit: ${u.name}\nBalance: ${fmt(u.balance)}\nPlan: ${u.plan || 'None'}\nStatus: ${u.status}\n\nCommands:\n"status active/suspended"\n"add 5000"\n"remove 2000"\n"plan pro/none"`);
         if (!action) return;
-        
         const parts = action.trim().split(' ');
         const cmd = parts[0].toLowerCase();
         const val = parts[1];
@@ -149,30 +146,19 @@ async function editUser(id) {
             toast('✅ Status: ' + val); 
         }
         else if (cmd === 'add' && parseInt(val) > 0) { 
+            const addAmount = parseInt(val);
             await db.collection('users').doc(id).update({ 
-                balance: firebase.firestore.FieldValue.increment(parseInt(val)) 
+                balance: firebase.firestore.FieldValue.increment(addAmount) 
             }); 
-            toast('✅ Added ₦' + parseInt(val).toLocaleString()); 
+            toast('✅ Added ₦' + addAmount.toLocaleString()); 
         }
-        // ✅ FIXED: Get FRESH balance before removing
         else if (cmd === 'remove' && parseInt(val) > 0) { 
             const removeAmount = parseInt(val);
-            
-            // ✅ IMPORTANT: Get fresh user data from Firestore
-            const freshUser = await getDoc('users', id);
-            if (!freshUser) {
-                toast('❌ User not found');
-                return;
-            }
-            
-            const currentBalance = freshUser.balance || 0;
-            
-            // ✅ Check: Cannot remove more than available balance
+            const currentBalance = u.balance || 0;
             if (removeAmount > currentBalance) {
-                toast('❌ User only has ' + fmt(currentBalance) + '. Cannot remove more than available balance.');
+                toast('❌ User only has ' + fmt(currentBalance) + '. Cannot remove more.');
                 return;
             }
-            
             await db.collection('users').doc(id).update({ 
                 balance: firebase.firestore.FieldValue.increment(-removeAmount) 
             }); 
@@ -214,16 +200,19 @@ async function editUser(id) {
 async function loadDeposits() {
     try {
         const snapshot = await db.collection('deposits').orderBy('date', 'desc').limit(50).get();
+        const search = (document.getElementById('depositSearch')?.value || '').toLowerCase();
         let html = '';
         if (snapshot.empty) {
             html = '<tr><td colspan="8" style="text-align:center;color:var(--text-dim);">No deposits found</td></tr>';
         } else {
             snapshot.forEach(d => {
                 const dep = d.data();
+                const userName = dep.userName || dep.userId || '';
+                if (search && !userName.toLowerCase().includes(search) && !dep.ref?.toLowerCase().includes(search)) return;
                 const statusClass = dep.status === 'approved' ? 'success' : dep.status === 'pending' ? 'warning' : 'danger';
                 const statusLabel = dep.status === 'approved' ? '✅ Approved' : dep.status === 'pending' ? '⏳ Pending' : '❌ Rejected';
                 html += `<tr>
-                    <td>${dep.userName || dep.userId}</td>
+                    <td>${userName}</td>
                     <td>${fmt(dep.amount)}</td>
                     <td>${dep.ref || '-'}</td>
                     <td>${dep.payerName || '-'}</td>
@@ -246,7 +235,6 @@ async function loadDeposits() {
     }
 }
 
-// ✅ FIXED: Approve Deposit
 async function approveDeposit(id) {
     if (!confirm('✅ Approve this deposit?')) return;
     try {
@@ -255,18 +243,13 @@ async function approveDeposit(id) {
             toast('❌ Deposit not found');
             return;
         }
-        
-        // Update deposit status
         await db.collection('deposits').doc(id).update({ 
             status: 'approved',
             processedAt: new Date().toISOString()
         });
-        
-        // Add balance to user
         await db.collection('users').doc(dep.userId).update({
             balance: firebase.firestore.FieldValue.increment(dep.amount)
         });
-        
         toast('✅ Deposit approved! ₦' + dep.amount.toLocaleString() + ' added to user balance');
         loadDeposits();
         loadDashboard();
@@ -276,7 +259,6 @@ async function approveDeposit(id) {
     }
 }
 
-// ✅ FIXED: Reject Deposit
 async function rejectDeposit(id) {
     if (!confirm('❌ Reject this deposit?')) return;
     try {
@@ -297,16 +279,19 @@ async function rejectDeposit(id) {
 async function loadWithdrawals() {
     try {
         const snapshot = await db.collection('withdrawals').orderBy('date', 'desc').limit(50).get();
+        const search = (document.getElementById('withdrawalSearch')?.value || '').toLowerCase();
         let html = '';
         if (snapshot.empty) {
             html = '<tr><td colspan="8" style="text-align:center;color:var(--text-dim);">No withdrawals found</td></tr>';
         } else {
             snapshot.forEach(d => {
                 const w = d.data();
+                const userName = w.userName || w.userId || '';
+                if (search && !userName.toLowerCase().includes(search) && !w.bankName?.toLowerCase().includes(search)) return;
                 const statusClass = w.status === 'approved' ? 'success' : w.status === 'pending' ? 'warning' : 'danger';
                 const statusLabel = w.status === 'approved' ? '✅ Approved' : w.status === 'pending' ? '⏳ Pending' : '❌ Rejected';
                 html += `<tr>
-                    <td>${w.userName || w.userId}</td>
+                    <td>${userName}</td>
                     <td>${fmt(w.amount)}</td>
                     <td>${fmt(w.fee)}</td>
                     <td>${fmt(w.net)}</td>
@@ -329,7 +314,6 @@ async function loadWithdrawals() {
     }
 }
 
-// ✅ FIXED: Approve Withdrawal
 async function approveWithdrawal(id) {
     if (!confirm('✅ Approve this withdrawal?')) return;
     try {
@@ -338,12 +322,10 @@ async function approveWithdrawal(id) {
             toast('❌ Withdrawal not found');
             return;
         }
-        
         await db.collection('withdrawals').doc(id).update({ 
             status: 'approved',
             processedAt: new Date().toISOString()
         });
-        
         toast('✅ Withdrawal approved! ₦' + w.net.toLocaleString() + ' will be sent to user');
         loadWithdrawals();
         loadDashboard();
@@ -353,7 +335,6 @@ async function approveWithdrawal(id) {
     }
 }
 
-// ✅ FIXED: Reject Withdrawal (with refund)
 async function rejectWithdrawal(id) {
     if (!confirm('❌ Reject this withdrawal and refund user?')) return;
     try {
@@ -362,18 +343,13 @@ async function rejectWithdrawal(id) {
             toast('❌ Withdrawal not found');
             return;
         }
-        
-        // Update withdrawal status
         await db.collection('withdrawals').doc(id).update({ 
             status: 'rejected',
             processedAt: new Date().toISOString()
         });
-        
-        // Refund user
         await db.collection('users').doc(w.userId).update({
             balance: firebase.firestore.FieldValue.increment(w.amount)
         });
-        
         toast('❌ Rejected - ₦' + w.amount.toLocaleString() + ' refunded to user');
         loadWithdrawals();
         loadDashboard();
@@ -494,6 +470,92 @@ async function loadReferrals() {
     }
 }
 
+// ============ ✅ TASK REPORTS (NEW) ============
+async function loadTaskReports() {
+    const dateInput = document.getElementById('taskDateFilter');
+    const date = dateInput?.value || new Date().toISOString().split('T')[0];
+    
+    if (dateInput && !dateInput.value) {
+        dateInput.value = date;
+    }
+
+    const container = document.getElementById('taskReportsList');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="empty-state">
+            <div class="spinner"></div>
+            <p>Loading tasks for ${date}...</p>
+        </div>
+    `;
+
+    try {
+        const tasks = await getAllUserTasksForDate(date);
+        
+        if (tasks.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No tasks completed on ${date}</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        let totalCompleted = 0;
+        let totalEarned = 0;
+
+        tasks.forEach(task => {
+            const completed = task.tasks.filter(t => t.done).length;
+            const earned = task.tasks.reduce((sum, t) => sum + (t.earned || 0), 0);
+            const progress = (completed / 5) * 100;
+            
+            totalCompleted += completed;
+            totalEarned += earned;
+
+            html += `
+                <div class="task-report-item">
+                    <div class="user-info">
+                        <span class="name">${task.userId}</span>
+                        <span class="id">${completed}/5 questions completed</span>
+                    </div>
+                    <div class="task-stats">
+                        <span class="completed">✅ ${completed}/5</span>
+                        <div class="progress">
+                            <div class="fill" style="width:${progress}%;"></div>
+                        </div>
+                        <span class="earned">${fmt(earned)}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Add summary
+        html = `
+            <div class="card" style="border-color:var(--gold);margin-bottom:15px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="color:var(--gold);font-weight:700;">📊 Daily Summary - ${date}</span>
+                    <span>Total Users: <strong>${tasks.length}</strong></span>
+                    <span>Total Tasks: <strong>${totalCompleted}/5</strong></span>
+                    <span>Total Earned: <strong style="color:var(--gold);">${fmt(totalEarned)}</strong></span>
+                </div>
+            </div>
+        ` + html;
+
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error('Load task reports error:', error);
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error loading tasks. Please refresh.</p>
+            </div>
+        `;
+    }
+}
+
 // ============ PLANS ============
 const defaultPlans = {
     sproutplus: { name: 'AGV Sprout Plus', price: 5000, perQ: 45, daily: 225, status: 'active' },
@@ -509,7 +571,6 @@ const defaultPlans = {
     legend: { name: 'AGV Legend', price: 200000, perQ: 1800, daily: 9000, status: 'soldout' }
 };
 
-// ✅ FIXED: Load Plans Admin
 async function loadPlansAdmin() {
     try {
         const snap = await db.collection('settings').doc('plans').get();
@@ -592,7 +653,6 @@ async function togglePlan(key, status) {
     }
 }
 
-// ✅ NEW: Edit plan values
 async function editPlanValues(key) {
     try {
         const plansDoc = await db.collection('settings').doc('plans').get();
