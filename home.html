@@ -67,28 +67,14 @@
             100% { opacity: 0; transform: translateY(-100%); }
         }
 
-        .ticker-item .ticker-phone {
-            color: var(--accent-light);
-            font-weight: 600;
-        }
-
-        .ticker-item .ticker-action {
-            color: var(--gold);
-        }
-
-        .ticker-item .ticker-amount {
-            color: var(--gold);
-            font-weight: 700;
-        }
+        .ticker-item .ticker-phone { color: var(--accent-light); font-weight: 600; }
+        .ticker-item .ticker-action { color: var(--gold); }
+        .ticker-item .ticker-amount { color: var(--gold); font-weight: 700; }
 
         .ticker-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--success);
-            margin: 0 6px;
-            animation: dotPulse 1s infinite;
+            display: inline-block; width: 6px; height: 6px;
+            border-radius: 50%; background: var(--success);
+            margin: 0 6px; animation: dotPulse 1s infinite;
         }
 
         @keyframes dotPulse {
@@ -99,27 +85,178 @@
         .ticker-dot.dot-gold { background: var(--gold); }
         .ticker-dot.dot-blue { background: var(--info); }
 
-        @keyframes bellRing {
-            0%, 100% { transform: rotate(0); }
-            25% { transform: rotate(-15deg); }
-            75% { transform: rotate(15deg); }
-        }
-
         .quick-action-btn {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .quick-action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .quick-action-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .quick-action-btn:active { transform: scale(0.95); }
+
+        /* ============ WELCOME POPUP ============ */
+        .welcome-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
         }
 
-        .quick-action-btn:active {
-            transform: scale(0.95);
+        .welcome-overlay.hidden { display: none; }
+
+        .welcome-popup {
+            background: var(--card);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 20px 18px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .welcome-logo {
+            font-size: 3em;
+            color: var(--accent);
+            animation: float 3s ease-in-out infinite;
+            margin-bottom: 5px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-typewriter-box {
+            background: rgba(76,175,80,0.1);
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            padding: 10px 18px;
+            margin: 10px 0;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-typewriter-text {
+            font-size: 0.9em;
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        .welcome-cursor {
+            animation: blink 0.8s infinite;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .welcome-features {
+            text-align: left;
+            margin: 12px 0;
+        }
+
+        .welcome-features .wf-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 0.82em;
+            color: var(--text-dim);
+        }
+
+        .welcome-features .wf-item i {
+            color: var(--accent);
+            width: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .welcome-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .welcome-buttons .btn {
+            flex: 1;
+            font-size: 0.85em;
+            padding: 10px 16px;
+        }
+
+        .btn-close-welcome {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-top: 10px;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+
+        .btn-close-welcome:hover { color: var(--accent); }
+
+        /* ✅ FIXED: Added missing styles */
+        .welcome-popup .btn-primary {
+            flex: 1;
         }
     </style>
 </head>
 <body>
+
+    <!-- ============ WELCOME POPUP ============ -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div class="welcome-popup">
+            <div class="welcome-logo">🌱</div>
+            <h3 style="color:var(--accent-light);font-size:1.2em;margin-bottom:2px;">Agrimindvest</h3>
+            
+            <!-- Typewriter -->
+            <div class="welcome-typewriter-box">
+                <span class="welcome-typewriter-text" id="welcomeTypewriter"></span>
+                <span class="welcome-cursor">|</span>
+            </div>
+
+            <!-- Features -->
+            <div class="welcome-features">
+                <div class="wf-item"><i class="fas fa-book-open"></i> Read daily agricultural articles</div>
+                <div class="wf-item"><i class="fas fa-question-circle"></i> Answer 5 questions - no penalties!</div>
+                <div class="wf-item"><i class="fas fa-coins"></i> Earn per correct answer instantly</div>
+                <div class="wf-item"><i class="fas fa-users"></i> Refer friends & earn 10% bonus</div>
+                <div class="wf-item"><i class="fas fa-wallet"></i> Withdraw to your bank account</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="welcome-buttons">
+                <a href="#" class="btn btn-outline btn-sm" id="welcomeGroupLink" target="_blank">
+                    <i class="fab fa-telegram"></i> Join Group
+                </a>
+                <a href="#" class="btn btn-outline btn-sm" id="welcomeSupportLink">
+                    <i class="fas fa-headset"></i> Support
+                </a>
+            </div>
+
+            <button class="btn btn-primary btn-block" onclick="closeWelcome()" style="margin-top:10px;font-size:0.9em;padding:12px;">
+                🚀 CONTINUE TO DASHBOARD
+            </button>
+
+            <button class="btn-close-welcome" onclick="closeWelcome()">Close</button>
+        </div>
+    </div>
 
     <!-- Header -->
     <header class="header">
@@ -170,41 +307,24 @@
             </div>
         </div>
 
-        <!-- Task Action -->
-        <div class="card" id="taskActionCard">
-            <!-- This content will be populated by the script -->
-        </div>
+        <!-- Task Action Card -->
+        <div class="card" id="taskActionCard"></div>
 
         <!-- Stats Row -->
         <div class="stats-row">
-            <div class="stat-mini">
-                <div class="val" id="sTeam">0</div>
-                <div class="lbl">Team</div>
-            </div>
-            <div class="stat-mini">
-                <div class="val" id="sRef">₦0</div>
-                <div class="lbl">Referrals</div>
-            </div>
-            <div class="stat-mini">
-                <div class="val" id="sTasks">0</div>
-                <div class="lbl">Tasks Done</div>
-            </div>
-            <div class="stat-mini">
-                <div class="val" id="sToday">0/5</div>
-                <div class="lbl">Today</div>
-            </div>
+            <div class="stat-mini"><div class="val" id="sTeam">0</div><div class="lbl">Team</div></div>
+            <div class="stat-mini"><div class="val" id="sRef">₦0</div><div class="lbl">Referrals</div></div>
+            <div class="stat-mini"><div class="val" id="sTasks">0</div><div class="lbl">Tasks Done</div></div>
+            <div class="stat-mini"><div class="val" id="sToday">0/5</div><div class="lbl">Today</div></div>
         </div>
 
-        <!-- Footer -->
+        <!-- Footer - NO ADMIN SHIELD -->
         <div class="footer">
             <p>
                 <a href="#" class="group-link" id="footerGroupLink" target="_blank"><i class="fab fa-telegram"></i> Join Telegram</a> &nbsp;|&nbsp;
                 <a href="#" class="group-link" id="footerSupportLink"><i class="fas fa-headset"></i> Support</a>
             </p>
-            <p style="margin-top:5px;">
-                &copy; 2026 Agrimindvest
-                <a href="admin.html" class="admin-shield" title="Admin"><i class="fas fa-shield-alt"></i></a>
-            </p>
+            <p style="margin-top:5px;">&copy; 2026 Agrimindvest</p>
         </div>
     </div>
 
@@ -224,58 +344,118 @@
         // ============ CHECK AUTH ============
         const user = checkAuth();
         if (!user) { window.location.href = 'login.html'; }
-
         let currentUser = user;
 
-        // ============ LIVE TICKER - PURE RANDOM ============
-        function maskPhone() {
-            const prefix = ['080', '081', '070', '090', '091'][Math.floor(Math.random() * 5)];
-            const middle = Math.floor(Math.random() * 9000000 + 1000000);
-            return prefix + middle + '****';
+        // ============ WELCOME POPUP TYPEWRITER ============
+        const welcomePhrases = [
+            "Welcome back! Ready to grow your knowledge? 🌱",
+            "Every question you answer builds your future...",
+            "Learning today = Earning tomorrow 💰",
+            "You're one task away from your next payout!",
+            "Consistency is the key to success 🔑",
+            "Keep reading. Keep learning. Keep earning.",
+            "Your financial freedom journey continues...",
+            "Small daily efforts = Big monthly results 📈",
+            "Knowledge is the new currency - invest in it!",
+            "The more you learn, the more you earn 💡",
+            "Stay consistent, stay profitable 🎯",
+            "Your future self will thank you for today's work"
+        ];
+
+        let wpIndex = 0, wpChar = 0, wpDeleting = false;
+        const wpEl = document.getElementById('welcomeTypewriter');
+
+        function welcomeTypewriter() {
+            const phrase = welcomePhrases[wpIndex];
+            if (wpDeleting) { wpEl.textContent = phrase.substring(0, wpChar - 1); wpChar--; }
+            else { wpEl.textContent = phrase.substring(0, wpChar + 1); wpChar++; }
+            let speed = wpDeleting ? 35 : 70;
+            if (!wpDeleting && wpChar === phrase.length) { speed = 2000; wpDeleting = true; }
+            else if (wpDeleting && wpChar === 0) { wpDeleting = false; wpIndex = (wpIndex + 1) % welcomePhrases.length; speed = 400; }
+            setTimeout(welcomeTypewriter, speed);
         }
 
-        function getRandomAmount() {
-            const amounts = ['₦3,000','₦5,000','₦7,500','₦10,000','₦15,000','₦20,000','₦25,000','₦30,000','₦40,000','₦50,000','₦75,000','₦100,000','₦150,000','₦200,000'];
-            return amounts[Math.floor(Math.random() * amounts.length)];
-        }
-
-        function getRandomPlan() {
-            return ['AGV Sprout','AGV Sprout Plus','AGV Growth','AGV Harvest','AGV Farmer','AGV Pro','AGV Elite','AGV Legend'][Math.floor(Math.random() * 8)];
-        }
-
-        function generateTickerItem() {
-            const phone = maskPhone();
-            const rand = Math.random();
-            
-            if (rand < 0.35) {
-                return `<span class="ticker-phone">${phone}</span> <span class="ticker-dot dot-gold"></span> invested in <span class="ticker-action">${getRandomPlan()}</span>`;
-            } else if (rand < 0.65) {
-                return `<span class="ticker-phone">${phone}</span> <span class="ticker-dot dot-blue"></span> just joined Agrimindvest 🌱`;
-            } else {
-                return `<span class="ticker-phone">${phone}</span> <span class="ticker-dot"></span> withdrawal of <span class="ticker-amount">${getRandomAmount()}</span> approved ✅`;
+        // ✅ FIXED: Use localStorage for persistent welcome dismissal
+        function isWelcomeShown() {
+            const shown = localStorage.getItem('agv_welcome_shown');
+            if (shown) {
+                // Check if it's been more than 24 hours
+                const timestamp = parseInt(shown);
+                const now = Date.now();
+                if (now - timestamp > 24 * 60 * 60 * 1000) {
+                    // More than 24 hours, show again
+                    localStorage.removeItem('agv_welcome_shown');
+                    return false;
+                }
+                return true;
             }
+            return false;
         }
 
+        // Check if welcome should show (persistent with 24-hour cooldown)
+        if (!isWelcomeShown()) {
+            document.getElementById('welcomeOverlay').classList.remove('hidden');
+            setTimeout(welcomeTypewriter, 400);
+        } else {
+            document.getElementById('welcomeOverlay').classList.add('hidden');
+        }
+
+        function closeWelcome() {
+            document.getElementById('welcomeOverlay').classList.add('hidden');
+            // ✅ FIXED: Store timestamp for 24-hour cooldown
+            localStorage.setItem('agv_welcome_shown', Date.now().toString());
+        }
+
+        // ============ LIVE TICKER ============
+        function maskPhone() {
+            const prefix = ['080','081','070','090','091'][Math.floor(Math.random()*5)];
+            return prefix + Math.floor(Math.random()*9000000+1000000) + '****';
+        }
+        function getRandomAmount() {
+            const a = ['₦3,000','₦5,000','₦7,500','₦10,000','₦15,000','₦20,000','₦25,000','₦30,000','₦40,000','₦50,000','₦75,000','₦100,000','₦150,000','₦200,000'];
+            return a[Math.floor(Math.random()*a.length)];
+        }
+        function getRandomPlan() {
+            return ['AGV Sprout','AGV Sprout Plus','AGV Growth','AGV Harvest','AGV Farmer','AGV Pro','AGV Elite','AGV Legend'][Math.floor(Math.random()*8)];
+        }
+        function generateTickerItem() {
+            const p = maskPhone(), r = Math.random();
+            if (r < 0.35) return `<span class="ticker-phone">${p}</span> <span class="ticker-dot dot-gold"></span> invested in <span class="ticker-action">${getRandomPlan()}</span>`;
+            else if (r < 0.65) return `<span class="ticker-phone">${p}</span> <span class="ticker-dot dot-blue"></span> just joined Agrimindvest 🌱`;
+            else return `<span class="ticker-phone">${p}</span> <span class="ticker-dot"></span> withdrawal of <span class="ticker-amount">${getRandomAmount()}</span> approved ✅`;
+        }
         function updateTicker() {
             document.getElementById('tickerItem1').innerHTML = generateTickerItem();
             document.getElementById('tickerItem2').innerHTML = generateTickerItem();
             document.getElementById('tickerItem3').innerHTML = generateTickerItem();
         }
-
         setInterval(updateTicker, 8000);
         setTimeout(updateTicker, 300);
 
         // ============ LOAD SETTINGS ============
         async function loadSettings() {
-            const s = await db.collection('settings').doc('siteSettings').get();
-            if (s.exists) {
-                const d = s.data();
-                document.getElementById('footerGroupLink').href = d.telegramLink || '#';
-                document.getElementById('footerSupportLink').href = 'mailto:' + (d.supportEmail || ADMIN_EMAIL);
-            }
-            const n = await db.collection('settings').doc('notices').get();
-            if (n.exists && n.data().home) {
-                document.getElementById('homeNotice').textContent = n.data().home;
+            try {
+                const s = await db.collection('settings').doc('siteSettings').get();
+                if (s.exists) {
+                    const d = s.data();
+                    const tg = d.telegramLink || '#';
+                    const se = d.supportEmail || ADMIN_EMAIL;
+                    document.getElementById('footerGroupLink').href = tg;
+                    document.getElementById('footerSupportLink').href = 'mailto:' + se;
+                    document.getElementById('welcomeGroupLink').href = tg;
+                    document.getElementById('welcomeSupportLink').href = 'mailto:' + se;
+                }
+                const n = await db.collection('settings').doc('notices').get();
+                if (n.exists && n.data().home) {
+                    document.getElementById('homeNotice').textContent = n.data().home;
+                }
+            } catch (error) {
+                console.error('Load settings error:', error);
+                // Use defaults if settings fail
+                document.getElementById('footerGroupLink').href = '#';
+                document.getElementById('footerSupportLink').href = 'mailto:' + ADMIN_EMAIL;
+                document.getElementById('welcomeGroupLink').href = '#';
+                document.getElementById('welcomeSupportLink').href = 'mailto:' + ADMIN_EMAIL;
             }
         }
 
@@ -283,11 +463,8 @@
         async function loadDashboard() {
             try {
                 currentUser = await refreshUser();
-
-                // Animate balance count up
                 animateCountUp(document.getElementById('homeBalance'), currentUser.balance || 0);
 
-                // Stats
                 const today = new Date().toISOString().split('T')[0];
                 const saved = JSON.parse(localStorage.getItem('agv_t_' + today) || '{}');
                 const myTasks = saved[currentUser.id] || [];
@@ -300,35 +477,40 @@
                 document.getElementById('sTasks').textContent = currentUser.tasksCompleted || 0;
                 document.getElementById('sToday').textContent = done + '/5';
 
-                // Task Action Card
                 const taskActionCard = document.getElementById('taskActionCard');
                 if (hasActivePlan(currentUser)) {
                     taskActionCard.innerHTML = `
                         <h4 style="color:var(--text-dim);margin-bottom:12px;">✅ READY FOR TODAY?</h4>
-                        <a href="tasks.html" class="btn btn-primary btn-lg btn-block quick-action-btn">Complete Your Tasks Now</a>
-                    `;
+                        <a href="tasks.html" class="btn btn-primary btn-lg btn-block quick-action-btn">Complete Your Tasks Now</a>`;
                 } else {
                     taskActionCard.innerHTML = `
                         <h4 style="color:var(--text-dim);margin-bottom:12px;">❌ NO ACTIVE PLAN</h4>
                         <p style="color:var(--text-dim);text-align:center;margin-bottom:15px;">You need an active plan to complete daily tasks and earn.</p>
-                        <a href="plans.html" class="btn btn-gold btn-lg btn-block quick-action-btn">Subscribe to a Plan</a>
-                    `;
+                        <a href="plans.html" class="btn btn-gold btn-lg btn-block quick-action-btn">Subscribe to a Plan</a>`;
                 }
 
-                // Stagger cards
-                staggerCards('.card', 0.08);
-                staggerCards('.stat-mini', 0.06);
-
-            } catch (error) {
+                // ✅ FIXED: Only stagger if elements exist
+                const cards = document.querySelectorAll('.card');
+                if (cards.length > 0) staggerCards('.card', 0.08);
+                const stats = document.querySelectorAll('.stat-mini');
+                if (stats.length > 0) staggerCards('.stat-mini', 0.06);
+                
+            } catch (error) { 
                 console.error('Dashboard error:', error);
+                toast('⚠️ Error loading dashboard. Please refresh.');
             }
         }
 
         // ============ INIT ============
         window.addEventListener('load', async () => {
-            await loadSettings();
-            await loadDashboard();
+            try {
+                await loadSettings();
+                await loadDashboard();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                toast('⚠️ Error loading page. Please refresh.');
+            }
         });
     </script>
 </body>
-          </html>
+</html>
