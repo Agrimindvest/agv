@@ -161,690 +161,247 @@
 
         // ============ BUILT-IN ARTICLES ============
         const articles = [
-    // ============ DAYS 1-5: CROP FARMING BASICS ============
-    {
-        title: 'Natural Pest Control for Maize Farming',
-        content: 'Maize is one of the most important cereal crops in Nigeria, providing food for millions. However, farmers face significant challenges from pests like stem borers and armyworms that can destroy up to 50% of harvest. Natural pest control methods are cost-effective and eco-friendly. Neem leaf application repels insects naturally without chemicals. Ash dusting creates a protective barrier on plants. Companion planting with desmodium grass pushes pests away while attracting beneficial insects. These traditional methods have been used for generations and are proven effective.',
-        qs: [
-            {q:'What is the first natural method mentioned?',o:['Ash dusting','Neem leaf application','Companion planting'],a:1},
-            {q:'Pests can destroy up to what percentage of harvest?',o:['25%','50%','75%'],a:1},
-            {q:'What does ash dusting create on plants?',o:['Protective barrier','Nutrients','Water retention'],a:0},
-            {q:'Which plant is used for companion planting?',o:['Wheat grass','Desmodium grass','Elephant grass'],a:1},
-            {q:'Why are natural methods preferred over chemicals?',o:['Faster results','Cost-effective and eco-friendly','Less labor required'],a:1}
-        ]
-    },
-    {
-        title: 'Tomato Market Analysis in Nigeria',
-        content: 'Tomato farming is highly profitable in Nigeria but market prices fluctuate significantly throughout the year. During the dry season from November to March, prices can reach ₦50,000 per basket due to scarcity. In the rainy season from June to September, prices drop to ₦15,000-20,000 as supply increases dramatically. Key factors affecting prices include transportation costs from northern producing states, inadequate storage facilities leading to post-harvest losses, and fluctuating demand from processing companies. Smart farmers who invest in proper storage can sell at premium prices during off-seasons.',
-        qs: [
-            {q:'When are tomato prices highest?',o:['Dry season (Nov-Mar)','Rainy season (Jun-Sep)','Planting season'],a:0},
-            {q:'What is the peak price per basket during scarcity?',o:['₦30,000','₦50,000','₦70,000'],a:1},
-            {q:'What causes price drops in rainy season?',o:['Increased supply','Decreased demand','Government intervention'],a:0},
-            {q:'Which factor does NOT affect tomato prices?',o:['Transportation costs','Storage facilities','Color of tomatoes'],a:2},
-            {q:'How can farmers maximize their earnings?',o:['Sell immediately after harvest','Invest in proper storage for off-season','Reduce the amount they plant'],a:1}
-        ]
-    },
-    {
-        title: 'Irrigation Techniques for Dry Season Farming',
-        content: 'Water management is crucial for successful dry season farming in Nigeria. Drip irrigation delivers water directly to plant roots, saving up to 70% compared to traditional flooding methods. Sprinkler systems cover larger areas but lose significant water to evaporation in hot conditions. Mulching with crop residues helps retain soil moisture and reduces watering frequency. The best irrigation method depends on crop type, farm size, available water source, and budget. Small-scale farmers can start with simple drip systems using locally available materials before upgrading.',
-        qs: [
-            {q:'Which irrigation method saves up to 70% water?',o:['Drip irrigation','Sprinkler system','Flood irrigation'],a:0},
-            {q:'What causes water loss in sprinkler systems?',o:['Evaporation','Root absorption','Soil type'],a:0},
-            {q:'What is mulching primarily used for?',o:['Adding fertilizer to soil','Retaining soil moisture','Plowing the field'],a:1},
-            {q:'What determines the best irrigation method to use?',o:['Crop type and farm size','The phase of the moon','The color of the soil'],a:0},
-            {q:'When is water management most crucial for farmers?',o:['Dry season','Rainy season','Harvest time'],a:0}
-        ]
-    },
-    {
-        title: 'Climate-Smart Farming Practices',
-        content: 'Climate change is affecting agriculture across Africa with unpredictable rainfall patterns and rising temperatures. Climate-smart farming helps farmers adapt while reducing environmental impact. Key practices include crop rotation to maintain soil health, agroforestry which integrates trees with crops, and water harvesting techniques for drought periods. Using improved seed varieties that are drought-resistant can increase yields by 30-40%. Farmers who adopt these practices not only protect their harvests but also contribute to environmental sustainability for future generations.',
-        qs: [
-            {q:'What is affecting African agriculture according to the article?',o:['Climate change','Too much rain','Labor shortage'],a:0},
-            {q:'What does crop rotation help maintain?',o:['Soil health','Water levels','Air quality'],a:0},
-            {q:'What is agroforestry?',o:['Using only chemicals on crops','Integrating trees with crops','Only growing trees without crops'],a:1},
-            {q:'How much can improved drought-resistant seeds increase yields?',o:['10-20%','30-40%','50-60%'],a:1},
-            {q:'What do climate-smart practices protect?',o:['Only the environment','Harvests and the environment','Only the harvests'],a:1}
-        ]
-    },
-    {
-        title: 'Agricultural Finance and Budgeting',
-        content: 'Proper financial management is essential for successful farming. Farmers need to budget for seeds, fertilizers, labor, and equipment before each planting season. Keeping records of expenses and income helps identify profitable crops and areas to reduce costs. Many farmers can access agricultural loans through cooperative societies or government programs like the Anchor Borrowers Programme. Setting aside 20% of profits for reinvestment ensures farm growth year after year. Understanding market prices and timing sales strategically can significantly increase annual income.',
-        qs: [
-            {q:'What is essential for successful farming?',o:['Only hard work','Proper financial management','Owning large land'],a:1},
-            {q:'What should farmers budget for before planting?',o:['Seeds, fertilizers, labor, and equipment','Only seeds','Only equipment'],a:0},
-            {q:'How can farmers access agricultural loans?',o:['Only through commercial banks','Through cooperatives or government programs','Only from family members'],a:1},
-            {q:'What percentage of profits should be set aside for reinvestment?',o:['10%','20%','50%'],a:1},
-            {q:'What can significantly increase annual income?',o:['Selling randomly throughout the year','Strategic market timing of sales','Selling everything at once'],a:1}
-        ]
-    },
-
-    // ============ DAYS 6-10: MORE CROPS ============
-    {
-        title: 'Cassava Farming: A Complete Guide',
-        content: 'Cassava is one of the most widely grown crops in Nigeria, serving as a staple food for millions. It thrives in tropical climates and can grow in poor soils where other crops fail. The best planting time is at the beginning of the rainy season between March and May. Improved varieties like TME 419 can yield up to 30 tons per hectare compared to 10 tons from local varieties. Proper spacing of 1 meter by 1 meter ensures optimal growth. Farmers should harvest between 12-18 months after planting for best results.',
-        qs: [
-            {q:'When is the best planting time for cassava in Nigeria?',o:['March to May','December to February','August to October'],a:0},
-            {q:'How much can improved cassava varieties yield per hectare?',o:['10 tons','30 tons','50 tons'],a:1},
-            {q:'What is the proper spacing for cassava plants?',o:['0.5m x 0.5m','1m x 1m','2m x 2m'],a:1},
-            {q:'When should cassava be harvested after planting?',o:['6-8 months','12-18 months','24-30 months'],a:1},
-            {q:'What type of soil can cassava tolerate?',o:['Only very rich soil','Poor soils where other crops fail','Only sandy soil'],a:1}
-        ]
-    },
-    {
-        title: 'Rice Production in Nigeria',
-        content: 'Rice has become one of the most important staple foods in Nigeria, with consumption rising annually. Nigeria produces about 5 million metric tons of rice yearly but still imports to meet demand. The major rice-producing states are Kebbi, Ebonyi, and Kano. Two main types are grown: upland rice (rain-fed) and lowland rice (irrigated). The Central Bank of Nigeria Anchor Borrowers Programme has helped many farmers access loans for rice farming. Proper water management and fertilizer application can double yields.',
-        qs: [
-            {q:'How much rice does Nigeria produce annually?',o:['1 million tons','5 million tons','10 million tons'],a:1},
-            {q:'Which state is a major rice producer?',o:['Lagos','Kebbi','Rivers'],a:1},
-            {q:'What are the two main types of rice grown in Nigeria?',o:['White and brown rice','Upland and lowland rice','Short and long grain rice'],a:1},
-            {q:'What program has helped farmers access loans for rice farming?',o:['Anchor Borrowers Programme','Student loan program','Housing fund'],a:0},
-            {q:'What can double rice yields according to the article?',o:['Hiring more workers','Proper water and fertilizer management','Using bigger farms'],a:1}
-        ]
-    },
-    {
-        title: 'Yam Cultivation Techniques',
-        content: 'Yam is known as the king of crops in many Nigerian communities and holds cultural significance. Nigeria produces over 70% of the worlds yams. The best planting time is between November and February. Yams require well-drained sandy loam soil and mounds about 1 meter high. Seed yams weighing 200-500g produce the best results. Staking with bamboo or wooden poles helps the vines grow properly. Major pests include yam beetles and nematodes which can reduce yields by 30%.',
-        qs: [
-            {q:'What percentage of world yams does Nigeria produce?',o:['Over 50%','Over 70%','Over 90%'],a:1},
-            {q:'When is the best planting time for yams?',o:['March to May','November to February','June to August'],a:1},
-            {q:'What type of soil do yams prefer?',o:['Clay soil','Well-drained sandy loam','Waterlogged soil'],a:1},
-            {q:'What is used for staking yam vines?',o:['Bamboo or wooden poles','Metal pipes','Plastic strings'],a:0},
-            {q:'What pests can reduce yam yields by 30%?',o:['Yam beetles and nematodes','Only birds','Only weeds'],a:0}
-        ]
-    },
-    {
-        title: 'Cocoa Production and Processing',
-        content: 'Cocoa is a major cash crop in Nigeria, with the country being the fourth largest producer globally. The main growing regions are in the southwest including Ondo, Osun, and Ogun states. Cocoa trees begin bearing fruit after 3-5 years and can produce for over 30 years. Proper fermentation of cocoa beans for 5-7 days develops the chocolate flavor. Drying beans to 7% moisture content prevents mold during storage. Nigeria exports most of its cocoa to Europe and America.',
-        qs: [
-            {q:'What rank is Nigeria in global cocoa production?',o:['First','Fourth','Tenth'],a:1},
-            {q:'How long before cocoa trees begin bearing fruit?',o:['1 year','3-5 years','10 years'],a:1},
-            {q:'How long should cocoa beans be fermented?',o:['1-2 days','5-7 days','14 days'],a:1},
-            {q:'What moisture content prevents mold during storage?',o:['15%','7%','20%'],a:1},
-            {q:'Where does Nigeria export most of its cocoa?',o:['Europe and America','Only Asia','Only other African countries'],a:0}
-        ]
-    },
-    {
-        title: 'Groundnut Farming Best Practices',
-        content: 'Groundnuts (peanuts) are an important legume crop grown extensively in northern Nigeria. They fix nitrogen in the soil, making them excellent for crop rotation. The best planting time is between May and June at the onset of rains. Seeds should be planted 5cm deep with spacing of 30cm between plants. Groundnuts mature in 90-130 days depending on the variety. Proper drying after harvest prevents aflatoxin contamination which can be harmful to health. Nigeria was once the worlds largest groundnut exporter.',
-        qs: [
-            {q:'What benefit do groundnuts provide to soil?',o:['Fix nitrogen','Remove nutrients','Increase acidity'],a:0},
-            {q:'When is the best planting time for groundnuts?',o:['January-February','May-June','September-October'],a:1},
-            {q:'How deep should groundnut seeds be planted?',o:['2cm','5cm','15cm'],a:1},
-            {q:'How long until groundnuts mature?',o:['60-80 days','90-130 days','180-200 days'],a:1},
-            {q:'What does proper drying after harvest prevent?',o:['Aflatoxin contamination','Insect attacks','Weed growth'],a:0}
-        ]
-    },
-
-    // ============ DAYS 11-15: LIVESTOCK ============
-    {
-        title: 'Poultry Farming for Beginners',
-        content: 'Poultry farming is one of the most accessible livestock businesses in Nigeria. Broilers can be raised for meat in 6-8 weeks while layers produce eggs for up to 18 months. A proper poultry house needs good ventilation, adequate space, and protection from predators. Vaccination against Newcastle disease and Gumboro is essential for healthy birds. Quality feed accounts for 70% of production costs. Starting with 100 day-old chicks is recommended for beginners. The demand for chicken and eggs continues to grow across Nigeria.',
-        qs: [
-            {q:'How long does it take to raise broilers for meat?',o:['2-3 weeks','6-8 weeks','6 months'],a:1},
-            {q:'What percentage of production costs is feed?',o:['30%','50%','70%'],a:2},
-            {q:'Which disease requires vaccination in poultry?',o:['Newcastle disease','Malaria','Cholera'],a:0},
-            {q:'How many chicks are recommended for beginners?',o:['50','100','500'],a:1},
-            {q:'How long do layers produce eggs?',o:['6 months','Up to 18 months','5 years'],a:1}
-        ]
-    },
-    {
-        title: 'Goat Rearing in Nigeria',
-        content: 'Goats are among the most popular livestock in Nigeria due to their adaptability and low maintenance requirements. The main breeds include West African Dwarf, Sokoto Red, and Sahel goats. Goats can survive on poor quality forage and require minimal housing. A simple shelter protecting from rain and sun is sufficient. Goats reproduce quickly with gestation lasting about 5 months and often giving birth to twins. Common diseases include PPR (Peste des Petits Ruminants) which can be prevented through vaccination. Goat meat (chevon) is in high demand across Nigeria.',
-        qs: [
-            {q:'Which is a Nigerian goat breed?',o:['West African Dwarf','Alpine','Boer'],a:0},
-            {q:'How long is goat gestation?',o:['3 months','About 5 months','9 months'],a:1},
-            {q:'What disease affects goats and can be prevented by vaccination?',o:['PPR','Malaria','Typhoid'],a:0},
-            {q:'What is goat meat called?',o:['Beef','Chevon','Mutton'],a:1},
-            {q:'How many kids do goats often give birth to?',o:['Always single','Often twins','Always triplets'],a:1}
-        ]
-    },
-    {
-        title: 'Fish Farming (Aquaculture) Basics',
-        content: 'Fish farming is rapidly growing in Nigeria as wild fish stocks decline. Catfish is the most commonly farmed species due to its fast growth and high market demand. A standard pond measuring 10m x 10m can hold about 1000 fingerlings. Water quality management is crucial - pH should be between 6.5-8.5 and dissolved oxygen above 5mg/L. Fish reach market size of about 1kg in 5-6 months with proper feeding. Floating pellets with 35-40% protein content produce the best growth rates. Nigeria produces over 300,000 metric tons of farmed fish annually.',
-        qs: [
-            {q:'Which fish is most commonly farmed in Nigeria?',o:['Tilapia','Catfish','Salmon'],a:1},
-            {q:'How many fingerlings can a standard 10m x 10m pond hold?',o:['500','1000','2000'],a:1},
-            {q:'What is the ideal pH range for fish pond water?',o:['4.0-5.0','6.5-8.5','10.0-12.0'],a:1},
-            {q:'How long does it take for fish to reach market size?',o:['2-3 months','5-6 months','12 months'],a:1},
-            {q:'What protein content in feed produces the best growth?',o:['15-20%','35-40%','50-60%'],a:1}
-        ]
-    },
-    {
-        title: 'Cattle Ranching in Nigeria',
-        content: 'Cattle production is a major agricultural activity in Nigeria, particularly in the northern region. The main breeds include White Fulani, Red Bororo, and Sokoto Gudali. Traditional pastoral systems are gradually transitioning to ranching which offers better management. A mature cow needs about 25-30 liters of water daily and adequate grazing land. Proper vaccination against Foot and Mouth Disease and Anthrax is essential. Cattle reach market weight in 2-3 years with good management. Nigeria has about 20 million cattle, one of the largest herds in Africa.',
-        qs: [
-            {q:'Which is a Nigerian cattle breed?',o:['White Fulani','Holstein','Angus'],a:0},
-            {q:'How much water does a mature cow need daily?',o:['5-10 liters','25-30 liters','100 liters'],a:1},
-            {q:'Which disease requires vaccination in cattle?',o:['Foot and Mouth Disease','Malaria','Typhoid'],a:0},
-            {q:'How long until cattle reach market weight?',o:['1 year','2-3 years','5 years'],a:1},
-            {q:'Approximately how many cattle does Nigeria have?',o:['About 5 million','About 20 million','About 50 million'],a:1}
-        ]
-    },
-    {
-        title: 'Snail Farming for Profit',
-        content: 'Snail farming (heliciculture) is a lucrative agribusiness requiring minimal space and capital. The giant African land snail is the most popular species for farming in Nigeria. Snails need a cool, humid environment with soil rich in calcium for shell development. They feed on vegetables, fruits, and specially formulated feeds. A mature snail can lay 100-400 eggs per year. Snails reach market size in 6-12 months. The demand for snail meat is high in hotels, restaurants, and markets across Nigeria.',
-        qs: [
-            {q:'What is snail farming called?',o:['Heliciculture','Aquaculture','Apiculture'],a:0},
-            {q:'Which snail species is most popular for farming in Nigeria?',o:['Garden snail','Giant African land snail','Sea snail'],a:1},
-            {q:'What do snails need in their soil for shell development?',o:['Calcium','Iron','Magnesium'],a:0},
-            {q:'How many eggs can a mature snail lay per year?',o:['10-20','100-400','1000-2000'],a:1},
-            {q:'How long until snails reach market size?',o:['1-3 months','6-12 months','24 months'],a:1}
-        ]
-    },
-
-    // ============ DAYS 16-20: MORE LIVESTOCK ============
-    {
-        title: 'Pig Farming Guide for Beginners',
-        content: 'Pig farming is highly profitable with pigs having excellent feed conversion rates. Sows produce 8-12 piglets per litter and can have two litters annually. Proper housing with concrete floors makes cleaning easier and prevents disease. Balanced feed with 16-18% protein supports optimal growth in young pigs. Market weight of 90kg is typically reached in 6-7 months. Strict biosecurity measures prevent devastating disease outbreaks. Pork demand is growing rapidly in urban Nigerian areas.',
-        qs: [
-            {q:'How many piglets can a sow produce per litter?',o:['4-6','8-12','15-20'],a:1},
-            {q:'How many litters can a sow have annually?',o:['One','Two','Three'],a:1},
-            {q:'What protein percentage do young growing pigs need?',o:['10-12%','16-18%','25-30%'],a:1},
-            {q:'How long to reach market weight of 90kg?',o:['3-4 months','6-7 months','12 months'],a:1},
-            {q:'What prevents disease outbreaks in pig farms?',o:['Strict biosecurity','More feeding','Less cleaning'],a:0}
-        ]
-    },
-    {
-        title: 'Rabbit Farming Basics',
-        content: 'Rabbit farming is a low-cost venture with impressive returns. Rabbits reproduce rapidly with a gestation period of just 30 days. Each doe produces 6-8 kits per litter. They require clean hutches protected from direct weather. Feed includes pellets, hay, and fresh vegetables. Rabbit meat is lean with high protein content making it very healthy. Rabbit manure is excellent organic fertilizer for gardens and farms.',
-        qs: [
-            {q:'How long is rabbit gestation?',o:['15 days','30 days','60 days'],a:1},
-            {q:'How many kits per litter?',o:['2-4','6-8','10-15'],a:1},
-            {q:'What do rabbits eat?',o:['Only pellets','Pellets, hay, and vegetables','Only meat'],a:1},
-            {q:'What makes rabbit meat healthy?',o:['High fat content','Lean with high protein','Low quality'],a:1},
-            {q:'What can rabbit manure be used for?',o:['Organic fertilizer','Building material','Animal bedding only'],a:0}
-        ]
-    },
-    {
-        title: 'Beekeeping for Honey Production',
-        content: 'Beekeeping (apiculture) provides valuable honey and beeswax. Bees are essential pollinators that increase crop yields significantly. Langstroth hives are the most commonly used modern hives. Hives should be placed near flowering plants and away from pesticides. Honey is typically harvested twice yearly during dry seasons. A strong colony produces 20-30kg of honey annually. Protective gear including suits and smokers prevents stings during harvesting.',
-        qs: [
-            {q:'What is beekeeping scientifically called?',o:['Apiculture','Aquaculture','Heliciculture'],a:0},
-            {q:'What type of hive is most commonly used?',o:['Langstroth','Wooden box','Plastic container'],a:0},
-            {q:'How often is honey typically harvested?',o:['Monthly','Twice yearly','Once yearly'],a:1},
-            {q:'How much honey can a strong colony produce annually?',o:['5-10kg','20-30kg','50-100kg'],a:1},
-            {q:'What protects beekeepers during harvesting?',o:['Protective gear and smokers','Running fast','Nothing is needed'],a:0}
-        ]
-    },
-    {
-        title: 'Grasscutter Farming Guide',
-        content: 'Grasscutters (cane rats) are prized for their delicious meat in West Africa. They are herbivores that feed primarily on grass and sugarcane. Domestication requires a quiet environment as they stress easily. Breeding pairs produce 2 litters yearly with 4-6 young each. The meat is lean, tender, and commands premium prices in markets. Housing needs concrete floors to prevent escape through burrowing. Grasscutter farming is gaining popularity as an alternative livestock venture.',
-        qs: [
-            {q:'What do grasscutters primarily eat?',o:['Meat','Grass and sugarcane','Insects'],a:1},
-            {q:'How many litters do they produce per year?',o:['1','2','4'],a:1},
-            {q:'How many young per litter?',o:['1-3','4-6','8-12'],a:1},
-            {q:'Why is grasscutter meat valued?',o:['It is fatty','It is lean and tender','It is tough'],a:1},
-            {q:'Why do their housing need concrete floors?',o:['For appearance','To prevent burrowing escape','For easier cleaning only'],a:1}
-        ]
-    },
-    {
-        title: 'Quail Farming for Eggs and Meat',
-        content: 'Quails are small birds raised efficiently for both eggs and meat. Japanese quail is the most common breed worldwide. They start laying eggs at just 6-8 weeks old. Each bird produces 250-300 eggs annually. Quail eggs are considered a delicacy with numerous health benefits. Housing must be predator-proof with proper ventilation. Market demand is growing especially in urban areas and hotels.',
-        qs: [
-            {q:'What is the most common quail breed?',o:['Japanese quail','American quail','African quail'],a:0},
-            {q:'At what age do quails start laying eggs?',o:['3-4 weeks','6-8 weeks','12-16 weeks'],a:1},
-            {q:'How many eggs per bird annually?',o:['100-150','250-300','400-500'],a:1},
-            {q:'What are quail eggs considered?',o:['Common everyday food','A delicacy with health benefits','A waste product'],a:1},
-            {q:'What must quail housing have?',o:['Predator-proof design','Open fields','Water tanks'],a:0}
-        ]
-    },
-
-    // ============ DAYS 21-25: AGRI-BUSINESS ============
-    {
-        title: 'Starting an Agribusiness in Nigeria',
-        content: 'Agribusiness combines farming with sound business principles. The first step is market research to identify profitable opportunities. A comprehensive business plan outlines costs, revenue projections, and marketing strategy. Register your business with the Corporate Affairs Commission for legitimacy. Access funding through Bank of Industry, Anchor Borrowers Programme, or cooperatives. Start small, learn the market thoroughly, then scale your operations gradually.',
-        qs: [
-            {q:'What is the first step in starting an agribusiness?',o:['Buy land immediately','Market research','Hire many workers'],a:1},
-            {q:'What document is essential for planning?',o:['A business plan','A school certificate','A medical report'],a:0},
-            {q:'Where should you register your business?',o:['Corporate Affairs Commission','Local court','Police station'],a:0},
-            {q:'Which organization provides agricultural funding?',o:['Only commercial banks','Bank of Industry and Anchor Borrowers','Only family sources'],a:1},
-            {q:'What is the recommended growth strategy?',o:['Start very big','Start small and scale gradually','Never expand'],a:1}
-        ]
-    },
-    {
-        title: 'Agricultural Value Chain Analysis',
-        content: 'The agricultural value chain covers production, processing, distribution, and marketing stages. Each stage adds significant value to the original product. Farmers can increase their profits by moving beyond just production into processing. For example, cassava processors earn substantially more than those selling raw cassava. Understanding the complete value chain helps identify the most profitable entry points. Value addition through processing creates more jobs and reduces post-harvest waste.',
-        qs: [
-            {q:'What is the first stage of the agricultural value chain?',o:['Marketing','Production','Distribution'],a:1},
-            {q:'How can farmers increase their profits?',o:['Sell only raw products','Move into processing','Reduce product quality'],a:1},
-            {q:'Who earns more according to the example?',o:['Raw cassava sellers','Cassava processors','Transporters'],a:1},
-            {q:'What does understanding the value chain help identify?',o:['Profitable entry points','Weather patterns','Soil types only'],a:0},
-            {q:'What does value addition through processing reduce?',o:['Post-harvest waste','Product quality','Market demand'],a:0}
-        ]
-    },
-    {
-        title: 'Export Opportunities for Nigerian Farmers',
-        content: 'Nigeria has excellent opportunities to export sesame seeds, cocoa, cashew, ginger, and hibiscus. International markets require strict quality standards and proper certifications. Global GAP certification is essential for accessing European markets. Proper packaging and complete documentation are mandatory for export. The Nigerian Export Promotion Council provides training and support. Starting with established aggregators reduces individual export risks significantly.',
-        qs: [
-            {q:'Which crop has export potential from Nigeria?',o:['Sesame seeds','Cassava leaves','Palm fronds'],a:0},
-            {q:'What certification is needed for European markets?',o:['Global GAP','School certificate','Voters card'],a:0},
-            {q:'Who provides export training and support?',o:['Nigerian Export Promotion Council','National Population Commission','INEC'],a:0},
-            {q:'How can individual farmers reduce export risks?',o:['Use established aggregators','Export completely alone','Ignore all standards'],a:0},
-            {q:'What is mandatory for export according to the article?',o:['Proper packaging and documentation','Only good weather','Having a very large farm'],a:0}
-        ]
-    },
-    {
-        title: 'Farm Record Keeping Essentials',
-        content: 'Record keeping is absolutely essential for farm profitability and growth. Track all expenses, sales, inventory, and labor costs consistently. Good records help identify which crops are most profitable and where losses occur. Modern digital tools and mobile apps make record keeping much easier. Detailed records are required for successful loan applications. Analyze your records monthly to make informed management decisions.',
-        qs: [
-            {q:'Why is record keeping essential?',o:['Just for tradition','For farm profitability and growth','Only for government requirements'],a:1},
-            {q:'What should farmers track consistently?',o:['Expenses, sales, and inventory','Only sales figures','Only expenses'],a:0},
-            {q:'How often should records be analyzed?',o:['Yearly','Monthly','Never'],a:1},
-            {q:'What do good records help with?',o:['Successful loan applications','Getting married','Cooking better'],a:0},
-            {q:'What makes record keeping easier today?',o:['Digital tools and mobile apps','Memory alone','Paper alone'],a:0}
-        ]
-    },
-    {
-        title: 'Cooperative Farming Benefits',
-        content: 'Farming cooperatives pool resources together for better outcomes for all members. Members share expensive equipment, labor, and valuable knowledge. Cooperatives negotiate better prices for both inputs and sales. Access to loans becomes significantly easier as a registered group. Risk is shared among members during difficult farming seasons. Training and extension services reach cooperatives faster than individual farmers.',
-        qs: [
-            {q:'What do cooperatives pool together?',o:['Resources like equipment and labor','Only money','Only land'],a:0},
-            {q:'How do cooperatives affect pricing?',o:['They get worse prices','They negotiate better prices','There is no difference'],a:1},
-            {q:'Is loan access easier as a cooperative?',o:['No, it is harder','Yes, it is easier','It is exactly the same'],a:1},
-            {q:'How is risk handled in cooperatives?',o:['Each member bears it alone','It is shared among members','There is no risk at all'],a:1},
-            {q:'Who reaches cooperatives faster with training?',o:['Extension services','Politicians','Foreign investors'],a:0}
-        ]
-    },
-
-    // ============ DAYS 26-30: SOIL & FERTILIZER ============
-    {
-        title: 'Understanding Soil Types in Nigeria',
-        content: 'Nigeria has three main soil types that every farmer should understand. Sandy soil drains water quickly but holds very few nutrients. Clay soil retains water well but can easily become waterlogged. Loam soil is the ideal type for most crops with balanced drainage and nutrients. Soil testing reveals important pH levels and nutrient content. Understanding your soil type helps in proper crop selection and management.',
-        qs: [
-            {q:'What are the three main soil types in Nigeria?',o:['Sandy, clay, and loam','Red, black, and white','Wet, dry, and mixed'],a:0},
-            {q:'Which soil type drains water too quickly?',o:['Sandy soil','Clay soil','Loam soil'],a:0},
-            {q:'Which soil is ideal for most crops?',o:['Sandy soil','Clay soil','Loam soil'],a:2},
-            {q:'What does soil testing reveal?',o:['pH and nutrient levels','Only the soil color','Only the soil texture'],a:0},
-            {q:'What problem does clay soil have?',o:['It drains too fast','It can become waterlogged','It is too dry'],a:1}
-        ]
-    },
-    {
-        title: 'Organic Fertilizer Production',
-        content: 'Organic fertilizers improve soil health naturally without chemicals. Compost made from crop residues and animal waste adds essential nutrients. Vermicomposting uses special earthworms to create extremely rich fertilizer. Green manure from leguminous plants naturally fixes nitrogen in soil. Organic matter significantly improves soil structure and water retention. Chemical-free produce from organic farming commands premium market prices.',
-        qs: [
-            {q:'What is compost primarily made from?',o:['Crop residues and animal waste','Plastics and metals','Only commercial chemicals'],a:0},
-            {q:'What does vermicomposting use?',o:['Earthworms','Bacteria only','Birds'],a:0},
-            {q:'What do leguminous plants fix in the soil?',o:['Nitrogen','Phosphorus','Calcium'],a:0},
-            {q:'What does organic matter improve?',o:['Soil structure and water retention','Only pollution levels','Only temperature'],a:0},
-            {q:'What price do chemical-free produce command?',o:['Lower prices','Premium market prices','Exactly the same prices'],a:1}
-        ]
-    },
-    {
-        title: 'Crop Rotation Benefits',
-        content: 'Crop rotation prevents soil depletion and breaks pest cycles naturally. Alternating crops with different nutrient needs maintains long-term soil fertility. Following legumes with cereals naturally replenishes nitrogen levels. Rotation effectively breaks pest and disease cycles reducing chemical needs. Three-year rotation plans optimize land use and maximize yields. This practice has been used successfully for thousands of years.',
-        qs: [
-            {q:'What does crop rotation prevent?',o:['Soil depletion','Rainfall','Sunlight'],a:0},
-            {q:'What should follow legumes in rotation?',o:['Cereals','More legumes','Only root crops'],a:0},
-            {q:'What does rotation reduce the need for?',o:['Chemical pesticides','Water','Labor'],a:0},
-            {q:'How long is a typical rotation cycle?',o:['One year','Three years','Ten years'],a:1},
-            {q:'What do legumes naturally replenish?',o:['Nitrogen','Phosphorus','Potassium'],a:0}
-        ]
-    },
-    {
-        title: 'Compost Making Guide',
-        content: 'Compost transforms everyday waste into valuable fertilizer for crops. Layer brown materials like dry leaves with green materials like fresh grass. Keep the pile moist but never waterlogged for best results. Turn the compost every 2-3 weeks to provide necessary aeration. Finished compost is dark, crumbly, and smells pleasantly earthy. Apply 2-3kg of compost per square meter to garden beds.',
-        qs: [
-            {q:'What are brown materials in composting?',o:['Dry leaves','Fresh grass','Meat scraps'],a:0},
-            {q:'How often should compost be turned?',o:['Every day','Every 2-3 weeks','Never'],a:1},
-            {q:'What does finished compost smell like?',o:['Rotten and unpleasant','Pleasantly earthy','Nothing at all'],a:1},
-            {q:'How much compost per square meter?',o:['0.5kg','2-3kg','10kg'],a:1},
-            {q:'How should the compost pile be kept?',o:['Waterlogged','Moist but not wet','Completely dry'],a:1}
-        ]
-    },
-    {
-        title: 'Soil Erosion Control Methods',
-        content: 'Soil erosion removes precious fertile topsoil reducing farm productivity. Contour farming follows natural land contours to slow water flow. Terracing on slopes creates level areas for safe planting. Cover crops protect exposed soil between main growing seasons. Windbreaks made of trees effectively reduce wind erosion. Mulching covers exposed soil preventing direct rain impact damage.',
-        qs: [
-            {q:'What does soil erosion remove?',o:['Fertile topsoil','Subsoil','Rocks'],a:0},
-            {q:'What does contour farming follow?',o:['Natural land contours','Straight lines only','River paths'],a:0},
-            {q:'What protects soil on slopes?',o:['Terracing','Deep plowing','Burning vegetation'],a:0},
-            {q:'What reduces wind erosion?',o:['Windbreaks made of trees','Fences made of wire','Buildings'],a:0},
-            {q:'What does mulching prevent?',o:['Direct rain impact on soil','Sunlight reaching soil','Frost formation'],a:0}
-        ]
-    },
-
-    // ============ DAYS 31-35: PEST & DISEASE ============
-    {
-        title: 'Integrated Pest Management (IPM)',
-        content: 'Integrated Pest Management combines multiple methods for sustainable pest control. The first step is always monitoring pest populations before taking any action. Cultural controls include crop rotation and planting resistant varieties. Biological controls use natural enemies like beneficial predators. Chemical pesticides are used only as the absolute last resort. IPM significantly reduces costs and minimizes environmental impact.',
-        qs: [
-            {q:'What is the first step in IPM?',o:['Spray chemicals immediately','Monitor pest populations','Harvest early'],a:1},
-            {q:'What is an example of cultural control?',o:['Crop rotation','Using only chemicals','Ignoring pests completely'],a:0},
-            {q:'What do biological controls use?',o:['Natural enemies and predators','Only synthetic chemicals','Fire'],a:0},
-            {q:'When are chemical pesticides used in IPM?',o:['As the first option','As the absolute last resort','Always and routinely'],a:1},
-            {q:'What does IPM reduce?',o:['Costs and environmental impact','Only time spent','Only labor costs'],a:0}
-        ]
-    },
-    {
-        title: 'Common Maize Diseases and Control',
-        content: 'Maize is affected by several serious diseases that reduce yields significantly. Maize streak virus causes distinctive yellow stripes on leaves. Leaf blight produces brown spots that eventually merge together. Rust appears as orange powdery spots on leaf surfaces. Downy mildew causes stunted growth and yellowing of plants. Using resistant varieties and appropriate fungicides helps manage these diseases.',
-        qs: [
-            {q:'What symptom does maize streak virus cause?',o:['Yellow stripes on leaves','Brown spots','White powder'],a:0},
-            {q:'What does leaf blight produce?',o:['Brown spots that merge','Orange powder','Black spots'],a:0},
-            {q:'How does rust appear on maize?',o:['Orange powdery spots','Green patches','White fluffy growth'],a:0},
-            {q:'What does downy mildew cause?',o:['Stunted growth','Taller plants','More yield'],a:0},
-            {q:'How can these diseases be managed?',o:['Resistant varieties and fungicides','Ignoring them completely','Only more water'],a:0}
-        ]
-    },
-    {
-        title: 'Tomato Pest Control Strategies',
-        content: 'Tomatoes face attacks from various insect pests throughout their growth. Whiteflies suck plant sap and spread damaging viral diseases. Tomato fruit worms bore directly into developing fruits causing rot. Aphids cluster on new growth causing leaves to curl and distort. Neem oil spray effectively controls many pests organically. Sticky traps help monitor and reduce flying insect populations.',
-        qs: [
-            {q:'How do whiteflies damage tomato plants?',o:['By sucking sap','By eating roots','By boring into stems'],a:0},
-            {q:'What do tomato fruit worms do?',o:['Bore into developing fruits','Eat only the leaves','Attack only the roots'],a:0},
-            {q:'What damage do aphids cause?',o:['Curling and distorting leaves','Making fruits ripen faster','Promoting root growth'],a:0},
-            {q:'What organic control works on many pests?',o:['Neem oil spray','Only synthetic chemicals','Salt water'],a:0},
-            {q:'What do sticky traps help with?',o:['Monitoring flying insects','Catching soil pests','Attracting beneficial insects'],a:0}
-        ]
-    },
-    {
-        title: 'Storage Pest Management',
-        content: 'Post-harvest pests destroy significant amounts of stored grains and legumes. Weevils bore into grains reducing both quality and weight substantially. Rats and mice consume and contaminate stored products with droppings. Proper drying to 12% moisture content prevents most storage pests. Hermetic storage bags create an oxygen-free environment that kills insects. Regular inspection of stored products catches problems early.',
-        qs: [
-            {q:'What is a common storage pest?',o:['Weevils','Bees','Butterflies'],a:0},
-            {q:'What moisture content prevents most storage pests?',o:['20%','12%','5%'],a:1},
-            {q:'What do hermetic storage bags create?',o:['An oxygen-free environment','More oxygen','Excessive heat'],a:0},
-            {q:'What damage do rats cause to stored products?',o:['Consumption and contamination','Fertilization','Pollination'],a:0},
-            {q:'How can storage problems be caught early?',o:['Regular inspection','Waiting for visible damage','Checking only once yearly'],a:0}
-        ]
-    },
-    {
-        title: 'Natural Pesticide Recipes for Farmers',
-        content: 'Farmers can make effective pesticides using locally available materials. Neem leaf solution is made by boiling leaves, cooling, and spraying on plants. Garlic-pepper spray naturally repels many types of insects. Wood ash dust effectively controls crawling insects on plant stems. Soap solution suffocates soft-bodied pests like aphids and whiteflies. These methods are cheap, safe, and environmentally friendly.',
-        qs: [
-            {q:'How is neem leaf solution prepared?',o:['By boiling leaves','By freezing leaves','By burning leaves'],a:0},
-            {q:'What does garlic-pepper spray do?',o:['Repels insects','Attracts insects','Has no effect'],a:0},
-            {q:'What does wood ash control?',o:['Crawling insects','Flying insects','Birds'],a:0},
-            {q:'What pests does soap solution target?',o:['Soft-bodied pests like aphids','Hard-shelled beetles','Large worms'],a:0},
-            {q:'What are these natural methods?',o:['Expensive and dangerous','Cheap, safe, and eco-friendly','Ineffective'],a:1}
-        ]
-    },
-
-    // ============ DAYS 36-40: HARVEST & STORAGE ============
-    {
-        title: 'Proper Harvesting Techniques',
-        content: 'Harvesting at the right time maximizes both crop quality and total yield. Crops harvested too early lack full flavor and essential nutrients. Late harvesting leads to losses from pests and over-ripening. Use clean, sharp tools to prevent unnecessary damage to produce. Handle all harvested crops gently to avoid bruising and damage. Morning harvesting when temperatures are cooler preserves freshness longer.',
-        qs: [
-            {q:'What does early harvesting cause?',o:['Lack of full flavor and nutrients','Better quality','Longer storage life'],a:0},
-            {q:'What does late harvesting lead to?',o:['Losses from pests','Better taste','More nutrients'],a:0},
-            {q:'Why should sharp tools be used?',o:['To prevent damage','To cut faster','To look more professional'],a:0},
-            {q:'Why is morning harvesting recommended?',o:['Temperatures are cooler','There is more sunlight','It is more convenient'],a:0},
-            {q:'How should harvested crops be handled?',o:['Gently to avoid bruising','Roughly to save time','Thrown into piles'],a:0}
-        ]
-    },
-    {
-        title: 'Grain Storage Methods',
-        content: 'Proper grain storage prevents significant post-harvest losses. Traditional methods include mud silos and raised platforms for air circulation. Modern hermetic bags create an oxygen-free storage environment. Metal silos provide excellent protection against rodents and insects. Grain must be dried to safe moisture levels before any storage. Regular inspection catches developing problems early before major damage occurs.',
-        qs: [
-            {q:'What is a traditional grain storage method?',o:['Mud silos','Refrigerators','Plastic bags'],a:0},
-            {q:'What do hermetic bags create?',o:['Oxygen-free environment','More oxygen','Excessive heat'],a:0},
-            {q:'What do metal silos protect against?',o:['Rodents and insects','Sunlight only','Rain only'],a:0},
-            {q:'What must be done before storing grain?',o:['Dry to safe moisture levels','Wash with water','Freeze thoroughly'],a:0},
-            {q:'Why is regular inspection important?',o:['To catch problems early','It is not important','To increase pest problems'],a:0}
-        ]
-    },
-    {
-        title: 'Tomato Storage Solutions',
-        content: 'Tomatoes are highly perishable and require very careful handling and storage. Never refrigerate fresh tomatoes as this ruins their flavor completely. Store at room temperature away from direct sunlight for best results. Processing into paste or dried chips extends shelf life significantly. Crating with proper ventilation prevents compression damage. Sort and remove any damaged fruits immediately to prevent rot spreading.',
-        qs: [
-            {q:'Should fresh tomatoes be refrigerated?',o:['Yes, always','No, it ruins flavor','Only in summer'],a:1},
-            {q:'What is the best storage temperature?',o:['Room temperature','Very cold','Very hot'],a:0},
-            {q:'How can shelf life be extended?',o:['Processing into paste or dried chips','Boiling only','Freezing raw'],a:0},
-            {q:'What do storage crates need?',o:['Proper ventilation','To be sealed completely','Plastic wrapping'],a:0},
-            {q:'Why remove damaged fruits?',o:['To prevent rot from spreading','To save storage space','To make them look better'],a:0}
-        ]
-    },
-    {
-        title: 'Onion Storage Guide',
-        content: 'Onions need proper curing before they can be stored long-term. Cure onions in a warm, dry place for 2-3 weeks. Store only fully cured, completely disease-free bulbs. Braiding and hanging allows excellent air circulation around bulbs. The storage area should be cool, dark, and well-ventilated. Check stored onions monthly and remove any that are sprouting.',
-        qs: [
-            {q:'How long should onions be cured?',o:['2-3 days','2-3 weeks','2-3 months'],a:1},
-            {q:'What storage method provides good air circulation?',o:['Braiding and hanging','Plastic bags','Sealed boxes'],a:0},
-            {q:'What should the storage area be like?',o:['Cool, dark, and ventilated','Hot and bright','Wet and warm'],a:0},
-            {q:'How often should stored onions be checked?',o:['Monthly','Never','Yearly'],a:0},
-            {q:'Which bulbs should be removed during checks?',o:['Any that are sprouting','The firmest ones','The largest ones'],a:0}
-        ]
-    },
-    {
-        title: 'Cassava Processing Methods',
-        content: 'Cassava processing extends shelf life and adds significant value to the crop. Peeling and washing removes dirt and naturally occurring cyanide compounds. Grating increases the surface area for faster and more efficient processing. Fermentation for 2-3 days improves both flavor and food safety. Garri, fufu, and flour are the most common processed products. Proper drying to low moisture content prevents mold growth during storage.',
-        qs: [
-            {q:'Why is cassava peeled?',o:['To remove cyanide compounds','To improve taste only','To add color'],a:0},
-            {q:'How long should fermentation last?',o:['2-3 hours','2-3 days','2-3 weeks'],a:1},
-            {q:'What is a common processed cassava product?',o:['Garri','Bread','Rice'],a:0},
-            {q:'What does grating increase?',o:['Surface area for processing','The weight','The color intensity'],a:0},
-            {q:'What does proper drying prevent?',o:['Mold growth','Germination','Ripening'],a:0}
-        ]
-    },
-
-    // ============ DAYS 41-45: CLIMATE & SUSTAINABILITY ============
-    {
-        title: 'Adapting to Climate Change in Farming',
-        content: 'Climate change brings increasingly unpredictable weather patterns affecting all farming. Drought-resistant crops like millet and sorghum provide better food security. Water harvesting techniques capture and store rainwater for dry periods. Diversifying crops spreads risk across different plant species. Early warning systems help farmers prepare for extreme weather events. Adaptation is essential for survival in modern agriculture.',
-        qs: [
-            {q:'Which crop is drought-resistant?',o:['Millet','Rice','Lettuce'],a:0},
-            {q:'What is water harvesting for?',o:['Dry periods','Flooding','Irrigation only'],a:0},
-            {q:'What does crop diversification spread?',o:['Risk','Seeds','Labor'],a:0},
-            {q:'What do early warning systems help with?',o:['Preparing for extreme weather','Increasing yields','Reducing labor'],a:0},
-            {q:'What does climate change bring?',o:['Unpredictable weather','Stable weather','Only more rain'],a:0}
-        ]
-    },
-    {
-        title: 'Water Conservation Techniques',
-        content: 'Water conservation is becoming essential as rainfall patterns become less predictable. Drip irrigation delivers water directly to plant roots reducing waste dramatically. Rainwater harvesting from roofs stores precious water for dry spells. Mulching significantly reduces evaporation from the soil surface. Planting drought-tolerant crop varieties reduces overall water requirements. Every drop of water saved contributes to farm sustainability.',
-        qs: [
-            {q:'Which irrigation method is most efficient?',o:['Drip irrigation','Flooding','Sprinkler'],a:0},
-            {q:'Where is rainwater harvested from?',o:['Roofs','Rivers','Lakes'],a:0},
-            {q:'What does mulching reduce?',o:['Evaporation','Rainfall','Temperature'],a:0},
-            {q:'What do drought-tolerant varieties do?',o:['Reduce water requirements','Increase water needs','Make no difference'],a:0},
-            {q:'Why is water conservation important?',o:['Rainfall is less predictable','There is too much water','It is cheaper'],a:0}
-        ]
-    },
-    {
-        title: 'Agroforestry Practices for Farmers',
-        content: 'Agroforestry combines trees with crops or livestock on the same land. Trees provide essential shade protecting crops from intense sunlight. Leaf litter from trees adds organic matter improving soil fertility naturally. Tree roots help prevent soil erosion on sloping land. Fruit trees provide additional income from harvests throughout the year. Nitrogen-fixing trees reduce the need for expensive fertilizers.',
-        qs: [
-            {q:'What does agroforestry combine?',o:['Trees with crops or livestock','Only crops','Only trees'],a:0},
-            {q:'What do trees provide for crops?',o:['Essential shade','Only timber','Only fruit'],a:0},
-            {q:'What does leaf litter add to soil?',o:['Organic matter','Sand','Clay'],a:0},
-            {q:'What do tree roots prevent?',o:['Soil erosion','Flooding','Drought'],a:0},
-            {q:'What do nitrogen-fixing trees reduce?',o:['Need for expensive fertilizers','Water requirements','Labor needs'],a:0}
-        ]
-    },
-    {
-        title: 'Sustainable Farming Methods',
-        content: 'Sustainable farming meets present needs without compromising future generations. Conservation tillage reduces soil disturbance and prevents erosion. Cover cropping protects and enriches soil between main growing seasons. Integrated pest management significantly reduces chemical pesticide dependence. Crop rotation maintains soil fertility naturally without synthetic inputs. These methods ensure long-term farm productivity.',
-        qs: [
-            {q:'What does sustainable farming meet?',o:['Present and future needs','Only present needs','Only future needs'],a:0},
-            {q:'What does conservation tillage reduce?',o:['Soil disturbance','Water use','Labor'],a:0},
-            {q:'What does cover cropping protect?',o:['Soil','Water','Air'],a:0},
-            {q:'What does IPM reduce dependence on?',o:['Chemical pesticides','Labor','Water'],a:0},
-            {q:'What maintains soil fertility naturally?',o:['Crop rotation','Synthetic inputs only','Monocropping'],a:0}
-        ]
-    },
-    {
-        title: 'Organic Farming Principles',
-        content: 'Organic farming works with nature rather than against it. No synthetic pesticides or fertilizers are used in organic production. Soil health is maintained through compost, manure, and crop rotation. Biodiversity is encouraged to create balanced farm ecosystems. Organic products command premium prices in markets worldwide. Certification verifies that organic standards have been met.',
-        qs: [
-            {q:'What does organic farming avoid?',o:['Synthetic pesticides','Water','Sunlight'],a:0},
-            {q:'How is soil health maintained organically?',o:['Compost and manure','Synthetic fertilizers','Nothing'],a:0},
-            {q:'What does biodiversity create?',o:['Balanced ecosystems','Problems','Less yield'],a:0},
-            {q:'What price do organic products command?',o:['Premium prices','Lower prices','Same prices'],a:0},
-            {q:'What does certification verify?',o:['Organic standards are met','Nothing important','Only the farm size'],a:0}
-        ]
-    },
-
-    // ============ DAYS 46-50: AGRI-TECHNOLOGY ============
-    {
-        title: 'Mobile Apps for Modern Farmers',
-        content: 'Mobile technology helps farmers access vital information and markets instantly. Weather apps provide accurate forecasts for planning farm activities. Market price apps compare prices across different locations in real-time. Farm management apps track expenses and income digitally. Extension services now reach farmers through SMS and WhatsApp groups. Technology is transforming how Nigerian farmers operate daily.',
-        qs: [
-            {q:'What do weather apps help farmers with?',o:['Planning farm activities','Cooking','Entertainment'],a:0},
-            {q:'What do market apps compare?',o:['Prices across locations','Weather patterns','Soil types'],a:0},
-            {q:'What do farm management apps track?',o:['Expenses and income','Only weather','Only prices'],a:0},
-            {q:'How do extension services reach farmers now?',o:['SMS and WhatsApp','Only radio','Only TV'],a:0},
-            {q:'What is technology doing for Nigerian farmers?',o:['Transforming daily operations','Nothing significant','Making things harder'],a:0}
-        ]
-    },
-    {
-        title: 'Solar-Powered Irrigation Systems',
-        content: 'Solar-powered pumps provide reliable irrigation without ongoing fuel costs. Solar panels convert sunlight directly into electricity to power water pumps. The initial investment is higher but operating costs are minimal. These systems work best in areas with consistent sunshine throughout the year. Government subsidies help more farmers afford solar installations. Solar irrigation is ideal for remote areas without grid electricity.',
-        qs: [
-            {q:'What do solar pumps eliminate?',o:['Ongoing fuel costs','Water costs','Labor costs'],a:0},
-            {q:'How does the initial investment compare?',o:['Higher than diesel pumps','Lower than diesel pumps','Exactly the same'],a:0},
-            {q:'Where do solar systems work best?',o:['Areas with consistent sunshine','Cloudy areas','Heavy rain areas'],a:0},
-            {q:'What helps farmers afford solar installations?',o:['Government subsidies','Nothing','Only loans'],a:0},
-            {q:'Where is solar irrigation ideal?',o:['Remote areas without grid electricity','Urban areas only','Only large farms'],a:0}
-        ]
-    },
-    {
-        title: 'Drone Technology in Agriculture',
-        content: 'Drones are transforming modern farming practices across the world. Aerial imaging identifies crop stress before it is visible to human eyes. Drones can spray pesticides with incredible precision reducing chemical use. Mapping fields from above helps plan optimal irrigation and drainage. Crop monitoring from the air detects problems much earlier than ground observation. Drone technology increases efficiency and reduces costs.',
-        qs: [
-            {q:'What can drones identify early?',o:['Crop stress','Weather patterns','Market prices'],a:0},
-            {q:'How do drones affect chemical use?',o:['They reduce it through precision','They increase it','There is no difference'],a:0},
-            {q:'What does aerial mapping help plan?',o:['Irrigation and drainage','Roads','Buildings'],a:0},
-            {q:'What does crop monitoring from air detect?',o:['Problems much earlier','Only ripe crops','Only weeds'],a:0},
-            {q:'What does drone technology increase?',o:['Efficiency','Costs','Problems'],a:0}
-        ]
-    },
-    {
-        title: 'Greenhouse Farming Benefits',
-        content: 'Greenhouses provide controlled environments for optimal crop growth. Temperature and humidity are regulated to suit specific crop needs. Pests and diseases are easier to manage in enclosed spaces. Water usage is dramatically reduced through controlled irrigation. Crops can be grown year-round regardless of outdoor seasons. Greenhouse produce often commands higher market prices due to quality.',
-        qs: [
-            {q:'What do greenhouses provide?',o:['Controlled environments','Open fields','Natural forests'],a:0},
-            {q:'What is regulated inside greenhouses?',o:['Temperature and humidity','Only sunlight','Only water'],a:0},
-            {q:'How does greenhouse growing affect water usage?',o:['Dramatically reduces it','Increases it greatly','Makes no difference'],a:0},
-            {q:'When can crops be grown in greenhouses?',o:['Year-round','Only in summer','Only in winter'],a:0},
-            {q:'Why does greenhouse produce get higher prices?',o:['Higher quality','Lower quality','Same quality'],a:0}
-        ]
-    },
-    {
-        title: 'Hydroponics: Soil-Free Farming',
-        content: 'Hydroponics grows plants without soil using nutrient-rich water solutions. Plants grow faster because nutrients are directly available to roots. Water usage is reduced by up to 90% compared to traditional farming. No soil means no soil-borne diseases or weeds to manage. Systems can be set up vertically saving enormous space. Hydroponics is ideal for urban areas with limited land.',
-        qs: [
-            {q:'What does hydroponics use instead of soil?',o:['Nutrient-rich water','Only air','Sand'],a:0},
-            {q:'Why do plants grow faster in hydroponics?',o:['Nutrients are directly available','There is more sunlight','It is colder'],a:0},
-            {q:'How much water can hydroponics save?',o:['Up to 50%','Up to 90%','No water savings'],a:1},
-            {q:'What does soil-free growing eliminate?',o:['Soil-borne diseases','All pests','All work'],a:0},
-            {q:'Where is hydroponics especially useful?',o:['Urban areas with limited land','Large rural farms','Only in deserts'],a:0}
-        ]
-    },
-
-    // ============ DAYS 51-55: ANIMAL HEALTH & NUTRITION ============
-    {
-        title: 'Poultry Disease Prevention',
-        content: 'Disease prevention is far cheaper and more effective than treatment in poultry. Strict biosecurity measures keep diseases from reaching the farm. Vaccinate all chicks against Newcastle disease and Gumboro. Clean drinking water and quality feed boost natural immunity. Isolate any sick birds immediately to prevent disease from spreading. Prevention saves money and ensures consistent production.',
-        qs: [
-            {q:'Which is cheaper in poultry farming?',o:['Prevention','Treatment','They cost the same'],a:0},
-            {q:'What keeps diseases off the farm?',o:['Strict biosecurity','More feeding','Less cleaning'],a:0},
-            {q:'What disease must poultry be vaccinated against?',o:['Newcastle disease','Rabies','Polio'],a:0},
-            {q:'What boosts natural immunity in birds?',o:['Clean water and quality feed','Dirty water','Less feed'],a:0},
-            {q:'What should be done with sick birds?',o:['Isolate them immediately','Leave them with the flock','Give them extra feed'],a:0}
-        ]
-    },
-    {
-        title: 'Ruminant Nutrition Basics',
-        content: 'Cattle, sheep, and goats are ruminants with specialized four-chambered stomachs. They efficiently convert grass and forage into meat and milk. A balanced diet requires energy, protein, minerals, and vitamins. Dry season feeding requires supplemented hay or silage for nutrition. Clean water availability is just as important as feed quality. Proper nutrition directly affects growth and production.',
-        qs: [
-            {q:'How many stomach chambers do ruminants have?',o:['Two','Four','One'],a:1},
-            {q:'What do ruminants convert forage into?',o:['Meat and milk','Only waste','Only energy'],a:0},
-            {q:'What does a balanced ruminant diet need?',o:['Energy, protein, minerals, vitamins','Only grass','Only water'],a:0},
-            {q:'What supplement is needed in dry season?',o:['Hay or silage','Nothing extra','Only water'],a:0},
-            {q:'How important is clean water for ruminants?',o:['As important as feed','Less important','Not important'],a:0}
-        ]
-    },
-    {
-        title: 'Fish Pond Water Management',
-        content: 'Proper pond water management ensures healthy and fast-growing fish. Monitor water quality by regularly checking pH and oxygen levels. Avoid overfeeding as uneaten food quickly pollutes the water. Regular water exchange prevents toxic ammonia from building up. Predator control with nets or fencing protects valuable fish stock. Good water management is the key to successful fish farming.',
-        qs: [
-            {q:'What should be monitored in fish ponds?',o:['pH and oxygen levels','Only temperature','Only water color'],a:0},
-            {q:'What does overfeeding cause?',o:['Water pollution','Faster growth','Better health'],a:0},
-            {q:'What does water exchange prevent?',o:['Toxic ammonia buildup','Oxygen increase','Temperature rise'],a:0},
-            {q:'How are predators controlled?',o:['Nets or fencing','Chemicals','Nothing is needed'],a:0},
-            {q:'What is ammonia to fish?',o:['Highly toxic','Beneficial','Completely neutral'],a:0}
-        ]
-    },
-    {
-        title: 'Common Livestock Diseases',
-        content: 'Several diseases commonly affect livestock in Nigeria requiring attention. Foot and Mouth Disease causes blisters and lameness in cattle. PPR (Peste des Petits Ruminants) affects goats and sheep severely. African Swine Fever is a deadly viral disease affecting pigs. Regular vaccination prevents most of these devastating diseases. Early detection and isolation stop diseases from spreading through herds.',
-        qs: [
-            {q:'What does Foot and Mouth Disease cause in cattle?',o:['Blisters and lameness','Hair loss','Weight gain'],a:0},
-            {q:'What animals does PPR affect?',o:['Goats and sheep','Cattle only','Pigs only'],a:0},
-            {q:'What disease affects pigs?',o:['African Swine Fever','Newcastle disease','Rabies'],a:0},
-            {q:'What prevents most livestock diseases?',o:['Regular vaccination','More feeding','Less water'],a:0},
-            {q:'What stops diseases from spreading?',o:['Early detection and isolation','Ignoring sick animals','Mixing all animals'],a:0}
-        ]
-    },
-    {
-        title: 'Animal Housing Requirements',
-        content: 'Proper housing is essential for healthy and productive livestock. Housing must provide protection from rain, sun, and strong winds. Good ventilation prevents respiratory diseases in confined animals. Adequate space reduces stress and prevents fighting among animals. Clean bedding material keeps animals comfortable and disease-free. Housing design should allow easy cleaning and manure removal.',
-        qs: [
-            {q:'What must housing protect animals from?',o:['Rain, sun, and wind','Only predators','Only cold'],a:0},
-            {q:'What does good ventilation prevent?',o:['Respiratory diseases','Foot problems','Skin issues'],a:0},
-            {q:'What does adequate space reduce?',o:['Stress and fighting','Feed consumption','Water intake'],a:0},
-            {q:'What does clean bedding do?',o:['Keeps animals comfortable','Increases disease','Has no effect'],a:0},
-            {q:'What should housing design allow?',o:['Easy cleaning','Complicated access','No maintenance'],a:0}
-        ]
-    },
-
-    // ============ DAYS 56-60: MARKETING & FINANCE ============
-    {
-        title: 'Social Media Marketing for Farmers',
-        content: 'Social media platforms help farmers reach customers directly without middlemen. WhatsApp groups connect farmers with buyers instantly for quick sales. Instagram showcases farm products with appealing photos that attract customers. Facebook marketplace lists produce for local buyers to discover easily. Regular posting builds customer trust and a loyal following over time. Social media marketing costs almost nothing but reaches thousands.',
-        qs: [
-            {q:'What does WhatsApp connect?',o:['Farmers with buyers','Only friends','Only family'],a:0},
-            {q:'What does Instagram showcase?',o:['Farm products with photos','Weather reports','News updates'],a:0},
-            {q:'What is Facebook marketplace used for?',o:['Listing produce locally','Only entertainment','Only news'],a:0},
-            {q:'What does regular posting build?',o:['Customer trust and following','Only followers','Nothing valuable'],a:0},
-            {q:'How much does social media marketing cost?',o:['Almost nothing','Very expensive','Too much for farmers'],a:0}
-        ]
-    },
-    {
-        title: 'Accessing Agricultural Loans',
-        content: 'Multiple funding sources exist for Nigerian farmers who know where to look. The Bank of Industry offers low-interest agricultural loans for various projects. The Anchor Borrowers Programme supports specific crop value chains effectively. Microfinance banks provide smaller but more accessible loans for farmers. Cooperative societies offer member-friendly lending terms and conditions. Proper documentation and a solid business plan improve approval chances significantly.',
-        qs: [
-            {q:'What does the Bank of Industry offer?',o:['Low-interest agricultural loans','Grants only','No loans at all'],a:0},
-            {q:'What does the Anchor Borrowers Programme support?',o:['Specific crop value chains','All types of businesses','Only trading companies'],a:0},
-            {q:'What do microfinance banks provide?',o:['Smaller accessible loans','Only very large loans','No loans at all'],a:0},
-            {q:'What do cooperatives offer members?',o:['Member-friendly lending terms','Only strict terms','No loans'],a:0},
-            {q:'What improves loan approval chances?',o:['Proper documentation and business plan','No documentation','Less information'],a:0}
-        ]
-    },
-    {
-        title: 'Farm Budgeting 101',
-        content: 'A farm budget carefully plans all income and expenses for the coming season. List all expected costs including seeds, fertilizer, labor, and transport. Estimate realistic income based on current market prices and expected yields. Always include contingency funds for unexpected expenses that arise. Compare actual results against your budget monthly to adjust plans. Profit is what remains after all costs have been fully covered.',
-        qs: [
-            {q:'What does a farm budget plan?',o:['Income and expenses','Only income','Only expenses'],a:0},
-            {q:'What costs should be listed?',o:['Seeds, fertilizer, labor, transport','Only seeds','Only labor'],a:0},
-            {q:'What should income estimates be based on?',o:['Current market prices','Random guesses','Only last years prices'],a:0},
-            {q:'Why include contingency funds?',o:['For unexpected expenses','For planned purchases','For profit only'],a:0},
-            {q:'How often should actual results be compared to budget?',o:['Monthly','Yearly','Never'],a:0}
-        ]
-    },
-    {
-        title: 'Saving and Investing Farm Profits',
-        content: 'Farmers earn most of their income during harvest but need money year-round. Save a portion of harvest income specifically for off-season family expenses. Open a dedicated savings account separate from your daily spending account. Consider investing in income-generating activities during the off-season months. Plan major purchases for post-harvest when cash is readily available. Smart saving habits ensure financial stability throughout the year.',
-        qs: [
-            {q:'When do farmers earn most of their income?',o:['During harvest','During off-season','During planting time'],a:0},
-            {q:'How much harvest income should be saved?',o:['A portion','Everything','Nothing'],a:0},
-            {q:'What type of savings account is recommended?',o:['Separate from daily spending','Same as daily spending','No account needed'],a:0},
-            {q:'What should be considered during off-season?',o:['Income-generating activities','Only resting','Only spending'],a:0},
-            {q:'When should major purchases be planned?',o:['Post-harvest when cash is available','Pre-planting season','Off-season only'],a:0}
-        ]
-    },
-    {
-        title: 'Future of Nigerian Agriculture',
-        content: 'Nigeria agriculture has enormous growth potential for the coming decades. Youth involvement brings fresh innovation and modern technology adoption. Processing and value addition creates jobs while reducing post-harvest waste. Export opportunities exist for sesame, cocoa, ginger, and many other crops. Sustainable farming practices ensure food security for future generations. The future of Nigerian agriculture is bright with proper investment.',
-        qs: [
-            {q:'What does youth bring to agriculture?',o:['Innovation and technology','Problems','Nothing new'],a:0},
-            {q:'What does processing and value addition create?',o:['Jobs and reduces waste','Waste only','Problems'],a:0},
-            {q:'Which crop has export potential?',o:['Sesame','Cassava leaves only','Grass'],a:0},
-            {q:'What do sustainable practices ensure?',o:['Food security for future generations','Only current profits','Only exports'],a:0},
-            {q:'What is the outlook for Nigerian agriculture?',o:['Bright with proper investment','Very poor','Declining rapidly'],a:0}
-        ]
-    }
-];
+            // Day 1
+            {
+                title: 'Natural Pest Control for Maize Farming',
+                content: 'Maize is one of the most important cereal crops in Nigeria, providing food for millions. However, farmers face significant challenges from pests like stem borers and armyworms that can destroy up to 50% of harvest. Natural pest control methods are cost-effective and eco-friendly. Neem leaf application repels insects naturally without chemicals. Ash dusting creates a protective barrier on plants. Companion planting with desmodium grass pushes pests away while attracting beneficial insects. These traditional methods have been used for generations and are proven effective.',
+                qs: [
+                    {q:'What is the first natural method mentioned?',o:['Ash dusting','Neem leaf application','Companion planting'],a:1},
+                    {q:'Pests can destroy up to what percentage of harvest?',o:['25%','50%','75%'],a:1},
+                    {q:'What does ash dusting create on plants?',o:['Protective barrier','Nutrients','Water retention'],a:0},
+                    {q:'Which plant is used for companion planting?',o:['Wheat grass','Desmodium grass','Elephant grass'],a:1},
+                    {q:'Why are natural methods preferred over chemicals?',o:['Faster results','Cost-effective and eco-friendly','Less labor required'],a:1}
+                ]
+            },
+            // Day 2
+            {
+                title: 'Tomato Market Analysis in Nigeria',
+                content: 'Tomato farming is highly profitable in Nigeria but market prices fluctuate significantly throughout the year. During the dry season from November to March, prices can reach ₦50,000 per basket due to scarcity. In the rainy season from June to September, prices drop to ₦15,000-20,000 as supply increases dramatically. Key factors affecting prices include transportation costs from northern producing states, inadequate storage facilities leading to post-harvest losses, and fluctuating demand from processing companies. Smart farmers who invest in proper storage can sell at premium prices during off-seasons.',
+                qs: [
+                    {q:'When are tomato prices highest?',o:['Dry season (Nov-Mar)','Rainy season (Jun-Sep)','Planting season'],a:0},
+                    {q:'What is the peak price per basket during scarcity?',o:['₦30,000','₦50,000','₦70,000'],a:1},
+                    {q:'What causes price drops in rainy season?',o:['Increased supply','Decreased demand','Government intervention'],a:0},
+                    {q:'Which factor does NOT affect tomato prices?',o:['Transportation costs','Storage facilities','Color of tomatoes'],a:2},
+                    {q:'How can farmers maximize their earnings?',o:['Sell immediately after harvest','Invest in proper storage for off-season','Reduce the amount they plant'],a:1}
+                ]
+            },
+            // Day 3
+            {
+                title: 'Irrigation Techniques for Dry Season Farming',
+                content: 'Water management is crucial for successful dry season farming in Nigeria. Drip irrigation delivers water directly to plant roots, saving up to 70% compared to traditional flooding methods. Sprinkler systems cover larger areas but lose significant water to evaporation in hot conditions. Mulching with crop residues helps retain soil moisture and reduces watering frequency. The best irrigation method depends on crop type, farm size, available water source, and budget. Small-scale farmers can start with simple drip systems using locally available materials before upgrading.',
+                qs: [
+                    {q:'Which irrigation method saves up to 70% water?',o:['Drip irrigation','Sprinkler system','Flood irrigation'],a:0},
+                    {q:'What causes water loss in sprinkler systems?',o:['Evaporation','Root absorption','Soil type'],a:0},
+                    {q:'What is mulching primarily used for?',o:['Adding fertilizer to soil','Retaining soil moisture','Plowing the field'],a:1},
+                    {q:'What determines the best irrigation method to use?',o:['Crop type and farm size','The phase of the moon','The color of the soil'],a:0},
+                    {q:'When is water management most crucial for farmers?',o:['Dry season','Rainy season','Harvest time'],a:0}
+                ]
+            },
+            // Day 4
+            {
+                title: 'Climate-Smart Farming Practices',
+                content: 'Climate change is affecting agriculture across Africa with unpredictable rainfall patterns and rising temperatures. Climate-smart farming helps farmers adapt while reducing environmental impact. Key practices include crop rotation to maintain soil health, agroforestry which integrates trees with crops, and water harvesting techniques for drought periods. Using improved seed varieties that are drought-resistant can increase yields by 30-40%. Farmers who adopt these practices not only protect their harvests but also contribute to environmental sustainability for future generations.',
+                qs: [
+                    {q:'What is affecting African agriculture according to the article?',o:['Climate change','Too much rain','Labor shortage'],a:0},
+                    {q:'What does crop rotation help maintain?',o:['Soil health','Water levels','Air quality'],a:0},
+                    {q:'What is agroforestry?',o:['Using only chemicals on crops','Integrating trees with crops','Only growing trees without crops'],a:1},
+                    {q:'How much can improved drought-resistant seeds increase yields?',o:['10-20%','30-40%','50-60%'],a:1},
+                    {q:'What do climate-smart practices protect?',o:['Only the environment','Harvests and the environment','Only the harvests'],a:1}
+                ]
+            },
+            // Day 5
+            {
+                title: 'Agricultural Finance and Budgeting',
+                content: 'Proper financial management is essential for successful farming. Farmers need to budget for seeds, fertilizers, labor, and equipment before each planting season. Keeping records of expenses and income helps identify profitable crops and areas to reduce costs. Many farmers can access agricultural loans through cooperative societies or government programs like the Anchor Borrowers Programme. Setting aside 20% of profits for reinvestment ensures farm growth year after year. Understanding market prices and timing sales strategically can significantly increase annual income.',
+                qs: [
+                    {q:'What is essential for successful farming?',o:['Only hard work','Proper financial management','Owning large land'],a:1},
+                    {q:'What should farmers budget for before planting?',o:['Seeds, fertilizers, labor, and equipment','Only seeds','Only equipment'],a:0},
+                    {q:'How can farmers access agricultural loans?',o:['Only through commercial banks','Through cooperatives or government programs','Only from family members'],a:1},
+                    {q:'What percentage of profits should be set aside for reinvestment?',o:['10%','20%','50%'],a:1},
+                    {q:'What can significantly increase annual income?',o:['Selling randomly throughout the year','Strategic market timing of sales','Selling everything at once'],a:1}
+                ]
+            },
+            // Day 6
+            {
+                title: 'Cassava Farming: A Complete Guide',
+                content: 'Cassava is one of the most widely grown crops in Nigeria, serving as a staple food for millions. It thrives in tropical climates and can grow in poor soils where other crops fail. The best planting time is at the beginning of the rainy season between March and May. Improved varieties like TME 419 can yield up to 30 tons per hectare compared to 10 tons from local varieties. Proper spacing of 1 meter by 1 meter ensures optimal growth. Farmers should harvest between 12-18 months after planting for best results.',
+                qs: [
+                    {q:'When is the best planting time for cassava in Nigeria?',o:['March to May','December to February','August to October'],a:0},
+                    {q:'How much can improved cassava varieties yield per hectare?',o:['10 tons','30 tons','50 tons'],a:1},
+                    {q:'What is the proper spacing for cassava plants?',o:['0.5m x 0.5m','1m x 1m','2m x 2m'],a:1},
+                    {q:'When should cassava be harvested after planting?',o:['6-8 months','12-18 months','24-30 months'],a:1},
+                    {q:'What type of soil can cassava tolerate?',o:['Only very rich soil','Poor soils where other crops fail','Only sandy soil'],a:1}
+                ]
+            },
+            // Day 7
+            {
+                title: 'Rice Production in Nigeria',
+                content: 'Rice has become one of the most important staple foods in Nigeria, with consumption rising annually. Nigeria produces about 5 million metric tons of rice yearly but still imports to meet demand. The major rice-producing states are Kebbi, Ebonyi, and Kano. Two main types are grown: upland rice (rain-fed) and lowland rice (irrigated). The Central Bank of Nigeria Anchor Borrowers Programme has helped many farmers access loans for rice farming. Proper water management and fertilizer application can double yields.',
+                qs: [
+                    {q:'How much rice does Nigeria produce annually?',o:['1 million tons','5 million tons','10 million tons'],a:1},
+                    {q:'Which state is a major rice producer?',o:['Lagos','Kebbi','Rivers'],a:1},
+                    {q:'What are the two main types of rice grown in Nigeria?',o:['White and brown rice','Upland and lowland rice','Short and long grain rice'],a:1},
+                    {q:'What program has helped farmers access loans for rice farming?',o:['Anchor Borrowers Programme','Student loan program','Housing fund'],a:0},
+                    {q:'What can double rice yields according to the article?',o:['Hiring more workers','Proper water and fertilizer management','Using bigger farms'],a:1}
+                ]
+            },
+            // Day 8
+            {
+                title: 'Yam Cultivation Techniques',
+                content: 'Yam is known as the king of crops in many Nigerian communities and holds cultural significance. Nigeria produces over 70% of the worlds yams. The best planting time is between November and February. Yams require well-drained sandy loam soil and mounds about 1 meter high. Seed yams weighing 200-500g produce the best results. Staking with bamboo or wooden poles helps the vines grow properly. Major pests include yam beetles and nematodes which can reduce yields by 30%.',
+                qs: [
+                    {q:'What percentage of world yams does Nigeria produce?',o:['Over 50%','Over 70%','Over 90%'],a:1},
+                    {q:'When is the best planting time for yams?',o:['March to May','November to February','June to August'],a:1},
+                    {q:'What type of soil do yams prefer?',o:['Clay soil','Well-drained sandy loam','Waterlogged soil'],a:1},
+                    {q:'What is used for staking yam vines?',o:['Bamboo or wooden poles','Metal pipes','Plastic strings'],a:0},
+                    {q:'What pests can reduce yam yields by 30%?',o:['Yam beetles and nematodes','Only birds','Only weeds'],a:0}
+                ]
+            },
+            // Day 9
+            {
+                title: 'Cocoa Production and Processing',
+                content: 'Cocoa is a major cash crop in Nigeria, with the country being the fourth largest producer globally. The main growing regions are in the southwest including Ondo, Osun, and Ogun states. Cocoa trees begin bearing fruit after 3-5 years and can produce for over 30 years. Proper fermentation of cocoa beans for 5-7 days develops the chocolate flavor. Drying beans to 7% moisture content prevents mold during storage. Nigeria exports most of its cocoa to Europe and America.',
+                qs: [
+                    {q:'What rank is Nigeria in global cocoa production?',o:['First','Fourth','Tenth'],a:1},
+                    {q:'How long before cocoa trees begin bearing fruit?',o:['1 year','3-5 years','10 years'],a:1},
+                    {q:'How long should cocoa beans be fermented?',o:['1-2 days','5-7 days','14 days'],a:1},
+                    {q:'What moisture content prevents mold during storage?',o:['15%','7%','20%'],a:1},
+                    {q:'Where does Nigeria export most of its cocoa?',o:['Europe and America','Only Asia','Only other African countries'],a:0}
+                ]
+            },
+            // Day 10
+            {
+                title: 'Groundnut Farming Best Practices',
+                content: 'Groundnuts (peanuts) are an important legume crop grown extensively in northern Nigeria. They fix nitrogen in the soil, making them excellent for crop rotation. The best planting time is between May and June at the onset of rains. Seeds should be planted 5cm deep with spacing of 30cm between plants. Groundnuts mature in 90-130 days depending on the variety. Proper drying after harvest prevents aflatoxin contamination which can be harmful to health. Nigeria was once the worlds largest groundnut exporter.',
+                qs: [
+                    {q:'What benefit do groundnuts provide to soil?',o:['Fix nitrogen','Remove nutrients','Increase acidity'],a:0},
+                    {q:'When is the best planting time for groundnuts?',o:['January-February','May-June','September-October'],a:1},
+                    {q:'How deep should groundnut seeds be planted?',o:['2cm','5cm','15cm'],a:1},
+                    {q:'How long until groundnuts mature?',o:['60-80 days','90-130 days','180-200 days'],a:1},
+                    {q:'What does proper drying after harvest prevent?',o:['Aflatoxin contamination','Insect attacks','Weed growth'],a:0}
+                ]
+            },
+            // Day 11
+            {
+                title: 'Poultry Farming for Beginners',
+                content: 'Poultry farming is one of the most accessible livestock businesses in Nigeria. Broilers can be raised for meat in 6-8 weeks while layers produce eggs for up to 18 months. A proper poultry house needs good ventilation, adequate space, and protection from predators. Vaccination against Newcastle disease and Gumboro is essential for healthy birds. Quality feed accounts for 70% of production costs. Starting with 100 day-old chicks is recommended for beginners. The demand for chicken and eggs continues to grow across Nigeria.',
+                qs: [
+                    {q:'How long does it take to raise broilers for meat?',o:['2-3 weeks','6-8 weeks','6 months'],a:1},
+                    {q:'What percentage of production costs is feed?',o:['30%','50%','70%'],a:2},
+                    {q:'Which disease requires vaccination in poultry?',o:['Newcastle disease','Malaria','Cholera'],a:0},
+                    {q:'How many chicks are recommended for beginners?',o:['50','100','500'],a:1},
+                    {q:'How long do layers produce eggs?',o:['6 months','Up to 18 months','5 years'],a:1}
+                ]
+            },
+            // Day 12
+            {
+                title: 'Goat Rearing in Nigeria',
+                content: 'Goats are among the most popular livestock in Nigeria due to their adaptability and low maintenance requirements. The main breeds include West African Dwarf, Sokoto Red, and Sahel goats. Goats can survive on poor quality forage and require minimal housing. A simple shelter protecting from rain and sun is sufficient. Goats reproduce quickly with gestation lasting about 5 months and often giving birth to twins. Common diseases include PPR (Peste des Petits Ruminants) which can be prevented through vaccination. Goat meat (chevon) is in high demand across Nigeria.',
+                qs: [
+                    {q:'Which is a Nigerian goat breed?',o:['West African Dwarf','Alpine','Boer'],a:0},
+                    {q:'How long is goat gestation?',o:['3 months','About 5 months','9 months'],a:1},
+                    {q:'What disease affects goats and can be prevented by vaccination?',o:['PPR','Malaria','Typhoid'],a:0},
+                    {q:'What is goat meat called?',o:['Beef','Chevon','Mutton'],a:1},
+                    {q:'How many kids do goats often give birth to?',o:['Always single','Often twins','Always triplets'],a:1}
+                ]
+            },
+            // Day 13
+            {
+                title: 'Fish Farming (Aquaculture) Basics',
+                content: 'Fish farming is rapidly growing in Nigeria as wild fish stocks decline. Catfish is the most commonly farmed species due to its fast growth and high market demand. A standard pond measuring 10m x 10m can hold about 1000 fingerlings. Water quality management is crucial - pH should be between 6.5-8.5 and dissolved oxygen above 5mg/L. Fish reach market size of about 1kg in 5-6 months with proper feeding. Floating pellets with 35-40% protein content produce the best growth rates. Nigeria produces over 300,000 metric tons of farmed fish annually.',
+                qs: [
+                    {q:'Which fish is most commonly farmed in Nigeria?',o:['Tilapia','Catfish','Salmon'],a:1},
+                    {q:'How many fingerlings can a standard 10m x 10m pond hold?',o:['500','1000','2000'],a:1},
+                    {q:'What is the ideal pH range for fish pond water?',o:['4.0-5.0','6.5-8.5','10.0-12.0'],a:1},
+                    {q:'How long does it take for fish to reach market size?',o:['2-3 months','5-6 months','12 months'],a:1},
+                    {q:'What protein content in feed produces the best growth?',o:['15-20%','35-40%','50-60%'],a:1}
+                ]
+            },
+            // Day 14
+            {
+                title: 'Cattle Ranching in Nigeria',
+                content: 'Cattle production is a major agricultural activity in Nigeria, particularly in the northern region. The main breeds include White Fulani, Red Bororo, and Sokoto Gudali. Traditional pastoral systems are gradually transitioning to ranching which offers better management. A mature cow needs about 25-30 liters of water daily and adequate grazing land. Proper vaccination against Foot and Mouth Disease and Anthrax is essential. Cattle reach market weight in 2-3 years with good management. Nigeria has about 20 million cattle, one of the largest herds in Africa.',
+                qs: [
+                    {q:'Which is a Nigerian cattle breed?',o:['White Fulani','Holstein','Angus'],a:0},
+                    {q:'How much water does a mature cow need daily?',o:['5-10 liters','25-30 liters','100 liters'],a:1},
+                    {q:'Which disease requires vaccination in cattle?',o:['Foot and Mouth Disease','Malaria','Typhoid'],a:0},
+                    {q:'How long until cattle reach market weight?',o:['1 year','2-3 years','5 years'],a:1},
+                    {q:'Approximately how many cattle does Nigeria have?',o:['About 5 million','About 20 million','About 50 million'],a:1}
+                ]
+            },
+            // Day 15
+            {
+                title: 'Snail Farming for Profit',
+                content: 'Snail farming (heliciculture) is a lucrative agribusiness requiring minimal space and capital. The giant African land snail is the most popular species for farming in Nigeria. Snails need a cool, humid environment with soil rich in calcium for shell development. They feed on vegetables, fruits, and specially formulated feeds. A mature snail can lay 100-400 eggs per year. Snails reach market size in 6-12 months. The demand for snail meat is high in hotels, restaurants, and markets across Nigeria.',
+                qs: [
+                    {q:'What is snail farming called?',o:['Heliciculture','Aquaculture','Apiculture'],a:0},
+                    {q:'Which snail species is most popular for farming in Nigeria?',o:['Garden snail','Giant African land snail','Sea snail'],a:1},
+                    {q:'What do snails need in their soil for shell development?',o:['Calcium','Iron','Magnesium'],a:0},
+                    {q:'How many eggs can a mature snail lay per year?',o:['10-20','100-400','1000-2000'],a:1},
+                    {q:'How long until snails reach market size?',o:['1-3 months','6-12 months','24 months'],a:1}
+                ]
+            },
+            // Day 16
+            {
+                title: 'Pig Farming Guide for Beginners',
+                content: 'Pig farming is highly profitable with pigs having excellent feed conversion rates. Sows produce 8-12 piglets per litter and can have two litters annually. Proper housing with concrete floors makes cleaning easier and prevents disease. Balanced feed with 16-18% protein supports optimal growth in young pigs. Market weight of 90kg is typically reached in 6-7 months. Strict biosecurity measures prevent devastating disease outbreaks. Pork demand is growing rapidly in urban Nigerian areas.',
+                qs: [
+                    {q:'How many piglets can a sow produce per litter?',o:['4-6','8-12','15-20'],a:1},
+                    {q:'How many litters can a sow have annually?',o:['One','Two','Three'],a:1},
+                    {q:'What protein percentage do young growing pigs need?',o:['10-12%','16-18%','25-30%'],a:1},
+                    {q:'How long to reach market weight of 90kg?',o:['3-4 months','6-7 months','12 months'],a:1},
+                    {q:'What prevents disease outbreaks in pig farms?',o:['Strict biosecurity','More feeding','Less cleaning'],a:0}
+                ]
+            },
+            // Day 17
+            {
+                title: 'Rabbit Farming Basics',
+                content: 'Rabbit farming is a low-cost venture with impressive returns. Rabbits reproduce rapidly with a gestation period of just 30 days. Each doe produces 6-8 kits per litter. They require clean hutches protected from direct weather. Feed includes pellets, hay, and fresh vegetables. Rabbit meat is lean with high protein content making it very healthy. Rabbit manure is excellent organic fertilizer for gardens and farms.',
+                qs: [
+                    {q:'How long is rabbit gestation?',o:['15 days','30 days','60 days'],a:1},
+                    {q:'How many kits per litter?',o:['2-4','6-8','10-15'],a:1},
+                    {q:'What do rabbits eat?',o:['Only pellets','Pellets, hay, and vegetables','Only meat'],a:1},
+                    {q:'What makes rabbit meat healthy?',o:['High fat content','Lean with high protein','Low quality'],a:1},
+                    {q:'What can rabbit manure be used for?',o:['Organic fertilizer','Building material','Animal bedding only'],a:0}
+                ]
+            },
+            // Day 18
+            {
+                title: 'Beekeeping for Honey Production',
+                content: 'Beekeeping (apiculture) provides valuable honey and beeswax. Bees are essential pollinators that increase crop yields significantly. Langstroth hives are the most commonly used modern hives. Hives should be placed near flowering plants and away from pesticides. Honey is typically harvested twice yearly during dry seasons. A strong colony produces 20-30kg of honey annually. Protective gear including suits and smokers prevents stings during harvesting.',
+                qs: [
+                    {q:'What is beekeeping scientifically called?',o:['Apiculture','Aquaculture','Heliciculture'],a:0},
+                    {q:'What type of hive is most commonly used?',o:['Langstroth','Wooden box','Plastic container'],a:0},
+                    {q:'How often is honey typically harvested?',o:['Monthly','Twice yearly','Once yearly'],a:1},
+                    {q:'How much honey can a strong colony produce annually?',o:['5-10kg','20-30kg','50-100kg'],a:1},
+                    {q:'What protects beekeepers during harvesting?',o:['Protective gear and smokers','Running fast','Nothing is needed'],a:0}
+                ]
+            },
+            // Day 19
+            {
+                title: 'Grasscutter Farming Guide',
+                content: 'Grasscutters (cane rats) are prized for their delicious meat in West Africa. They are herbivores that feed primarily on grass and sugarcane. Domestication requires a quiet environment as they stress easily. Breeding pairs produce 2 litters yearly with 4-6 young each. The meat is lean, tender, and commands premium prices in markets. Housing needs concrete floors to prevent escape through burrowing. Grasscutter farming is gaining popularity as an alternative livestock venture.',
+                qs: [
+                    {q:'What do grasscutters primarily eat?',o:['Meat','Grass and sugarcane','Insects'],a:1},
+                    {q:'How many litters do they produce per year?',o:['1','2','4'],a:1},
+                    {q:'How many young per litter?',o:['1-3','4-6','8-12'],a:1},
+                    {q:'Why is grasscutter meat valued?',o:['It is fatty','It is lean and tender','It is tough'],a:1},
+                    {q:'Why do their housing need concrete floors?',o:['For appearance','To prevent burrowing escape','For easier cleaning only'],a:1}
+                ]
+            },
+            // Day 20
+            {
+                title: 'Quail Farming for Eggs and Meat',
+                content: 'Quails are small birds raised efficiently for both eggs and meat. Japanese quail is the most common breed worldwide. They start laying eggs at just 6-8 weeks old. Each bird produces 250-300 eggs annually. Quail eggs are considered a delicacy with numerous health benefits. Housing must be predator-proof with proper ventilation. Market demand is growing especially in urban areas and hotels.',
+                qs: [
+                    {q:'What is the most common quail breed?',o:['Japanese quail','American quail','African quail'],a:0},
+                    {q:'At what age do quails start laying eggs?',o:['3-4 weeks','6-8 weeks','12-16 weeks'],a:1},
+                    {q:'How many eggs per bird annually?',o:['100-150','250-300','400-500'],a:1},
+                    {q:'What are quail eggs considered?',o:['Common everyday food','A delicacy with health benefits','A waste product'],a:1},
+                    {q:'What must quail housing have?',o:['Predator-proof design','Open fields','Water tanks'],a:0}
+                ]
+            }
+        ];
 
         // ============ GET LOCAL DATE ============
         function getLocalDate() {
@@ -911,6 +468,7 @@
             return tasks;
         }
 
+        // ============ PAGE LOAD ============
         window.addEventListener('load', async () => {
             try {
                 currentUser = await refreshUser();
@@ -925,7 +483,7 @@
                 activePlans = await getActivePlans();
                 perQuestionValue = calculatePerQuestion(currentUser, activePlans);
 
-                // ✅ FIXED: Load from Firestore with localStorage fallback
+                // ✅ Load from Firestore with localStorage fallback
                 const today = getLocalDate();
                 todayTasks = await syncTasks(currentUser.id, today);
                 totalEarnedToday = todayTasks.reduce((s, t) => s + (t.earned || 0), 0);
@@ -1024,7 +582,7 @@
                 todayTasks.push({ q: currentQuestionIndex, earned: perQuestionValue, done: true, retries: currentQuestion._disabled.length });
                 totalEarnedToday += perQuestionValue;
                 
-                // ✅ FIXED: Save to Firestore
+                // ✅ Save to Firestore
                 const today = getLocalDate();
                 await saveTasksToFirestore(currentUser.id, today, todayTasks);
                 
