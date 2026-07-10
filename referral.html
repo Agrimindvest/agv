@@ -511,7 +511,7 @@
         async function loadReferralData() {
             try {
                 const refCode = currentUser.refCode || currentUser.id;
-                const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+                const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
                 document.getElementById('refLink').textContent = refLink;
                 document.getElementById('refEarnings').textContent = fmt(currentUser.refEarnings || 0);
 
@@ -586,7 +586,7 @@
         // ============ COPY REFERRAL LINK ============
         function copyRefLink() {
             const refCode = currentUser.refCode || currentUser.id;
-            const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+            const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
             navigator.clipboard.writeText(refLink)
                 .then(() => toast('📋 Link copied to clipboard!'))
                 .catch(() => {
@@ -604,7 +604,7 @@
         // ============ SHARE VIA WHATSAPP ============
         function shareWhatsApp() {
             const refCode = currentUser.refCode || currentUser.id;
-            const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+            const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
             const message = encodeURIComponent(
                 '🌱 *Join Me on Agrimindvest!* 🌱\n\n' +
                 '💼 Read articles, answer questions, and earn daily\n' +
@@ -621,7 +621,7 @@
         // ============ ADVANCED SHARE ============
         function shareCopyAdvanced() {
             const refCode = currentUser.refCode || currentUser.id;
-            const refLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+            const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
             
             if (navigator.share) {
                 navigator.share({
@@ -658,7 +658,7 @@
 
                 // Create invite record
                 const refCode = currentUser.refCode || currentUser.id;
-                const inviteLink = 'agrimindvest.web.app/register.html?ref=' + refCode;
+                const inviteLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
 
                 await db.collection('invites').add({
                     from: currentUser.id,
