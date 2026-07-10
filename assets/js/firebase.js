@@ -15,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============ CONSTANTS ============
-const ADMIN_EMAIL = 'newmanmonopoly@gmail.com';
+const ADMIN_EMAIL = 'agrimindvest@gmail.com';
 const DEPOSIT_BANK = 'Safe Haven Microfinance Bank';
 const DEPOSIT_ACCOUNT = '5012552807';
 const DEPOSIT_NAME = 'PEERPURSETECHNO';
@@ -126,25 +126,19 @@ async function refreshUser() {
 
 // ============ PLAN HELPERS ============
 
-// Check if user has ANY active plan
 function hasActivePlan(user) {
     if (!user) return false;
-    // Must have at least one plan purchased
     if (!user.ownedPlans || user.ownedPlans.length === 0) return false;
-    // Check expiry date - if exists and is in future, plan is active
     if (user.expiryDate) {
         return new Date(user.expiryDate) > new Date();
     }
-    // Fallback: if user has plans but no expiry date, consider active
     return true;
 }
 
-// Get active plans with default fallback
 async function getActivePlans() {
     try {
         const snap = await db.collection('settings').doc('plans').get();
         if (!snap.exists) {
-            // Create default plans
             await db.collection('settings').doc('plans').set(DEFAULT_PLANS);
             return DEFAULT_PLANS;
         }
@@ -160,7 +154,6 @@ async function getActivePlans() {
     }
 }
 
-// Get all plans with default fallback and auto-create
 async function getAllPlans() {
     try {
         const snap = await db.collection('settings').doc('plans').get();
@@ -173,7 +166,6 @@ async function getAllPlans() {
         
         const plans = snap.data();
         
-        // Check if all default plans exist
         let needsUpdate = false;
         const updatedPlans = { ...plans };
         Object.keys(DEFAULT_PLANS).forEach(key => {
@@ -196,7 +188,6 @@ async function getAllPlans() {
     }
 }
 
-// Ensure plans exist (for admin panel)
 async function ensurePlansExist() {
     try {
         const snap = await db.collection('settings').doc('plans').get();
@@ -225,17 +216,97 @@ function calculatePerQuestion(user, plans) {
     return total;
 }
 
+// ============ TASK HELPERS (NEW) ============
+
+// ✅ Save tasks to Firestore
+async function saveUserTasks(userId, date, tasks) {
+    try {
+        await db.collection('userTasks').doc(userId + '_' + date).set({
+            userId: userId,
+            date: date,
+            tasks: tasks,
+            completedCount: tasks.filter(t => t.done).length,
+            totalEarned: tasks.reduce((sum, t) => sum + (t.earned || 0), 0),
+            updatedAt: new Date().toISOString()
+        });
+        return true;
+    } catch (error) {
+        console.error('Save tasks error:', error);
+        return false;
+    }
+}
+
+// ✅ Load tasks from Firestore
+async function loadUserTasks(userId, date) {
+    try {
+        const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
+        if (doc.exists) {
+            return doc.data().tasks || [];
+        }
+        return [];
+    } catch (error) {
+        console.error('Load tasks error:', error);
+        return [];
+    }
+}
+
+// ✅ Get all user tasks for a specific date (for admin)
+async function getAllUserTasksForDate(date) {
+    try {
+        const snapshot = await db.collection('userTasks')
+            .where('date', '==', date)
+            .get();
+        
+        const results = [];
+        snapshot.forEach(doc => {
+            results.push({ id: doc.id, ...doc.data() });
+        });
+        return results;
+    } catch (error) {
+        console.error('Get all user tasks error:', error);
+        return [];
+    }
+}
+
+// ✅ Sync tasks: Firestore first, localStorage fallback
+async function syncUserTasks(userId, date) {
+    let tasks = await loadUserTasks(userId, date);
+    
+    if (!tasks || tasks.length === 0) {
+        const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+        tasks = saved[userId] || [];
+        
+        if (tasks.length > 0) {
+            await saveUserTasks(userId, date, tasks);
+        }
+    }
+    
+    const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+    saved[userId] = tasks;
+    localStorage.setItem('agv_t_' + date, JSON.stringify(saved));
+    
+    return tasks;
+}
+
 // ============ WITHDRAWAL HELPERS ============
 
-// ✅ FIXED: Check if user can withdraw today - RETURNS FALSE ON ERROR
 async function canWithdrawToday(userId) {
     try {
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
+        
         const snapshot = await db.collection('withdrawals')
             .where('userId', '==', userId)
-            .where('date', '>=', todayStr)
             .get();
+        
+        let todayCount = 0;
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.date && data.date >= todayStr) {
+                todayCount++;
+            }
+        });
+        
         const w = await db.collection('settings').doc('withdrawalSettings').get();
         const settings = w.exists ? w.data() : {};
         const day = today.getDay();
@@ -245,14 +316,13 @@ async function canWithdrawToday(userId) {
         } else { 
             maxPerDay = settings.max_weekday || 1; 
         }
-        return snapshot.size < maxPerDay;
+        return todayCount < maxPerDay;
     } catch (error) {
         console.error('Can withdraw today error:', error);
-        return false; // ✅ BLOCK withdrawal on error
+        return false;
     }
 }
 
-// ✅ FIXED: Check if withdrawal window is open - RETURNS FALSE ON ERROR
 async function isWithdrawalWindowOpen() {
     try {
         const w = await db.collection('settings').doc('withdrawalSettings').get();
@@ -270,7 +340,7 @@ async function isWithdrawalWindowOpen() {
         return currentTime >= startTime && currentTime < endTime;
     } catch (error) {
         console.error('Withdrawal window check error:', error);
-        return false; // ✅ BLOCK withdrawal on error
+        return false;
     }
 }
 
@@ -373,7 +443,6 @@ function staggerCards(selector, baseDelay = 0.05) {
 }
 
 // ============ EXPOSE GLOBALLY ============
-// Make all functions available globally
 window.fmt = fmt;
 window.toast = toast;
 window.generateRef = generateRef;
@@ -396,6 +465,14 @@ window.deleteDoc = deleteDoc;
 window.sendAdminEmail = sendAdminEmail;
 window.animateCountUp = animateCountUp;
 window.staggerCards = staggerCards;
+
+// ✅ NEW: Task helpers exposed
+window.saveUserTasks = saveUserTasks;
+window.loadUserTasks = loadUserTasks;
+window.getAllUserTasksForDate = getAllUserTasksForDate;
+window.syncUserTasks = syncUserTasks;
+
+// Constants
 window.DEFAULT_PLANS = DEFAULT_PLANS;
 window.ADMIN_EMAIL = ADMIN_EMAIL;
 window.DEPOSIT_BANK = DEPOSIT_BANK;
@@ -412,16 +489,7 @@ console.log('📋 Functions loaded:', Object.keys(window).filter(k =>
     ['fmt','toast','checkAuth','getCurrentUser','refreshUser','hasActivePlan',
      'getActivePlans','getAllPlans','ensurePlansExist','calculatePerQuestion',
      'canWithdrawToday','isWithdrawalWindowOpen','getDoc','setDoc','updateDoc',
-     'getCollection','deleteDoc','sendAdminEmail','animateCountUp','staggerCards'
+     'getCollection','deleteDoc','sendAdminEmail','animateCountUp','staggerCards',
+     'saveUserTasks','loadUserTasks','getAllUserTasksForDate','syncUserTasks'
     ].includes(k)
 ));
-console.log('📋 Constants loaded:', {
-    ADMIN_EMAIL,
-    DEPOSIT_BANK,
-    DEPOSIT_ACCOUNT,
-    DEPOSIT_NAME,
-    WELCOME_BONUS,
-    WITHDRAWAL_FEE_PCT,
-    MIN_DEPOSIT,
-    MIN_WITHDRAWAL
-});
