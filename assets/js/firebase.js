@@ -15,7 +15,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // ============ CONSTANTS ============
-const ADMIN_EMAIL = 'newmanmonopoly@gmail.com';
+const ADMIN_EMAIL = 'agrimindvest@gmail.com';
 const DEPOSIT_BANK = 'Safe Haven Microfinance Bank';
 const DEPOSIT_ACCOUNT = '5012552807';
 const DEPOSIT_NAME = 'PEERPURSETECHNO';
@@ -24,7 +24,7 @@ const WITHDRAWAL_FEE_PCT = 15;
 const MIN_DEPOSIT = 5000;
 const MIN_WITHDRAWAL = 500;
 
-// ============ DEFAULT PLANS (Centralized) ============
+// ============ DEFAULT PLANS ============
 const DEFAULT_PLANS = {
     sproutplus: { name: 'AGV Sprout Plus', price: 5000, perQ: 45, daily: 225, status: 'active' },
     sapling: { name: 'AGV Sapling', price: 7500, perQ: 67.5, daily: 337.5, status: 'active' },
@@ -72,7 +72,6 @@ function generateUserId() {
 function checkAuth() {
     const userData = localStorage.getItem('agv_u');
     if (!userData) { 
-        // Don't redirect if on public pages
         const currentPage = window.location.pathname.split('/').pop();
         if (currentPage !== 'index.html' && 
             currentPage !== 'register.html' && 
@@ -216,9 +215,9 @@ function calculatePerQuestion(user, plans) {
     return total;
 }
 
-// ============ TASK HELPERS (NEW) ============
+// ============ TASK HELPERS ============
 
-// ✅ Save tasks to Firestore
+// Save tasks to Firestore
 async function saveUserTasks(userId, date, tasks) {
     try {
         await db.collection('userTasks').doc(userId + '_' + date).set({
@@ -229,6 +228,7 @@ async function saveUserTasks(userId, date, tasks) {
             totalEarned: tasks.reduce((sum, t) => sum + (t.earned || 0), 0),
             updatedAt: new Date().toISOString()
         });
+        console.log('✅ Tasks saved to Firestore:', tasks.length);
         return true;
     } catch (error) {
         console.error('Save tasks error:', error);
@@ -236,12 +236,14 @@ async function saveUserTasks(userId, date, tasks) {
     }
 }
 
-// ✅ Load tasks from Firestore
+// Load tasks from Firestore
 async function loadUserTasks(userId, date) {
     try {
         const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
         if (doc.exists) {
-            return doc.data().tasks || [];
+            const tasks = doc.data().tasks || [];
+            console.log('📋 Tasks loaded from Firestore:', tasks.length);
+            return tasks;
         }
         return [];
     } catch (error) {
@@ -250,7 +252,49 @@ async function loadUserTasks(userId, date) {
     }
 }
 
-// ✅ Get all user tasks for a specific date (for admin)
+// ✅ FIXED: Sync tasks with auto-migration from localStorage to Firestore
+async function syncUserTasks(userId, date) {
+    try {
+        // 1. Try to load from Firestore first
+        const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
+        
+        if (doc.exists) {
+            // Found in Firestore - use it
+            const tasks = doc.data().tasks || [];
+            console.log('📋 Tasks loaded from Firestore:', tasks.length);
+            
+            // Update localStorage for offline access
+            const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+            saved[userId] = tasks;
+            localStorage.setItem('agv_t_' + date, JSON.stringify(saved));
+            
+            return tasks;
+        }
+        
+        // 2. Not in Firestore - check localStorage
+        const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+        const tasks = saved[userId] || [];
+        
+        if (tasks.length > 0) {
+            // ✅ Found in localStorage - MIGRATE to Firestore!
+            console.log('📋 Found ' + tasks.length + ' tasks in localStorage. Migrating to Firestore...');
+            await saveUserTasks(userId, date, tasks);
+            toast('✅ Tasks synced to cloud!');
+        } else {
+            console.log('📋 No tasks found for today');
+        }
+        
+        return tasks;
+        
+    } catch (error) {
+        console.error('Sync tasks error:', error);
+        // Fallback to localStorage
+        const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
+        return saved[userId] || [];
+    }
+}
+
+// Get all user tasks for a specific date (for admin)
 async function getAllUserTasksForDate(date) {
     try {
         const snapshot = await db.collection('userTasks')
@@ -266,26 +310,6 @@ async function getAllUserTasksForDate(date) {
         console.error('Get all user tasks error:', error);
         return [];
     }
-}
-
-// ✅ Sync tasks: Firestore first, localStorage fallback
-async function syncUserTasks(userId, date) {
-    let tasks = await loadUserTasks(userId, date);
-    
-    if (!tasks || tasks.length === 0) {
-        const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
-        tasks = saved[userId] || [];
-        
-        if (tasks.length > 0) {
-            await saveUserTasks(userId, date, tasks);
-        }
-    }
-    
-    const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
-    saved[userId] = tasks;
-    localStorage.setItem('agv_t_' + date, JSON.stringify(saved));
-    
-    return tasks;
 }
 
 // ============ WITHDRAWAL HELPERS ============
@@ -466,7 +490,7 @@ window.sendAdminEmail = sendAdminEmail;
 window.animateCountUp = animateCountUp;
 window.staggerCards = staggerCards;
 
-// ✅ NEW: Task helpers exposed
+// ✅ Task helpers exposed
 window.saveUserTasks = saveUserTasks;
 window.loadUserTasks = loadUserTasks;
 window.getAllUserTasksForDate = getAllUserTasksForDate;
