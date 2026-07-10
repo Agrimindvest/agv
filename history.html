@@ -44,6 +44,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
         .history-type { font-weight: 700; font-size: 0.9em; }
@@ -56,6 +58,29 @@
 
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
         .empty-state i { font-size: 3em; color: var(--border); margin-bottom: 15px; }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+        .status-pending { background: rgba(255,152,0,0.2); color: var(--warning); }
+        .status-processing { background: rgba(33,150,243,0.2); color: var(--info); }
+        .status-approved { background: rgba(0,200,83,0.2); color: var(--success); }
+        .status-successful { background: rgba(0,200,83,0.2); color: var(--success); }
+        .status-rejected { background: rgba(244,67,54,0.2); color: var(--danger); }
+        .status-failed { background: rgba(244,67,54,0.2); color: var(--danger); }
+        .status-credited { background: rgba(0,200,83,0.2); color: var(--success); }
+
+        /* ✅ FIXED: Active filter tab styling */
+        .filter-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
     </style>
 </head>
 <body>
@@ -76,14 +101,14 @@
         <div class="history-container">
             <h3 style="color:var(--accent-light);margin-bottom:15px;">📜 Transaction History</h3>
 
-            <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterHistory('all')">All</button>
-                <button class="filter-tab" onclick="filterHistory('deposit')">💳 Deposits</button>
-                <button class="filter-tab" onclick="filterHistory('withdrawal')">💸 Withdrawals</button>
-                <button class="filter-tab" onclick="filterHistory('task')">📝 Tasks</button>
-                <button class="filter-tab" onclick="filterHistory('referral')">👥 Referrals</button>
-                <button class="filter-tab" onclick="filterHistory('bonus')">🎁 Bonuses</button>
-                <button class="filter-tab" onclick="filterHistory('plan')">💰 Plans</button>
+            <div class="filter-tabs" id="filterTabs">
+                <button class="filter-tab active" data-filter="all" onclick="filterHistory('all')">📊 All</button>
+                <button class="filter-tab" data-filter="deposit" onclick="filterHistory('deposit')">💳 Deposits</button>
+                <button class="filter-tab" data-filter="withdrawal" onclick="filterHistory('withdrawal')">💸 Withdrawals</button>
+                <button class="filter-tab" data-filter="task" onclick="filterHistory('task')">📝 Tasks</button>
+                <button class="filter-tab" data-filter="referral" onclick="filterHistory('referral')">👥 Referrals</button>
+                <button class="filter-tab" data-filter="bonus" onclick="filterHistory('bonus')">🎁 Bonuses</button>
+                <button class="filter-tab" data-filter="plan" onclick="filterHistory('plan')">💰 Plans</button>
             </div>
 
             <div id="historyList">
@@ -115,69 +140,185 @@
         let currentFilter = 'all';
 
         window.addEventListener('load', async () => {
-            currentUser = await refreshUser();
-            await loadAllHistory();
-            const urlParams = new URLSearchParams(window.location.search);
-            const filter = urlParams.get('filter');
-            if (filter) {
-                filterHistory(filter);
+            try {
+                currentUser = await refreshUser();
+                await loadAllHistory();
+                
+                // ✅ FIXED: Check URL params for filter
+                const urlParams = new URLSearchParams(window.location.search);
+                const filter = urlParams.get('filter');
+                if (filter) {
+                    filterHistory(filter);
+                }
+            } catch (error) {
+                console.error('Init error:', error);
+                toast('Error loading history');
             }
         });
 
         async function loadAllHistory() {
-            document.getElementById('historyList').innerHTML = '<div class="empty-state"><div class="spinner"></div><p>Loading...</p></div>';
+            document.getElementById('historyList').innerHTML = '<div class="empty-state"><div class="spinner"></div><p>Loading transactions...</p></div>';
             allTransactions = [];
 
             try {
-                const depSnap = await db.collection('deposits').where('userId', '==', currentUser.id).orderBy('date', 'desc').get();
-                depSnap.forEach(d => {
-                    const data = d.data();
-                    allTransactions.push({ type: 'deposit', amount: data.amount, status: data.status, date: data.date, ref: data.ref || '', payerName: data.payerName || '', payerAccount: data.payerAccount || '', channel: data.channel || 'manual' });
-                });
+                // ============ LOAD DEPOSITS ============
+                try {
+                    const depSnap = await db.collection('deposits')
+                        .where('userId', '==', currentUser.id)
+                        .get();
+                    
+                    depSnap.forEach(d => {
+                        const data = d.data();
+                        allTransactions.push({ 
+                            type: 'deposit', 
+                            amount: data.amount || 0, 
+                            status: data.status || 'pending', 
+                            date: data.date || new Date().toISOString(), 
+                            ref: data.ref || '', 
+                            payerName: data.payerName || '', 
+                            payerAccount: data.payerAccount || '', 
+                            channel: data.channel || 'manual' 
+                        });
+                    });
+                } catch (e) { console.log('Deposits load error:', e.message); }
 
-                const wthSnap = await db.collection('withdrawals').where('userId', '==', currentUser.id).orderBy('date', 'desc').get();
-                wthSnap.forEach(d => {
-                    const data = d.data();
-                    allTransactions.push({ type: 'withdrawal', amount: data.amount, fee: data.fee, net: data.net, status: data.status, date: data.date, bankName: data.bankName || '', acctNo: data.acctNo || '' });
-                });
+                // ============ LOAD WITHDRAWALS ============
+                try {
+                    const wthSnap = await db.collection('withdrawals')
+                        .where('userId', '==', currentUser.id)
+                        .get();
+                    
+                    wthSnap.forEach(d => {
+                        const data = d.data();
+                        allTransactions.push({ 
+                            type: 'withdrawal', 
+                            amount: data.amount || 0, 
+                            fee: data.fee || 0, 
+                            net: data.net || 0, 
+                            status: data.status || 'pending', 
+                            date: data.date || new Date().toISOString(), 
+                            bankName: data.bankName || '', 
+                            acctNo: data.acctNo || '' 
+                        });
+                    });
+                } catch (e) { console.log('Withdrawals load error:', e.message); }
 
-                const paySnap = await db.collection('payments').where('userId', '==', currentUser.id).orderBy('date', 'desc').get();
-                paySnap.forEach(d => {
-                    const data = d.data();
-                    allTransactions.push({ type: 'plan', amount: data.amount, status: data.status, date: data.date, package: data.package || '' });
-                });
+                // ============ LOAD PAYMENTS (PLAN PURCHASES) ============
+                try {
+                    const paySnap = await db.collection('payments')
+                        .where('userId', '==', currentUser.id)
+                        .get();
+                    
+                    paySnap.forEach(d => {
+                        const data = d.data();
+                        allTransactions.push({ 
+                            type: 'plan', 
+                            amount: data.amount || 0, 
+                            status: data.status || 'approved', 
+                            date: data.date || new Date().toISOString(), 
+                            package: data.package || '' 
+                        });
+                    });
+                } catch (e) { console.log('Payments load error:', e.message); }
 
-                const refSnap = await db.collection('referrals').where('referrerId', '==', currentUser.id).where('earned', '>', 0).orderBy('earned').orderBy('date', 'desc').get();
-                refSnap.forEach(d => {
-                    const data = d.data();
-                    allTransactions.push({ type: 'referral', amount: data.earned, status: 'credited', date: data.date, refereeName: data.refereeName || '' });
-                });
+                // ============ LOAD REFERRALS ============
+                try {
+                    const refSnap = await db.collection('referrals')
+                        .where('referrerId', '==', currentUser.id)
+                        .get();
+                    
+                    refSnap.forEach(d => {
+                        const data = d.data();
+                        if (data.earned > 0) {
+                            allTransactions.push({ 
+                                type: 'referral', 
+                                amount: data.earned || 0, 
+                                status: data.status || 'credited', 
+                                date: data.date || new Date().toISOString(), 
+                                refereeName: data.refereeName || '' 
+                            });
+                        }
+                    });
+                } catch (e) { console.log('Referrals load error:', e.message); }
 
-                const bonusSnap = await db.collection('deposits').where('userId', '==', currentUser.id).where('channel', '==', 'bonus').get();
-                bonusSnap.forEach(d => {
-                    const data = d.data();
-                    allTransactions.push({ type: 'bonus', amount: data.amount, status: 'credited', date: data.date, note: data.note || 'Welcome Bonus' });
-                });
+                // ============ LOAD WELCOME BONUS ============
+                try {
+                    const bonusSnap = await db.collection('deposits')
+                        .where('userId', '==', currentUser.id)
+                        .where('channel', '==', 'bonus')
+                        .get();
+                    
+                    bonusSnap.forEach(d => {
+                        const data = d.data();
+                        allTransactions.push({ 
+                            type: 'bonus', 
+                            amount: data.amount || 0, 
+                            status: 'credited', 
+                            date: data.date || new Date().toISOString(), 
+                            note: data.note || 'Welcome Bonus' 
+                        });
+                    });
+                } catch (e) { console.log('Bonus load error:', e.message); }
 
-                for (let i = 0; i < 60; i++) {
-                    const d = new Date(); d.setDate(d.getDate() - i);
-                    const dateStr = d.toISOString().split('T')[0];
-                    const saved = JSON.parse(localStorage.getItem('agv_t_' + dateStr) || '{}');
-                    const tasks = saved[currentUser.id] || [];
-                    if (tasks.length > 0 && tasks.some(t => t.done)) {
-                        const totalEarned = tasks.reduce((s, t) => s + (t.earned || 0), 0);
-                        const completed = tasks.filter(t => t.done).length;
-                        if (totalEarned > 0) {
-                            allTransactions.push({ type: 'task', amount: totalEarned, completed: completed, status: 'credited', date: new Date(dateStr).toISOString() });
+                // ============ LOAD TASK EARNINGS FROM LOCALSTORAGE ============
+                try {
+                    for (let i = 0; i < 60; i++) {
+                        const d = new Date(); 
+                        d.setDate(d.getDate() - i);
+                        const dateStr = d.toISOString().split('T')[0];
+                        const saved = JSON.parse(localStorage.getItem('agv_t_' + dateStr) || '{}');
+                        const tasks = saved[currentUser.id] || [];
+                        if (tasks.length > 0 && tasks.some(t => t.done)) {
+                            const totalEarned = tasks.reduce((s, t) => s + (t.earned || 0), 0);
+                            const completed = tasks.filter(t => t.done).length;
+                            if (totalEarned > 0) {
+                                allTransactions.push({ 
+                                    type: 'task', 
+                                    amount: totalEarned, 
+                                    completed: completed, 
+                                    status: 'credited', 
+                                    date: new Date(dateStr).toISOString() 
+                                });
+                            }
                         }
                     }
-                }
+                } catch (e) { console.log('Task history load error:', e.message); }
 
+                // Sort by date (newest first)
                 allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
                 renderHistory();
 
             } catch (error) {
-                document.getElementById('historyList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading.</p></div>';
+                console.error('History error:', error);
+                document.getElementById('historyList').innerHTML = 
+                    '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading history. Please refresh the page.</p></div>';
+            }
+        }
+
+        function getStatusLabel(status) {
+            switch (status) {
+                case 'pending': return '⏳ Pending';
+                case 'processing': return '🔄 Processing';
+                case 'approved': return '✅ Approved';
+                case 'successful': return '✅ Successful';
+                case 'rejected': return '❌ Rejected';
+                case 'failed': return '❌ Failed';
+                case 'credited': return '✅ Credited';
+                default: return '⏳ ' + (status || 'Pending');
+            }
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'pending': return 'status-pending';
+                case 'processing': return 'status-processing';
+                case 'approved': return 'status-approved';
+                case 'successful': return 'status-successful';
+                case 'rejected': return 'status-rejected';
+                case 'failed': return 'status-failed';
+                case 'credited': return 'status-credited';
+                default: return 'status-pending';
             }
         }
 
@@ -185,14 +326,27 @@
             const filtered = currentFilter === 'all' ? allTransactions : allTransactions.filter(t => t.type === currentFilter);
 
             if (filtered.length === 0) {
-                document.getElementById('historyList').innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>No ${currentFilter === 'all' ? '' : currentFilter} transactions yet</p></div>`;
+                const filterNames = {
+                    'all': '',
+                    'deposit': 'deposit',
+                    'withdrawal': 'withdrawal',
+                    'task': 'task',
+                    'referral': 'referral',
+                    'bonus': 'bonus',
+                    'plan': 'plan'
+                };
+                const displayName = filterNames[currentFilter] || '';
+                document.getElementById('historyList').innerHTML = 
+                    `<div class="empty-state"><i class="fas fa-inbox"></i><p>No ${displayName} transactions yet</p></div>`;
                 return;
             }
 
             let html = '';
             filtered.forEach((tx, i) => {
                 const date = new Date(tx.date);
-                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) + ' • ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateStr = date.toLocaleDateString('en-US', { 
+                    weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' 
+                }) + ' • ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                 let typeLabel, amountClass, amountPrefix;
                 switch (tx.type) {
@@ -202,17 +356,20 @@
                     case 'referral': typeLabel = '👥 Referral Bonus'; amountClass = 'positive'; amountPrefix = '+'; break;
                     case 'bonus': typeLabel = '🎁 Welcome Bonus'; amountClass = 'positive'; amountPrefix = '+'; break;
                     case 'plan': typeLabel = '💰 Plan Purchase'; amountClass = 'negative'; amountPrefix = '-'; break;
+                    default: typeLabel = '📋 Transaction'; amountClass = 'positive'; amountPrefix = '';
                 }
 
-                let statusBadge = '';
-                if (tx.status === 'pending') statusBadge = '<span class="status-pending">⏳ Pending</span>';
-                else if (tx.status === 'approved' || tx.status === 'credited') statusBadge = '<span class="status-approved">✅ Approved</span>';
-                else if (tx.status === 'rejected') statusBadge = '<span class="status-rejected">❌ Rejected</span>';
-
                 let detailHTML = '';
-                if (tx.type === 'deposit') { detailHTML = `Ref: ${tx.ref}`; if (tx.payerName) detailHTML += ` • From: ${tx.payerName}`; }
-                else if (tx.type === 'withdrawal') { detailHTML = `Fee: ${fmt(tx.fee)} • Net: ${fmt(tx.net)}`; if (tx.bankName) detailHTML += ` • ${tx.bankName}`; }
-                else if (tx.type === 'task') detailHTML = `${tx.completed || '?'}/5 Questions`;
+                if (tx.type === 'deposit') { 
+                    detailHTML = `Ref: ${tx.ref}`; 
+                    if (tx.payerName) detailHTML += ` • From: ${tx.payerName}`;
+                    if (tx.payerAccount) detailHTML += ` • Acct: ${tx.payerAccount}`;
+                }
+                else if (tx.type === 'withdrawal') { 
+                    detailHTML = `Fee: ${fmt(tx.fee)} • Net: ${fmt(tx.net)}`; 
+                    if (tx.bankName) detailHTML += ` • ${tx.bankName} - ${tx.acctNo}`; 
+                }
+                else if (tx.type === 'task') detailHTML = `${tx.completed || '?'}/5 Questions Completed`;
                 else if (tx.type === 'referral') detailHTML = `From: ${tx.refereeName || 'Referral'}`;
                 else if (tx.type === 'plan') detailHTML = `Plan: ${tx.package || 'Purchase'}`;
                 else if (tx.type === 'bonus') detailHTML = tx.note || 'Welcome Bonus';
@@ -220,7 +377,10 @@
                 html += `
                 <div class="history-card ${tx.type}" style="animation-delay:${i * 0.03}s;">
                     <div class="history-header">
-                        <span class="history-type">${typeLabel} ${statusBadge}</span>
+                        <span class="history-type">
+                            ${typeLabel} 
+                            <span class="status-badge ${getStatusClass(tx.status)}">${getStatusLabel(tx.status)}</span>
+                        </span>
                         <span class="history-amount ${amountClass}">${amountPrefix}${fmt(tx.amount)}</span>
                     </div>
                     <div class="history-detail">${detailHTML}</div>
@@ -231,16 +391,36 @@
             document.getElementById('historyList').innerHTML = html;
         }
 
+        // ✅ FIXED: Filter function with proper active tab handling
         function filterHistory(type) {
             currentFilter = type;
-            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-            const buttons = document.querySelectorAll('.filter-tab');
-            buttons.forEach(button => {
-                if (button.getAttribute('onclick') === `filterHistory('${type}')`) {
-                    button.classList.add('active');
+            
+            // ✅ FIXED: Update active class on filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+                const filterValue = tab.getAttribute('data-filter') || tab.textContent.trim().toLowerCase();
+                if (filterValue === type || 
+                    (type === 'all' && tab.textContent.includes('All')) ||
+                    (type === 'deposit' && tab.textContent.includes('Deposits')) ||
+                    (type === 'withdrawal' && tab.textContent.includes('Withdrawals')) ||
+                    (type === 'task' && tab.textContent.includes('Tasks')) ||
+                    (type === 'referral' && tab.textContent.includes('Referrals')) ||
+                    (type === 'bonus' && tab.textContent.includes('Bonuses')) ||
+                    (type === 'plan' && tab.textContent.includes('Plans'))) {
+                    tab.classList.add('active');
                 }
             });
+            
             renderHistory();
+            
+            // ✅ FIXED: Update URL without reloading
+            const url = new URL(window.location);
+            if (type === 'all') {
+                url.searchParams.delete('filter');
+            } else {
+                url.searchParams.set('filter', type);
+            }
+            window.history.replaceState({}, '', url);
         }
     </script>
 </body>
