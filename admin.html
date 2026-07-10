@@ -144,7 +144,7 @@
             margin-left: 0;
         }
 
-        /* ============ TOP HEADER WITH MENU BUTTON ============ */
+        /* ============ TOP HEADER ============ */
         .admin-topbar {
             display: flex;
             justify-content: space-between;
@@ -213,10 +213,6 @@
             font-weight: 600;
         }
 
-        .admin-topbar .right i {
-            font-size: 1.2em;
-        }
-
         /* ============ SECTIONS ============ */
         .admin-section {
             display: none;
@@ -230,20 +226,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .admin-header h2 {
-            color: var(--accent-light);
-            font-size: 1.2em;
         }
 
         /* ============ STATS GRID ============ */
@@ -387,12 +369,6 @@
             color: black;
         }
 
-        .btn-gold {
-            background: var(--gold);
-            color: black;
-            font-weight: 600;
-        }
-
         .refresh-btn {
             background: var(--accent);
             color: white;
@@ -457,46 +433,6 @@
             opacity: 0.6;
         }
 
-        /* ============ FORMS ============ */
-        .form-group {
-            margin-bottom: 14px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 4px;
-            font-weight: 500;
-            color: var(--text-dim);
-            font-size: 0.8em;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 10px 14px;
-            background: var(--dark);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 0.9em;
-            transition: all 0.3s;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
-        }
-
-        .form-textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
         /* ============ CARD ============ */
         .card {
             background: var(--card);
@@ -509,6 +445,88 @@
 
         .card:hover {
             border-color: var(--accent);
+        }
+
+        /* ============ EMPTY STATE ============ */
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-dim);
+        }
+
+        .empty-state i {
+            font-size: 2.5em;
+            color: var(--border);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .empty-state p {
+            font-size: 0.85em;
+        }
+
+        /* ============ TASK REPORT CARD ============ */
+        .task-report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--dark);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s;
+        }
+
+        .task-report-item:hover {
+            border-left-color: var(--gold);
+            background: var(--card);
+        }
+
+        .task-report-item .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-report-item .user-info .name {
+            font-weight: 600;
+            color: var(--accent-light);
+        }
+
+        .task-report-item .user-info .id {
+            font-size: 0.7em;
+            color: var(--text-dim);
+        }
+
+        .task-report-item .task-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-report-item .task-stats .completed {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .task-report-item .task-stats .earned {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .task-report-item .task-stats .progress {
+            width: 80px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .task-report-item .task-stats .progress .fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.5s ease;
         }
 
         /* ============ LOGIN OVERLAY ============ */
@@ -542,10 +560,6 @@
         .login-box h2 {
             color: var(--accent-light);
             margin-bottom: 20px;
-        }
-
-        .login-box .form-group {
-            margin-bottom: 15px;
         }
 
         .login-box .btn-block {
@@ -637,6 +651,16 @@
             .login-box {
                 padding: 25px 20px;
             }
+
+            .task-report-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .task-report-item .task-stats {
+                justify-content: space-between;
+            }
         }
 
         /* ============ SCROLLBAR ============ */
@@ -657,7 +681,7 @@
             background: var(--accent);
         }
 
-        /* ============ TOAST OVERRIDE ============ */
+        /* ============ TOAST ============ */
         .toast {
             position: fixed;
             top: 20px;
@@ -687,24 +711,6 @@
         @keyframes slideUp {
             from { transform: translateX(-50%) translateY(0); opacity: 1; }
             to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-        }
-
-        /* ============ EMPTY STATE ============ */
-        .empty-state {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--text-dim);
-        }
-
-        .empty-state i {
-            font-size: 2.5em;
-            color: var(--border);
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .empty-state p {
-            font-size: 0.85em;
         }
     </style>
 </head>
@@ -761,6 +767,11 @@
                 <button class="nav-item" data-section="referrals" onclick="switchSection('referrals')">
                     <i class="fas fa-sitemap"></i>
                     <span class="nav-label">Referrals</span>
+                </button>
+                <!-- ✅ NEW: Tasks Report -->
+                <button class="nav-item" data-section="tasks" onclick="switchSection('tasks')">
+                    <i class="fas fa-check-double"></i>
+                    <span class="nav-label">Tasks Report</span>
                 </button>
                 <button class="nav-item" data-section="plans" onclick="switchSection('plans')">
                     <i class="fas fa-tags"></i>
@@ -901,6 +912,23 @@
                         </thead>
                         <tbody id="refTable"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- ============ ✅ NEW: TASKS REPORT ============ -->
+            <div class="admin-section" id="sec-tasks">
+                <div class="section-header">
+                    <h3>📝 Daily Tasks Report</h3>
+                    <div class="search-box">
+                        <input type="date" id="taskDateFilter" onchange="loadTaskReports()">
+                        <button class="refresh-btn" onclick="loadTaskReports()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="taskReportsList">
+                    <div class="empty-state">
+                        <i class="fas fa-tasks"></i>
+                        <p>Select a date to view task completions</p>
+                    </div>
                 </div>
             </div>
 
@@ -1062,6 +1090,7 @@
                 withdrawals: '💸 Withdrawals',
                 content: '📝 Content Bank',
                 referrals: '👥 Referrals',
+                tasks: '📝 Tasks Report',
                 plans: '📋 Plans',
                 notices: '📢 Notices',
                 settings: '⚙️ Settings'
@@ -1074,10 +1103,94 @@
             if (section === 'deposits' && typeof loadDeposits === 'function') loadDeposits();
             if (section === 'withdrawals' && typeof loadWithdrawals === 'function') loadWithdrawals();
             if (section === 'referrals' && typeof loadReferrals === 'function') loadReferrals();
+            if (section === 'tasks' && typeof loadTaskReports === 'function') loadTaskReports();
             if (section === 'plans' && typeof loadPlansAdmin === 'function') loadPlansAdmin();
             if (section === 'notices' && typeof loadNotices === 'function') loadNotices();
             if (section === 'settings' && typeof loadSettingsData === 'function') loadSettingsData();
             if (section === 'content' && typeof loadContent === 'function') loadContent();
+        };
+
+        // ============ ✅ TASK REPORTS FUNCTION ============
+        window.loadTaskReports = async function() {
+            const dateInput = document.getElementById('taskDateFilter');
+            const date = dateInput.value || new Date().toISOString().split('T')[0];
+            
+            if (!dateInput.value) {
+                dateInput.value = date;
+            }
+
+            document.getElementById('taskReportsList').innerHTML = `
+                <div class="empty-state">
+                    <div class="spinner"></div>
+                    <p>Loading tasks for ${date}...</p>
+                </div>
+            `;
+
+            try {
+                const tasks = await getAllUserTasksForDate(date);
+                
+                if (tasks.length === 0) {
+                    document.getElementById('taskReportsList').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No tasks completed on ${date}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                let totalCompleted = 0;
+                let totalEarned = 0;
+
+                tasks.forEach(task => {
+                    const completed = task.tasks.filter(t => t.done).length;
+                    const earned = task.tasks.reduce((sum, t) => sum + (t.earned || 0), 0);
+                    const progress = (completed / 5) * 100;
+                    
+                    totalCompleted += completed;
+                    totalEarned += earned;
+
+                    html += `
+                        <div class="task-report-item">
+                            <div class="user-info">
+                                <span class="name">${task.userId}</span>
+                                <span class="id">${completed}/5 questions completed</span>
+                            </div>
+                            <div class="task-stats">
+                                <span class="completed">✅ ${completed}/5</span>
+                                <div class="progress">
+                                    <div class="fill" style="width:${progress}%;"></div>
+                                </div>
+                                <span class="earned">${fmt(earned)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Add summary
+                html = `
+                    <div class="card" style="border-color:var(--gold);margin-bottom:15px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                            <span style="color:var(--gold);font-weight:700;">📊 Daily Summary - ${date}</span>
+                            <span>Total Users: <strong>${tasks.length}</strong></span>
+                            <span>Total Tasks: <strong>${totalCompleted}/5</strong></span>
+                            <span>Total Earned: <strong style="color:var(--gold);">${fmt(totalEarned)}</strong></span>
+                        </div>
+                    </div>
+                ` + html;
+
+                document.getElementById('taskReportsList').innerHTML = html;
+
+            } catch (error) {
+                console.error('Load task reports error:', error);
+                document.getElementById('taskReportsList').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error loading tasks. Please refresh.</p>
+                    </div>
+                `;
+            }
         };
 
         // ============ CHECK IF ALREADY LOGGED IN ============
