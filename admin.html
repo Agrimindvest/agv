@@ -34,7 +34,6 @@
             z-index: 1000;
             border-right: 2px solid var(--accent);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateX(0);
         }
 
         .admin-sidebar.closed {
@@ -250,14 +249,14 @@
         /* ============ STATS GRID ============ */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
         }
 
         .stat-card {
             background: var(--card);
-            padding: 18px;
+            padding: 16px;
             border-radius: 12px;
             border: 1px solid var(--border);
             display: flex;
@@ -273,19 +272,19 @@
         }
 
         .stat-card i {
-            font-size: 1.8em;
+            font-size: 1.6em;
             color: var(--accent);
         }
 
         .stat-info h4 {
             color: var(--text-dim);
-            font-size: 0.7em;
+            font-size: 0.65em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .stat-info span {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 700;
             color: var(--gold);
         }
@@ -294,7 +293,7 @@
         .table-wrap {
             background: var(--card);
             border-radius: 12px;
-            padding: 18px;
+            padding: 15px;
             border: 1px solid var(--border);
             overflow-x: auto;
         }
@@ -302,23 +301,23 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85em;
+            font-size: 0.82em;
         }
 
         th {
             background: var(--primary-dark);
-            padding: 10px 12px;
+            padding: 8px 10px;
             text-align: left;
             font-weight: 600;
             color: var(--gold);
-            font-size: 0.8em;
+            font-size: 0.75em;
             white-space: nowrap;
         }
 
         td {
-            padding: 10px 12px;
+            padding: 8px 10px;
             border-bottom: 1px solid var(--border);
-            font-size: 0.8em;
+            font-size: 0.78em;
             vertical-align: middle;
         }
 
@@ -330,7 +329,7 @@
         .badge {
             padding: 3px 10px;
             border-radius: 12px;
-            font-size: 0.7em;
+            font-size: 0.65em;
             font-weight: 600;
             display: inline-block;
         }
@@ -352,8 +351,8 @@
 
         /* ============ BUTTONS ============ */
         .btn-sm {
-            padding: 5px 12px;
-            font-size: 0.75em;
+            padding: 4px 10px;
+            font-size: 0.7em;
             border-radius: 6px;
             border: none;
             cursor: pointer;
@@ -398,10 +397,10 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
+            padding: 5px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75em;
+            font-size: 0.7em;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
@@ -427,6 +426,35 @@
             color: var(--accent-light);
             font-size: 1em;
             margin: 0;
+        }
+
+        .section-header .search-box {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .section-header .search-box input {
+            padding: 6px 12px;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.8em;
+            min-width: 180px;
+            transition: all 0.3s;
+        }
+
+        .section-header .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+        }
+
+        .section-header .search-box input::placeholder {
+            color: var(--text-dim);
+            opacity: 0.6;
         }
 
         /* ============ FORMS ============ */
@@ -574,15 +602,16 @@
 
             .section-header {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
             }
 
-            .section-header > div {
+            .section-header .search-box {
                 width: 100%;
             }
 
-            .section-header input[type="text"] {
-                width: 100% !important;
+            .section-header .search-box input {
+                flex: 1;
+                min-width: 0;
             }
         }
 
@@ -626,6 +655,56 @@
 
         .admin-sidebar::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
+        }
+
+        /* ============ TOAST OVERRIDE ============ */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border: 1px solid var(--accent);
+            padding: 12px 25px;
+            border-radius: 25px;
+            z-index: 99999;
+            font-weight: 600;
+            font-size: 0.9em;
+            animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            color: var(--text);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        .toast.fade-out {
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(0); opacity: 1; }
+            to { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+        }
+
+        /* ============ EMPTY STATE ============ */
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-dim);
+        }
+
+        .empty-state i {
+            font-size: 2.5em;
+            color: var(--border);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .empty-state p {
+            font-size: 0.85em;
         }
     </style>
 </head>
@@ -738,9 +817,9 @@
             <div class="admin-section" id="sec-users">
                 <div class="section-header">
                     <h3>👥 Users</h3>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <input type="text" class="form-input" placeholder="Search..." id="userSearch" oninput="loadUsers()" style="width:200px;">
-                        <button class="refresh-btn" onclick="loadUsers()"><i class="fas fa-sync"></i> Refresh</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="🔍 Search users..." id="userSearch" oninput="loadUsers()">
+                        <button class="refresh-btn" onclick="loadUsers()"><i class="fas fa-sync"></i></button>
                     </div>
                 </div>
                 <div class="table-wrap">
@@ -757,7 +836,10 @@
             <div class="admin-section" id="sec-deposits">
                 <div class="section-header">
                     <h3>💳 Deposits</h3>
-                    <button class="refresh-btn" onclick="loadDeposits()"><i class="fas fa-sync"></i> Refresh</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="🔍 Search deposits..." id="depositSearch" oninput="loadDeposits()">
+                        <button class="refresh-btn" onclick="loadDeposits()"><i class="fas fa-sync"></i></button>
+                    </div>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -773,7 +855,10 @@
             <div class="admin-section" id="sec-withdrawals">
                 <div class="section-header">
                     <h3>💸 Withdrawals</h3>
-                    <button class="refresh-btn" onclick="loadWithdrawals()"><i class="fas fa-sync"></i> Refresh</button>
+                    <div class="search-box">
+                        <input type="text" placeholder="🔍 Search withdrawals..." id="withdrawalSearch" oninput="loadWithdrawals()">
+                        <button class="refresh-btn" onclick="loadWithdrawals()"><i class="fas fa-sync"></i></button>
+                    </div>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -807,7 +892,7 @@
             <div class="admin-section" id="sec-referrals">
                 <div class="section-header">
                     <h3>👥 Referrals</h3>
-                    <button class="refresh-btn" onclick="loadReferrals()"><i class="fas fa-sync"></i> Refresh</button>
+                    <button class="refresh-btn" onclick="loadReferrals()"><i class="fas fa-sync"></i></button>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -823,9 +908,9 @@
             <div class="admin-section" id="sec-plans">
                 <div class="section-header">
                     <h3>📋 Plans</h3>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <div class="search-box">
                         <button class="btn btn-primary btn-sm" onclick="showAddPlan()"><i class="fas fa-plus"></i> Add Plan</button>
-                        <button class="refresh-btn" onclick="loadPlansAdmin()"><i class="fas fa-sync"></i> Refresh</button>
+                        <button class="refresh-btn" onclick="loadPlansAdmin()"><i class="fas fa-sync"></i></button>
                     </div>
                 </div>
                 <div id="plansAdminList"></div>
@@ -883,13 +968,14 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
+            const mainContent = document.getElementById('mainContent');
 
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('open');
                 overlay.classList.toggle('active');
             } else {
                 sidebar.classList.toggle('closed');
-                document.getElementById('mainContent').classList.toggle('expanded');
+                mainContent.classList.toggle('expanded');
             }
         }
 
@@ -903,14 +989,38 @@
             });
         });
 
+        // ============ CLOSE SIDEBAR ON OVERLAY CLICK ============
+        document.getElementById('sidebarOverlay').addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+                this.classList.remove('active');
+            }
+        });
+
         // ============ SHOW ADMIN CONTENT ============
         function showAdminContent() {
             document.getElementById('adminWrapper').style.display = 'flex';
             document.getElementById('loginOverlay').classList.add('hidden');
         }
 
-        // ============ OVERRIDE ADMIN LOGIN WITH SESSION ============
-        const originalAdminLogin = window.adminLogin;
+        // ============ TOAST FUNCTION ============
+        function toast(message, duration = 3000) {
+            const existing = document.querySelector('.toast');
+            if (existing) {
+                existing.classList.add('fade-out');
+                setTimeout(() => existing.remove(), 300);
+            }
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = message;
+            document.body.appendChild(t);
+            setTimeout(() => {
+                t.classList.add('fade-out');
+                setTimeout(() => t.remove(), 300);
+            }, duration);
+        }
+
+        // ============ ADMIN LOGIN ============
         window.adminLogin = function() {
             const email = document.getElementById('adminUser').value.trim();
             const password = document.getElementById('adminPass').value;
@@ -924,8 +1034,7 @@
             }
         };
 
-        // ============ OVERRIDE ADMIN LOGOUT ============
-        const originalAdminLogout = window.adminLogout;
+        // ============ ADMIN LOGOUT ============
         window.adminLogout = function() {
             localStorage.removeItem('adminLoggedIn');
             document.getElementById('adminWrapper').style.display = 'none';
@@ -935,11 +1044,59 @@
             toast('Logged out');
         };
 
+        // ============ SWITCH SECTION ============
+        window.switchSection = function(section) {
+            // Update nav items
+            document.querySelectorAll('.admin-sidebar .nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.admin-sidebar .nav-item[data-section="${section}"]`)?.classList.add('active');
+
+            // Update sections
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('sec-' + section).classList.add('active');
+
+            // Update title
+            const titleMap = {
+                dashboard: '📊 Dashboard',
+                users: '👥 Users',
+                deposits: '💳 Deposits',
+                withdrawals: '💸 Withdrawals',
+                content: '📝 Content Bank',
+                referrals: '👥 Referrals',
+                plans: '📋 Plans',
+                notices: '📢 Notices',
+                settings: '⚙️ Settings'
+            };
+            document.getElementById('sectionTitle').textContent = titleMap[section] || section;
+
+            // Load data
+            if (section === 'dashboard' && typeof loadDashboard === 'function') loadDashboard();
+            if (section === 'users' && typeof loadUsers === 'function') loadUsers();
+            if (section === 'deposits' && typeof loadDeposits === 'function') loadDeposits();
+            if (section === 'withdrawals' && typeof loadWithdrawals === 'function') loadWithdrawals();
+            if (section === 'referrals' && typeof loadReferrals === 'function') loadReferrals();
+            if (section === 'plans' && typeof loadPlansAdmin === 'function') loadPlansAdmin();
+            if (section === 'notices' && typeof loadNotices === 'function') loadNotices();
+            if (section === 'settings' && typeof loadSettingsData === 'function') loadSettingsData();
+            if (section === 'content' && typeof loadContent === 'function') loadContent();
+        };
+
         // ============ CHECK IF ALREADY LOGGED IN ============
         if (localStorage.getItem('adminLoggedIn') === 'true') {
             showAdminContent();
             if (typeof loadDashboard === 'function') loadDashboard();
         }
+
+        // ============ HANDLE WINDOW RESIZE ============
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        });
+
+        console.log('🛡️ Admin Panel Ready');
     </script>
 </body>
 </html>
