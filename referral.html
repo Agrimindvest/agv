@@ -27,7 +27,6 @@
             font-size: 0.9em;
         }
 
-        /* ============ METRICS SECTION ============ */
         .metrics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -77,7 +76,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ============ EARNINGS HIGHLIGHT ============ */
         .earnings-highlight {
             background: linear-gradient(135deg, var(--primary), rgba(76, 175, 80, 0.2));
             border: 2px solid var(--accent);
@@ -103,7 +101,6 @@
             text-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
         }
 
-        /* ============ REFERRAL LINK SECTION ============ */
         .referral-link-card {
             background: var(--card);
             border: 2px solid var(--accent);
@@ -195,7 +192,6 @@
         .share-whatsapp { background: #25D366; }
         .share-copy { background: var(--accent); color: var(--dark); }
 
-        /* ============ INVITE SECTION ============ */
         .invite-card {
             background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(76, 175, 80, 0.1));
             border: 1px solid var(--border);
@@ -257,7 +253,6 @@
         .invite-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 193, 7, 0.3); }
         .invite-btn:active { transform: translateY(0); }
 
-        /* ============ RULES SECTION ============ */
         .rules-card {
             background: rgba(255, 152, 0, 0.1);
             border: 1px solid var(--warning);
@@ -297,7 +292,6 @@
             margin-top: 2px;
         }
 
-        /* ============ REFERRAL USERS LIST ============ */
         .users-section {
             animation: fadeSlideIn 0.5s ease 0.35s both;
         }
@@ -393,26 +387,23 @@
     </header>
 
     <div class="main-content">
-        
+
         <a href="home.html" style="color:var(--accent-light);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:20px;">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
 
         <div class="referral-container">
-            
-            <!-- Page Header -->
+
             <div class="referral-page-header">
                 <h2 class="referral-title">👥 Referral Program</h2>
                 <p class="referral-subtitle">Build your team and earn sustainable income</p>
             </div>
 
-            <!-- Earnings Highlight -->
             <div class="earnings-highlight">
                 <div class="earnings-label">💰 YOUR REFERRAL EARNINGS</div>
                 <div class="earnings-amount" id="refEarnings">₦0</div>
             </div>
 
-            <!-- Key Metrics -->
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-value" id="refTotal">0</div>
@@ -432,7 +423,6 @@
                 </div>
             </div>
 
-            <!-- Referral Link Section -->
             <div class="referral-link-card">
                 <h4><i class="fas fa-link"></i> YOUR REFERRAL LINK</h4>
                 <div class="ref-link-display">
@@ -449,7 +439,6 @@
                 </div>
             </div>
 
-            <!-- Direct Invite Section -->
             <div class="invite-card">
                 <h4><i class="fas fa-envelope"></i> DIRECT INVITE</h4>
                 <p style="font-size:0.85em;color:var(--text-dim);margin-bottom:12px;">Invite friends directly by email or phone</p>
@@ -462,7 +451,6 @@
                 </div>
             </div>
 
-            <!-- Referral Rules -->
             <div class="rules-card">
                 <h4><i class="fas fa-info-circle"></i> HOW IT WORKS</h4>
                 <ul>
@@ -474,7 +462,6 @@
                 </ul>
             </div>
 
-            <!-- Referral Users List -->
             <div class="users-section">
                 <h4><i class="fas fa-users"></i> YOUR TEAM (<span id="userCount">0</span>)</h4>
                 <div id="refUsersList">
@@ -492,14 +479,16 @@
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
     </nav>
 
-      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase.js"></script>
     <script>
-
         const user = checkAuth();
         if (!user) window.location.href = 'login.html';
 
         let currentUser = user;
+
+        // BASE URL of your deployed app — change this if you add a custom domain
+        const APP_BASE_URL = 'https://agv-wheat.vercel.app';
 
         window.addEventListener('load', async () => {
             currentUser = await refreshUser();
@@ -510,19 +499,35 @@
         async function loadReferralData() {
             try {
                 const refCode = currentUser.refCode || currentUser.id;
-                const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
+                const refLink = APP_BASE_URL + '/register.html?ref=' + refCode;
                 document.getElementById('refLink').textContent = refLink;
                 document.getElementById('refEarnings').textContent = fmt(currentUser.refEarnings || 0);
 
-                const snapshot = await db.collection('users').where('referredBy', '==', currentUser.id).get();
+                // Fetch all users referred by me
+                const { data: referredUsers, error } = await sb
+                    .from('users')
+                    .select('*')
+                    .eq('referred_by', currentUser.id);
+                if (error) throw error;
 
-                let totalRefs = snapshot.size;
+                let totalRefs = referredUsers.length;
                 let activeRefs = 0;
                 let inactiveRefs = 0;
                 let pendingEarnings = 0;
                 let usersHTML = '';
 
-                if (snapshot.empty) {
+                // Fetch referral earnings from referrals table
+                const { data: refEarnings } = await sb
+                    .from('referrals')
+                    .select('referee_id, earned')
+                    .eq('referrer_id', currentUser.id);
+
+                const earningsMap = {};
+                (refEarnings || []).forEach(r => {
+                    earningsMap[r.referee_id] = (earningsMap[r.referee_id] || 0) + Number(r.earned || 0);
+                });
+
+                if (referredUsers.length === 0) {
                     usersHTML = `
                     <div class="empty-state">
                         <i class="fas fa-user-tie"></i>
@@ -530,23 +535,12 @@
                         <p style="font-size:0.85em;">Share your referral link above to start building your team!</p>
                     </div>`;
                 } else {
-                    const refEarnings = await db.collection('referrals').where('referrerId', '==', currentUser.id).get();
-                    const earningsMap = {};
-                    refEarnings.forEach(d => {
-                        const data = d.data();
-                        earningsMap[data.refereeId] = (earningsMap[data.refereeId] || 0) + (data.earned || 0);
-                        if (!data.earned || data.earned === 0) {
-                            pendingEarnings += 0; // Calculate based on their plan
-                        }
-                    });
-
-                    snapshot.forEach((doc, i) => {
-                        const refUser = doc.data();
+                    referredUsers.forEach((refUser, i) => {
                         const hasPlan = refUser.plan && refUser.plan !== 'none' && refUser.invested;
                         const earned = earningsMap[refUser.id] || 0;
                         if (hasPlan) activeRefs++; else inactiveRefs++;
 
-                        const joinDate = new Date(refUser.createdAt);
+                        const joinDate = new Date(refUser.created_at);
                         const daysAgo = Math.floor((new Date() - joinDate) / (1000 * 60 * 60 * 24));
                         const daysText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago';
 
@@ -585,11 +579,10 @@
         // ============ COPY REFERRAL LINK ============
         function copyRefLink() {
             const refCode = currentUser.refCode || currentUser.id;
-            const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
+            const refLink = APP_BASE_URL + '/register.html?ref=' + refCode;
             navigator.clipboard.writeText(refLink)
                 .then(() => toast('📋 Link copied to clipboard!'))
                 .catch(() => {
-                    // Fallback
                     const textarea = document.createElement('textarea');
                     textarea.value = refLink;
                     document.body.appendChild(textarea);
@@ -603,7 +596,7 @@
         // ============ SHARE VIA WHATSAPP ============
         function shareWhatsApp() {
             const refCode = currentUser.refCode || currentUser.id;
-            const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
+            const refLink = APP_BASE_URL + '/register.html?ref=' + refCode;
             const message = encodeURIComponent(
                 '🌱 *Join Me on Agrimindvest!* 🌱\n\n' +
                 '💼 Read articles, answer questions, and earn daily\n' +
@@ -620,8 +613,8 @@
         // ============ ADVANCED SHARE ============
         function shareCopyAdvanced() {
             const refCode = currentUser.refCode || currentUser.id;
-            const refLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
-            
+            const refLink = APP_BASE_URL + '/register.html?ref=' + refCode;
+
             if (navigator.share) {
                 navigator.share({
                     title: 'Join Agrimindvest',
@@ -637,7 +630,7 @@
         async function sendDirectInvite() {
             const input = document.getElementById('inviteInput').value.trim();
             const statusDiv = document.getElementById('inviteStatus');
-            
+
             if (!input) {
                 statusDiv.innerHTML = '<span style="color:var(--warning);">Please enter email or phone</span>';
                 return;
@@ -646,32 +639,29 @@
             statusDiv.innerHTML = '<span style="color:var(--text-dim);">Sending invite...</span>';
 
             try {
-                // Validate email or phone
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const phoneRegex = /^[\d+\-\s()]{7,}$/;
-                
+
                 if (!emailRegex.test(input) && !phoneRegex.test(input)) {
                     statusDiv.innerHTML = '<span style="color:var(--danger);">Invalid email or phone</span>';
                     return;
                 }
 
-                // Create invite record
                 const refCode = currentUser.refCode || currentUser.id;
-                const inviteLink = 'agrimindvest.github.io/agv/register.html?ref=' + refCode;
+                const inviteLink = APP_BASE_URL + '/register.html?ref=' + refCode;
 
-                await db.collection('invites').add({
-                    from: currentUser.id,
-                    fromName: currentUser.name,
-                    to: input,
+                await sb.from('invites').insert({
+                    from_user: currentUser.id,
+                    from_name: currentUser.name,
+                    to_user: input,
                     link: inviteLink,
                     type: emailRegex.test(input) ? 'email' : 'phone',
-                    status: 'sent',
-                    createdAt: new Date().toISOString()
+                    status: 'sent'
                 });
 
                 statusDiv.innerHTML = '<span style="color:var(--success);">✅ Invite sent successfully!</span>';
                 document.getElementById('inviteInput').value = '';
-                
+
                 setTimeout(() => {
                     statusDiv.innerHTML = '';
                 }, 4000);
@@ -681,7 +671,6 @@
             }
         }
 
-        // ============ ALLOW ENTER KEY ON INVITE ============
         document.getElementById('inviteInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 sendDirectInvite();
