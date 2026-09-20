@@ -223,7 +223,7 @@
         <div class="welcome-popup">
             <div class="welcome-logo">🌱</div>
             <h3 style="color:var(--accent-light);font-size:1.2em;margin-bottom:2px;">Agrimindvest</h3>
-            
+
             <div class="welcome-typewriter-box">
                 <span class="welcome-typewriter-text" id="welcomeTypewriter"></span>
                 <span class="welcome-cursor">|</span>
@@ -233,12 +233,12 @@
                 <div class="wf-item"><i class="fas fa-book-open"></i> Read daily agricultural articles</div>
                 <div class="wf-item"><i class="fas fa-question-circle"></i> Answer 5 questions - no penalties!</div>
                 <div class="wf-item"><i class="fas fa-coins"></i> Earn per correct answer instantly</div>
-                <div class="wf-item"><i class="fas fa-users"></i> Refer friends & earn 10% bonus</div>
+                <div class="wf-item"><i class="fas fa-users"></i> Refer friends &amp; earn 10% bonus</div>
                 <div class="wf-item"><i class="fas fa-wallet"></i> Withdraw to your bank account</div>
             </div>
 
             <div class="welcome-buttons">
-                <a href="https://t.me/agrimindvest" class="btn btn-outline btn-sm" id="welcomeGroupLink" target="_blank">
+                <a href="https://t.me/agrimindvest" class="btn btn-outline btn-sm" id="welcomeGroupLink" target="_blank" rel="noopener noreferrer">
                     <i class="fab fa-telegram"></i> Join Group
                 </a>
                 <a href="#" class="btn btn-outline btn-sm" id="welcomeSupportLink">
@@ -265,7 +265,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        
+
         <div class="notice-banner" id="homeNotice">Welcome to Agrimindvest! Complete your daily tasks to earn.</div>
 
         <div class="live-ticker" id="liveTicker">
@@ -310,7 +310,7 @@
 
         <div class="footer">
             <p>
-                <a href="https://t.me/agrimindvest" class="group-link" id="footerGroupLink" target="https://t.me/agrimindvest"><i class="fab fa-telegram"></i> Join Telegram</a> &nbsp;|&nbsp;
+                <a href="https://t.me/agrimindvest" class="group-link" id="footerGroupLink" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram"></i> Join Telegram</a> &nbsp;|&nbsp;
                 <a href="#" class="group-link" id="footerSupportLink"><i class="fas fa-headset"></i> Support</a>
             </p>
             <p style="margin-top:5px;">&copy; 2026 Agrimindvest</p>
@@ -325,7 +325,7 @@
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
     </nav>
 
-       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase.js"></script>
     <script>
         // ============ CHECK AUTH ============
@@ -417,26 +417,31 @@
         // ============ LOAD SETTINGS ============
         async function loadSettings() {
             try {
-                const s = await db.collection('settings').doc('siteSettings').get();
-                if (s.exists) {
-                    const d = s.data();
-                    const tg = d.telegramLink || '#';
-                    const se = d.supportEmail || ADMIN_EMAIL;
-                    document.getElementById('footerGroupLink').href = tg;
-                    document.getElementById('footerSupportLink').href = 'mailto:' + se;
-                    document.getElementById('welcomeGroupLink').href = tg;
-                    document.getElementById('welcomeSupportLink').href = 'mailto:' + se;
+                // Use Supabase helper — no Firebase code
+                const s = await getDoc('settings', 'siteSettings');
+
+                // Only override the hardcoded link if DB has a real value
+                if (s && s.telegramLink && s.telegramLink.trim() !== '' && s.telegramLink !== '#') {
+                    const el1 = document.getElementById('footerGroupLink');
+                    const el2 = document.getElementById('welcomeGroupLink');
+                    if (el1) el1.href = s.telegramLink;
+                    if (el2) el2.href = s.telegramLink;
                 }
-                const n = await db.collection('settings').doc('notices').get();
-                if (n.exists && n.data().home) {
-                    document.getElementById('homeNotice').textContent = n.data().home;
+
+                if (s && s.supportEmail && s.supportEmail.trim() !== '') {
+                    const el1 = document.getElementById('footerSupportLink');
+                    const el2 = document.getElementById('welcomeSupportLink');
+                    if (el1) el1.href = 'mailto:' + s.supportEmail;
+                    if (el2) el2.href = 'mailto:' + s.supportEmail;
+                }
+
+                const n = await getDoc('settings', 'notices');
+                if (n && n.home) {
+                    document.getElementById('homeNotice').textContent = n.home;
                 }
             } catch (error) {
                 console.error('Load settings error:', error);
-                document.getElementById('footerGroupLink').href = '#';
-                document.getElementById('footerSupportLink').href = 'mailto:' + ADMIN_EMAIL;
-                document.getElementById('welcomeGroupLink').href = '#';
-                document.getElementById('welcomeSupportLink').href = 'mailto:' + ADMIN_EMAIL;
+                // Do NOT overwrite links on error — keep hardcoded ones
             }
         }
 
@@ -449,29 +454,15 @@
             return year + '-' + month + '-' + day;
         }
 
-        // ============ LOAD TASKS FROM FIRESTORE ============
-        async function loadUserTasksFromFirestore(userId, date) {
-            try {
-                const doc = await db.collection('userTasks').doc(userId + '_' + date).get();
-                if (doc.exists) {
-                    return doc.data().tasks || [];
-                }
-                return [];
-            } catch (error) {
-                console.error('Load tasks from Firestore error:', error);
-                return [];
-            }
-        }
-
         // ============ LOAD DASHBOARD ============
         async function loadDashboard() {
             try {
                 currentUser = await refreshUser();
                 animateCountUp(document.getElementById('homeBalance'), currentUser.balance || 0);
 
-                // ✅ FIXED: Load tasks from Firestore
                 const today = getLocalDate();
-                const myTasks = await loadUserTasksFromFirestore(currentUser.id, today);
+                const taskData = await syncUserTasks(currentUser.id, today);
+                const myTasks = taskData.tasks || [];
                 const done = myTasks.filter(t => t.done).length;
                 const todayEarned = myTasks.reduce((s, t) => s + (t.earned || 0), 0);
 
@@ -497,8 +488,8 @@
                 if (cards.length > 0) staggerCards('.card', 0.08);
                 const stats = document.querySelectorAll('.stat-mini');
                 if (stats.length > 0) staggerCards('.stat-mini', 0.06);
-                
-            } catch (error) { 
+
+            } catch (error) {
                 console.error('Dashboard error:', error);
                 toast('⚠️ Error loading dashboard. Please refresh.');
             }
