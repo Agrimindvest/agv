@@ -43,9 +43,6 @@
         .step-dot.active { background: var(--accent); box-shadow: 0 0 15px rgba(76,175,80,0.5); transform: scale(1.3); }
         .step-dot.done { background: var(--success); transform: scale(1.1); }
 
-        .success-checkmark { animation: checkDraw 0.6s cubic-bezier(0.4,0,0.2,1); }
-        @keyframes checkDraw { from{transform:scale(0) rotate(-45deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
-
         .btn-primary { transition: all 0.3s; }
         .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-gold { transition: all 0.3s; }
@@ -70,7 +67,6 @@
             margin: 15px 0;
         }
 
-        /* ✅ NEW: Timer and Amount Display */
         .timer-section {
             background: rgba(255,193,7,0.1);
             border: 1px solid var(--gold);
@@ -121,6 +117,111 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        /* ============ NEW: PLAN PICKER ============ */
+        .plan-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .plan-option {
+            background: var(--dark);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-option:hover {
+            border-color: var(--accent);
+            transform: translateX(3px);
+        }
+
+        .plan-option.selected {
+            border-color: var(--accent);
+            background: rgba(76,175,80,0.12);
+            box-shadow: 0 0 0 3px rgba(76,175,80,0.15);
+        }
+
+        .plan-option .plan-info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .plan-option .plan-name {
+            font-weight: 700;
+            color: var(--accent-light);
+            font-size: 0.95em;
+        }
+
+        .plan-option .plan-sub {
+            font-size: 0.7em;
+            color: var(--text-dim);
+        }
+
+        .plan-option .plan-price-tag {
+            font-weight: 800;
+            color: var(--gold);
+            font-size: 1.05em;
+            white-space: nowrap;
+        }
+
+        .plan-option .check-icon {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: transparent;
+            font-size: 0.75em;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+
+        .plan-option.selected .check-icon {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+
+        .plans-loading {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-dim);
+            font-size: 0.9em;
+        }
+
+        .selected-summary {
+            background: rgba(76,175,80,0.08);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            font-size: 0.85em;
+            color: var(--accent-light);
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .selected-summary.show { display: flex; }
+
+        /* Group header */
+        .plan-group-label {
+            font-size: 0.7em;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 6px;
+            margin-bottom: 2px;
+            padding-left: 4px;
+        }
     </style>
 </head>
 <body>
@@ -136,7 +237,7 @@
         </a>
 
         <div class="deposit-container">
-            
+
             <div class="deposit-error" id="depositError"></div>
 
             <div class="step-indicator">
@@ -145,20 +246,46 @@
                 <div class="step-dot" id="stepDot3"></div>
             </div>
 
-            <!-- STEP 1 -->
+            <!-- ============ STEP 1: CHOOSE PLAN ============ -->
             <div id="step1">
-                <h3 style="color:var(--accent-light);margin-bottom:10px;">💳 Fund Your Wallet</h3>
-                <p style="color:var(--text-dim);margin-bottom:20px;">Enter the amount you want to deposit</p>
+                <h3 style="color:var(--accent-light);margin-bottom:6px;">💳 Fund Your Wallet</h3>
+                <p style="color:var(--text-dim);margin-bottom:20px;font-size:0.9em;">
+                    Select the plan you want to fund. The deposit amount is fixed per plan.
+                </p>
+
                 <div class="card">
-                    <div class="form-group">
-                        <label>💰 Amount (Min: ₦5,000)</label>
-                        <input type="number" class="form-input" id="depAmt" placeholder="Enter amount" min="5000">
+                    <label style="display:block;font-weight:600;color:var(--text-dim);font-size:0.85em;margin-bottom:12px;">
+                        💰 CHOOSE YOUR PLAN
+                    </label>
+
+                    <div id="planPicker" class="plan-picker">
+                        <div class="plans-loading">
+                            <div class="spinner" style="margin:0 auto 10px;"></div>
+                            Loading available plans...
+                        </div>
                     </div>
-                    <button class="btn btn-primary btn-block" id="generateBtn" onclick="generateDetails()">💰 GENERATE PAYMENT DETAILS</button>
+
+                    <div class="selected-summary" id="selectedSummary">
+                        <i class="fas fa-check-circle"></i>
+                        <span>You will transfer <strong id="selectedAmountText">₦0</strong> for <strong id="selectedPlanText">—</strong></span>
+                    </div>
+
+                    <button class="btn btn-primary btn-block" id="generateBtn" onclick="generateDetails()" style="margin-top:16px;" disabled>
+                        🔒 SELECT A PLAN TO CONTINUE
+                    </button>
+                </div>
+
+                <div class="info-box" style="margin-top:15px;">
+                    <h4><i class="fas fa-info-circle"></i> Why fixed amounts?</h4>
+                    <ul>
+                        <li><i class="fas fa-lock"></i> Prevents deposit errors</li>
+                        <li><i class="fas fa-bolt"></i> Faster manual verification</li>
+                        <li><i class="fas fa-check"></i> Matches your plan exactly</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- STEP 2 -->
+            <!-- ============ STEP 2: PAYMENT DETAILS ============ -->
             <div id="step2" class="hidden">
                 <h3 style="color:var(--accent-light);margin-bottom:10px;">🏦 Payment Details</h3>
                 <p style="color:var(--text-dim);margin-bottom:5px;">Transfer the exact amount using the details below</p>
@@ -170,8 +297,7 @@
                 </div>
 
                 <div id="detailsSection" class="hidden">
-                    
-                    <!-- ✅ NEW: Timer and Amount Display -->
+
                     <div class="timer-section">
                         <div class="timer-label">💰 AMOUNT TO TRANSFER</div>
                         <div class="amount-display" id="displayAmount">₦0</div>
@@ -203,7 +329,7 @@
                 </div>
             </div>
 
-            <!-- STEP 3 -->
+            <!-- ============ STEP 3: CONFIRM ============ -->
             <div id="step3" class="hidden">
                 <h3 style="color:var(--accent-light);margin-bottom:10px;">📋 Confirm Your Transfer</h3>
                 <p style="color:var(--text-dim);margin-bottom:20px;">Provide your bank details for verification</p>
@@ -215,7 +341,7 @@
                 </div>
             </div>
 
-            <!-- SUCCESS -->
+            <!-- ============ SUCCESS ============ -->
             <div id="stepSuccess" class="hidden">
                 <div class="card" style="text-align:center;">
                     <div class="result-icon">✅</div>
@@ -241,60 +367,131 @@
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
     </nav>
 
-       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase.js"></script>
     <script>
-        // ============ CHECK AUTH ============
+        // ============ STATE ============
         (function() {
             const user = checkAuth();
-            if (!user) { 
-                window.location.href = 'login.html'; 
+            if (!user) {
+                window.location.href = 'login.html';
                 return;
             }
-            
+
             window.currentUser = user;
             window.depositRef = '';
             window.depositAmount = 0;
-            window.MIN_DEPOSIT = 5000;
+            window.selectedPlanKey = null;
+            window.availablePlans = {};
             window.timerInterval = null;
-            window.timerSeconds = 600; // 10 minutes
+            window.timerSeconds = 600;
 
-            // ✅ FIXED: Show error function
+            // ============ SHOW ERROR ============
             window.showError = function(message) {
                 const errorEl = document.getElementById('depositError');
                 if (errorEl) {
                     errorEl.textContent = message;
                     errorEl.classList.add('show');
-                    setTimeout(() => {
-                        errorEl.classList.remove('show');
-                    }, 5000);
+                    setTimeout(() => errorEl.classList.remove('show'), 5000);
                 }
             };
 
-            // ✅ NEW: Start 10-minute timer
+            // ============ LOAD PLANS INTO PICKER ============
+            window.loadAvailablePlans = async function() {
+                const picker = document.getElementById('planPicker');
+                try {
+                    const plans = await getActivePlans();
+
+                    // Filter out sold out / disabled
+                    const usable = {};
+                    Object.keys(plans).forEach(key => {
+                        const p = plans[key];
+                        if (p.status === 'active') usable[key] = p;
+                    });
+
+                    // Sort by price ascending
+                    const sortedKeys = Object.keys(usable).sort((a, b) => (usable[a].price || 0) - (usable[b].price || 0));
+
+                    if (sortedKeys.length === 0) {
+                        picker.innerHTML = `
+                            <div class="plans-loading">
+                                <i class="fas fa-exclamation-circle" style="font-size:2em;color:var(--warning);display:block;margin-bottom:10px;"></i>
+                                <p>No plans available right now.</p>
+                                <p style="font-size:0.85em;">Please check back later or contact admin.</p>
+                            </div>`;
+                        return;
+                    }
+
+                    window.availablePlans = usable;
+
+                    let html = '';
+                    sortedKeys.forEach(key => {
+                        const p = usable[key];
+                        html += `
+                            <div class="plan-option" data-key="${key}" onclick="selectPlan('${key}')">
+                                <div class="plan-info-left">
+                                    <span class="plan-name">${p.name}</span>
+                                    <span class="plan-sub">${fmt(p.perQ)}/question • ${fmt(p.daily)} daily</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <span class="plan-price-tag">${fmt(p.price)}</span>
+                                    <span class="check-icon"><i class="fas fa-check"></i></span>
+                                </div>
+                            </div>`;
+                    });
+                    picker.innerHTML = html;
+
+                } catch (error) {
+                    console.error('Load plans error:', error);
+                    picker.innerHTML = `
+                        <div class="plans-loading">
+                            <i class="fas fa-exclamation-triangle" style="font-size:2em;color:var(--danger);display:block;margin-bottom:10px;"></i>
+                            <p>Could not load plans. Please refresh.</p>
+                        </div>`;
+                }
+            };
+
+            // ============ SELECT A PLAN ============
+            window.selectPlan = function(key) {
+                const plan = window.availablePlans[key];
+                if (!plan) return;
+
+                window.selectedPlanKey = key;
+                window.depositAmount = Number(plan.price) || 0;
+
+                // Update UI
+                document.querySelectorAll('.plan-option').forEach(el => {
+                    el.classList.toggle('selected', el.dataset.key === key);
+                });
+
+                document.getElementById('selectedAmountText').textContent = fmt(plan.price);
+                document.getElementById('selectedPlanText').textContent = plan.name;
+                document.getElementById('selectedSummary').classList.add('show');
+
+                const btn = document.getElementById('generateBtn');
+                btn.disabled = false;
+                btn.innerHTML = `💰 GENERATE PAYMENT FOR ${fmt(plan.price)}`;
+            };
+
+            // ============ TIMER ============
             window.startTimer = function() {
-                window.timerSeconds = 600; // 10 minutes
+                window.timerSeconds = 600;
                 const timerDisplay = document.getElementById('timerDisplay');
                 const timerFill = document.getElementById('timerFill');
-                
-                if (window.timerInterval) {
-                    clearInterval(window.timerInterval);
-                }
-                
+
+                if (window.timerInterval) clearInterval(window.timerInterval);
+
                 window.timerInterval = setInterval(function() {
                     window.timerSeconds--;
-                    
-                    // Update display
+
                     const mins = Math.floor(window.timerSeconds / 60);
                     const secs = window.timerSeconds % 60;
-                    timerDisplay.textContent = 
+                    timerDisplay.textContent =
                         String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-                    
-                    // Update progress bar
+
                     const progress = (window.timerSeconds / 600) * 100;
                     timerFill.style.width = progress + '%';
-                    
-                    // Color warnings
+
                     timerDisplay.className = 'timer-display';
                     timerFill.className = 'timer-fill';
                     if (window.timerSeconds <= 60) {
@@ -305,44 +502,25 @@
                         timerDisplay.classList.add('danger');
                         timerFill.classList.add('danger');
                     }
-                    
-                    // Timer expired
+
                     if (window.timerSeconds <= 0) {
                         clearInterval(window.timerInterval);
                         timerDisplay.textContent = '00:00';
                         timerDisplay.className = 'timer-display danger';
                         toast('⏰ Time expired! Please generate new payment details.');
-                        // Optional: Auto-go back to step 1
-                        // document.getElementById('step2').classList.add('hidden');
-                        // document.getElementById('step1').classList.remove('hidden');
                     }
                 }, 1000);
             };
 
-            // ✅ FIXED: Generate Details with Timer
+            // ============ GENERATE DETAILS ============
             window.generateDetails = function() {
-                console.log('🔍 Generate details called');
-                
-                const amountInput = document.getElementById('depAmt');
-                if (!amountInput) {
-                    console.error('Amount input not found');
+                if (!window.selectedPlanKey || !window.depositAmount) {
+                    window.showError('Please select a plan first');
                     return;
                 }
-                
-                const amount = parseInt(amountInput.value);
-                console.log('Amount parsed:', amount);
-                
-                if (!amount || amount < window.MIN_DEPOSIT) {
-                    console.log('❌ Invalid amount:', amount);
-                    window.showError('Minimum deposit is ₦' + window.MIN_DEPOSIT.toLocaleString());
-                    return;
-                }
-                
-                console.log('✅ Amount valid:', amount);
-                window.depositAmount = amount;
+
                 window.depositRef = generateRef('AGV-DEP');
-                console.log('Deposit ref:', window.depositRef);
-                
+
                 document.getElementById('step1').classList.add('hidden');
                 document.getElementById('step2').classList.remove('hidden');
                 document.getElementById('stepDot1').classList.add('done');
@@ -350,36 +528,29 @@
                 document.getElementById('loadingSection').classList.remove('hidden');
                 document.getElementById('detailsSection').classList.add('hidden');
 
-                // Show amount in timer section
-                document.getElementById('displayAmount').textContent = fmt(amount);
+                document.getElementById('displayAmount').textContent = fmt(window.depositAmount);
 
                 const progressFill = document.getElementById('progressFill');
                 let width = 0;
                 const interval = setInterval(() => {
-                    width += 5; 
+                    width += 5;
                     if (progressFill) progressFill.style.width = width + '%';
                     if (width >= 100) {
                         clearInterval(interval);
                         document.getElementById('loadingSection').classList.add('hidden');
                         document.getElementById('detailsSection').classList.remove('hidden');
                         document.getElementById('displayRef').textContent = window.depositRef;
-                        // Start timer when details are shown
                         window.startTimer();
                     }
                 }, 250);
             };
-
-            // ✅ FIXED: Copy Reference
+  // ============ COPY REF ============
             window.copyRef = function() {
                 const ref = document.getElementById('displayRef').textContent;
-                console.log('Copying ref:', ref);
-                
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(ref)
                         .then(() => toast('📋 Description copied!'))
-                        .catch(() => {
-                            window.copyRefFallback(ref);
-                        });
+                        .catch(() => window.copyRefFallback(ref));
                 } else {
                     window.copyRefFallback(ref);
                 }
@@ -399,13 +570,9 @@
                 document.body.removeChild(textarea);
             };
 
-            // ✅ FIXED: Show Confirm Step - Stop Timer
+            // ============ SHOW CONFIRM ============
             window.showConfirmStep = function() {
-                console.log('Showing confirm step');
-                // Stop timer when user confirms
-                if (window.timerInterval) {
-                    clearInterval(window.timerInterval);
-                }
+                if (window.timerInterval) clearInterval(window.timerInterval);
                 document.getElementById('step2').classList.add('hidden');
                 document.getElementById('step3').classList.remove('hidden');
                 document.getElementById('confirmRef').value = window.depositRef;
@@ -413,13 +580,11 @@
                 document.getElementById('stepDot3').classList.add('active');
             };
 
-            // ✅ FIXED: Submit Deposit
+            // ============ SUBMIT ============
             window.submitDeposit = async function() {
-                console.log('🔍 Submitting deposit...');
-                
                 const payerName = document.getElementById('payerName').value.trim();
                 const payerAccount = document.getElementById('payerAccount').value.trim();
-                
+
                 if (!payerName || !payerAccount) {
                     window.showError('Please fill all fields');
                     return;
@@ -431,22 +596,20 @@
                 submitBtn.textContent = '⏳ Submitting...';
 
                 try {
-                    console.log('Saving deposit to Firestore...');
-                    await db.collection('deposits').add({
-                        userId: window.currentUser.id, 
-                        userName: window.currentUser.name, 
+                    const { error } = await sb.from('deposits').insert({
+                        user_id: window.currentUser.id,
+                        user_name: window.currentUser.name,
                         amount: window.depositAmount,
-                        ref: window.depositRef, 
-                        payerName, 
-                        payerAccount,
-                        bankName: 'Safe Haven Microfinance Bank', 
-                        accountNo: '5012552807', 
-                        accountName: 'PEERPURSETECHNO',
-                        date: new Date().toISOString(), 
-                        status: 'pending', 
+                        ref: window.depositRef,
+                        payer_name: payerName,
+                        payer_account: payerAccount,
+                        bank_name: 'Safe Haven Microfinance Bank',
+                        account_no: '5012552807',
+                        account_name: 'PEERPURSETECHNO',
+                        status: 'pending',
                         channel: 'manual'
                     });
-                    console.log('✅ Deposit saved successfully');
+                    if (error) throw error;
 
                     document.getElementById('step3').classList.add('hidden');
                     document.getElementById('stepSuccess').classList.remove('hidden');
@@ -454,7 +617,6 @@
                     document.getElementById('successRef').textContent = window.depositRef;
                     document.getElementById('stepDot3').classList.add('done');
 
-                    console.log('Sending admin email...');
                     sendAdminEmail('💰 NEW DEPOSIT - ' + window.currentUser.name,
                         'NEW DEPOSIT PENDING\n\n' +
                         'User: ' + window.currentUser.name + ' (' + window.currentUser.id + ')\n' +
@@ -466,45 +628,29 @@
                         'Action: Login to admin to approve/reject');
 
                     toast('✅ Deposit submitted! Awaiting verification.');
-                    
+
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
-
-                } catch (error) { 
-                    console.error('❌ Deposit error:', error); 
+                } catch (error) {
+                    console.error('❌ Deposit error:', error);
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
                     window.showError('Error submitting deposit: ' + (error.message || 'Please try again.'));
                 }
             };
 
-            // ✅ FIXED: Load event
+            // ============ INIT ============
             window.addEventListener('load', async function() {
-                console.log('🔍 Deposit page loading...');
                 try {
                     window.currentUser = await refreshUser();
                     if (!window.currentUser) {
-                        console.log('No user found, redirecting to login');
                         window.location.href = 'login.html';
                         return;
                     }
-                    console.log('✅ Deposit page loaded for user:', window.currentUser.name);
+                    await window.loadAvailablePlans();
                 } catch (error) {
                     console.error('Load error:', error);
                     window.showError('Error loading page. Please refresh.');
-                }
-            });
-
-            // ✅ FIXED: Enter key support for amount
-            document.addEventListener('DOMContentLoaded', function() {
-                const depAmt = document.getElementById('depAmt');
-                if (depAmt) {
-                    depAmt.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            console.log('Enter key pressed, generating details');
-                            window.generateDetails();
-                        }
-                    });
                 }
             });
 
@@ -513,3 +659,4 @@
     </script>
 </body>
 </html>
+         
