@@ -27,7 +27,6 @@
         .forgot-link:hover { color: var(--accent-light); }
         .form-input:focus { transform: translateY(-2px); }
 
-        /* ✅ NEW: Error message styling */
         .login-error {
             background: rgba(244,67,54,0.1);
             border: 1px solid var(--danger);
@@ -53,7 +52,6 @@
         <h2 class="login-title">🔐 Welcome Back</h2>
         <p class="login-subtitle">Login to continue earning</p>
 
-        <!-- ✅ NEW: Error display -->
         <div class="login-error" id="loginError"></div>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
@@ -77,18 +75,18 @@
         </p>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="assets/js/firebase.js"></script>
+    <!-- Supabase + app helpers -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase.js"></script>
     <script>
         function togglePassword(inputId, icon) {
             const input = document.getElementById(inputId);
-            if (input.type === 'password') { 
-                input.type = 'text'; 
-                icon.classList.replace('fa-eye', 'fa-eye-slash'); 
-            } else { 
-                input.type = 'password'; 
-                icon.classList.replace('fa-eye-slash', 'fa-eye'); 
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
@@ -96,7 +94,6 @@
             toast('📧 Contact support: ' + ADMIN_EMAIL + ' to reset your password.');
         }
 
-        // ✅ FIXED: Show error message
         function showError(message) {
             const errorEl = document.getElementById('loginError');
             errorEl.textContent = message;
@@ -106,23 +103,24 @@
             }, 5000);
         }
 
+        // If already logged in, go straight to home
         window.addEventListener('load', () => {
             const savedUser = localStorage.getItem('agv_u');
             if (savedUser) {
-                try { 
-                    const u = JSON.parse(savedUser); 
-                    if (u && u.id) window.location.href = 'home.html'; 
-                } catch(e) {}
+                try {
+                    const u = JSON.parse(savedUser);
+                    if (u && u.id) window.location.href = 'home.html';
+                } catch (e) {}
             }
         });
 
-        // ✅ FIXED: Direct Firestore login (no Cloud Functions)
+        // ============ LOGIN (Supabase RPC) ============
         async function handleLogin(event) {
             event.preventDefault();
-            
+
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const password = document.getElementById('loginPassword').value;
-            
+
             if (!email || !password) {
                 showError('Please fill all fields');
                 return;
@@ -134,42 +132,41 @@
             btn.textContent = '⏳ Logging in...';
 
             try {
-                // ✅ FIXED: Query Firestore directly
-                const snapshot = await db.collection('users')
-                    .where('email', '==', email)
-                    .where('password', '==', password)
-                    .get();
+                const { data: rpcResult, error: rpcError } = await sb.rpc('login_user', {
+                    p_email: email,
+                    p_password: password
+                });
 
-                if (snapshot.empty) {
-                    showError('❌ Invalid email or password. Please try again.');
+                if (rpcError) throw rpcError;
+
+                if (!rpcResult || rpcResult.error) {
+                    const msg = rpcResult?.error === 'suspended'
+                        ? '❌ Your account has been suspended. Contact support.'
+                        : '❌ Invalid email or password. Please try again.';
+                    showError(msg);
                     btn.disabled = false;
                     btn.textContent = originalText;
                     return;
                 }
 
-                // Get user data
-                const userDoc = snapshot.docs[0];
-                const user = { id: userDoc.id, ...userDoc.data() };
+                const user = rpcResult.user;
 
                 // Save to localStorage
                 localStorage.setItem('agv_u', JSON.stringify(user));
 
                 toast('Welcome back, ' + user.name + '! 🎉');
-                
-                setTimeout(() => { 
-                    window.location.href = 'home.html'; 
+
+                setTimeout(() => {
+                    window.location.href = 'home.html';
                 }, 600);
 
             } catch (error) {
                 console.error('Login error:', error);
                 btn.disabled = false;
                 btn.textContent = originalText;
-                
-                // ✅ FIXED: Better error messages
-                if (error.code === 'permission-denied') {
-                    showError('❌ Permission denied. Please check your Firestore rules.');
-                } else if (error.code === 'unavailable') {
-                    showError('❌ Service unavailable. Please check your connection.');
+
+                if (error.message && error.message.includes('Failed to fetch')) {
+                    showError('❌ Network error. Please check your connection.');
                 } else {
                     showError('❌ Login failed: ' + (error.message || 'Please try again.'));
                 }
