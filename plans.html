@@ -17,7 +17,7 @@
     </header>
 
     <div class="main-content">
-        
+
         <a href="home.html" style="color:var(--accent-light);text-decoration:none;display:flex;align-items:center;gap:5px;margin-bottom:15px;">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
@@ -46,7 +46,7 @@
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
     </nav>
 
-     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/supabase.js"></script>
     <script>
         const user = checkAuth();
@@ -54,27 +54,11 @@
 
         let currentUser = user;
         let allPlans = {};
-        
-        // Plan limits - sproutplus = 1, others = 3
+
         const planLimits = {
             sproutplus: 1, sapling: 3, growth: 3,
             harvest: 3, farmer: 3, pro: 3, elite: 3,
             premier: 3, executive: 3, investor: 3, legend: 3
-        };
-
-        // Default plans
-        const defaultPlans = {
-            sproutplus: { name: 'AGV Sprout Plus', price: 5000, perQ: 45, daily: 225, status: 'active' },
-            sapling: { name: 'AGV Sapling', price: 7500, perQ: 67.5, daily: 337.5, status: 'active' },
-            growth: { name: 'AGV Growth', price: 10000, perQ: 90, daily: 450, status: 'active' },
-            harvest: { name: 'AGV Harvest', price: 15000, perQ: 135, daily: 675, status: 'active' },
-            farmer: { name: 'AGV Farmer', price: 20000, perQ: 180, daily: 900, status: 'active' },
-            pro: { name: 'AGV Pro', price: 30000, perQ: 270, daily: 1350, status: 'active' },
-            elite: { name: 'AGV Elite', price: 50000, perQ: 450, daily: 2250, status: 'active' },
-            premier: { name: 'AGV Premier', price: 75000, perQ: 675, daily: 3375, status: 'active' },
-            executive: { name: 'AGV Executive', price: 100000, perQ: 900, daily: 4500, status: 'active' },
-            investor: { name: 'AGV Investor', price: 125000, perQ: 1125, daily: 5625, status: 'active' },
-            legend: { name: 'AGV Legend', price: 200000, perQ: 1800, daily: 9000, status: 'soldout' }
         };
 
         function renderPageContent() {
@@ -175,10 +159,8 @@
             staggerCards('.plan-card', 0.06);
         }
 
-        // ✅ FIXED: Load Plans with proper error handling and default creation
         async function loadPlans() {
             try {
-                // Show loading state
                 document.getElementById('allPlansContainer').innerHTML = `
                     <div style="text-align:center;padding:30px;">
                         <div class="spinner"></div>
@@ -186,50 +168,18 @@
                     </div>`;
 
                 currentUser = await refreshUser();
-                
-                // ✅ FIX 1: Check if plans exist in Firestore
-                const plansDoc = await db.collection('settings').doc('plans').get();
-                
-                if (!plansDoc.exists) {
-                    // ✅ FIX 2: Create default plans if they don't exist
-                    console.log('No plans found in Firestore. Creating default plans...');
-                    await db.collection('settings').doc('plans').set(defaultPlans);
-                    allPlans = defaultPlans;
-                    toast('✅ Default plans created successfully!');
-                } else {
-                    allPlans = plansDoc.data();
-                    
-                    // ✅ FIX 3: Ensure all default plans exist
-                    let needsUpdate = false;
-                    const updatedPlans = { ...allPlans };
-                    
-                    Object.keys(defaultPlans).forEach(key => {
-                        if (!updatedPlans[key]) {
-                            updatedPlans[key] = defaultPlans[key];
-                            needsUpdate = true;
-                            console.log('Adding missing plan:', key);
-                        }
-                    });
-                    
-                    if (needsUpdate) {
-                        await db.collection('settings').doc('plans').set(updatedPlans);
-                        allPlans = updatedPlans;
-                        toast('✅ Missing plans added!');
-                    }
-                }
-                
+                allPlans = await getAllPlans();
                 renderPageContent();
-                
+
             } catch (error) {
                 console.error('Load plans error:', error);
-                // ✅ FIX 4: Use default plans as fallback
-                allPlans = defaultPlans;
+                allPlans = DEFAULT_PLANS;
                 renderPageContent();
                 toast('⚠️ Using default plans - check your connection');
             }
         }
 
-        // ✅ FIXED: Invest with extra balance safety check
+        // ============ INVEST (with referral bonus) ============
         async function invest(planKey) {
             const plan = allPlans[planKey];
             if (!plan) return toast('Plan not found');
@@ -240,10 +190,10 @@
             const purchased = (currentUser.ownedPlans || []).filter(x => x === planKey).length;
             if (purchased >= limit) return toast('You have reached the maximum purchases for this plan');
 
-            // ✅ Extra safety: Refresh user data before checking balance
+            // Refresh user data before checking balance
             currentUser = await refreshUser();
             const userBalance = currentUser.balance || 0;
-            
+
             if (userBalance < plan.price) {
                 return toast('❌ Insufficient balance. Need: ' + fmt(plan.price) + '. You have: ' + fmt(userBalance));
             }
@@ -251,67 +201,90 @@
             if (!confirm(`Invest ${fmt(plan.price)} for ${plan.name}?\n\nPer Question: ${fmt(plan.perQ)}\nDaily Potential: ${fmt(plan.daily)}\nCycle: 365 Days\nTotal Return: ${fmt(plan.daily * 365)}\n\nYour balance: ${fmt(userBalance)}`)) return;
 
             try {
-                // ✅ Extra safety: Use transaction to prevent race conditions
-                await db.runTransaction(async (transaction) => {
-                    const userRef = db.collection('users').doc(currentUser.id);
-                    const userDoc = await transaction.get(userRef);
-                    
-                    if (!userDoc.exists) {
-                        throw new Error('User not found');
-                    }
-                    
-                    const currentBalance = userDoc.data().balance || 0;
-                    
-                    // ✅ Double-check balance inside transaction
-                    if (currentBalance < plan.price) {
-                        throw new Error('Insufficient balance. Please refresh and try again.');
-                    }
-                    
-                    // Deduct balance
-                    transaction.update(userRef, {
-                        balance: firebase.firestore.FieldValue.increment(-plan.price)
-                    });
+                // ---- 1. Deduct balance (atomic via RPC) ----
+                const { error: incErr } = await sb.rpc('increment_user_field', {
+                    p_user_id: currentUser.id,
+                    p_field: 'balance',
+                    p_amount: -plan.price
                 });
+                if (incErr) throw incErr;
 
-                // Update local user data
+                // ---- 2. Update user plan fields ----
                 const ownedPlans = [...(currentUser.ownedPlans || []), planKey];
                 const expiryDate = new Date();
                 expiryDate.setDate(expiryDate.getDate() + 365);
 
-                // Update other user fields
-                await db.collection('users').doc(currentUser.id).update({
-                    ownedPlans: ownedPlans,
+                await sb.from('users').update({
+                    owned_plans: ownedPlans,
                     plan: planKey,
-                    expiryDate: expiryDate.toISOString(),
+                    expiry_date: expiryDate.toISOString(),
                     invested: true,
-                    investmentAmount: (currentUser.investmentAmount || 0) + plan.price
+                    investment_amount: (currentUser.investmentAmount || 0) + plan.price
+                }).eq('id', currentUser.id);
+
+                // ---- 3. Record payment ----
+                await sb.from('payments').insert({
+                    user_id: currentUser.id,
+                    user_name: currentUser.name,
+                    amount: plan.price,
+                    package: planKey,
+                    status: 'approved',
+                    type: 'balance'
                 });
 
-                await db.collection('payments').add({
-                    userId: currentUser.id, userName: currentUser.name,
-                    amount: plan.price, package: planKey,
-                    date: new Date().toISOString(), status: 'approved', type: 'balance'
-                });
-
-                // Referral bonus
+                // ---- 4. Award referral bonus (10%) ----
                 if (currentUser.referredBy && currentUser.referredBy !== 'ADMIN') {
-                    const referrer = await db.collection('users').doc(currentUser.referredBy).get();
-                    if (referrer.exists && hasActivePlan(referrer.data())) {
-                        const bonus = Math.floor(plan.price * 0.10);
-                        await db.collection('users').doc(currentUser.referredBy).update({
-                            refEarnings: firebase.firestore.FieldValue.increment(bonus),
-                            balance: firebase.firestore.FieldValue.increment(bonus)
-                        });
-                        await db.collection('referrals').add({
-                            referrerId: currentUser.referredBy, refereeId: currentUser.id,
-                            refereeName: currentUser.name, earned: bonus,
-                            package: planKey, date: new Date().toISOString(),
-                            level: 1, status: 'credited'
-                        });
+                    try {
+                        const { data: referrer } = await sb
+                            .from('users')
+                            .select('*')
+                            .eq('id', currentUser.referredBy)
+                            .maybeSingle();
+
+                        if (referrer && referrer.plan && referrer.plan !== 'none' && referrer.invested) {
+                            const bonus = Math.floor(plan.price * 0.10);
+
+                            // Credit referrer: balance + ref_earnings
+                            await sb.rpc('increment_user_field', {
+                                p_user_id: referrer.id,
+                                p_field: 'balance',
+                                p_amount: bonus
+                            });
+                            await sb.rpc('increment_user_field', {
+                                p_user_id: referrer.id,
+                                p_field: 'ref_earnings',
+                                p_amount: bonus
+                            });
+
+                            // Log referral record
+                            await sb.from('referrals').insert({
+                                referrer_id: referrer.id,
+                                referee_id: currentUser.id,
+                                referee_name: currentUser.name,
+                                package: planKey,
+                                earned: bonus,
+                                level: 1,
+                                status: 'credited'
+                            });
+                        } else {
+                            // Referrer has no active plan - still record with 0 earned
+                            await sb.from('referrals').insert({
+                                referrer_id: currentUser.referredBy,
+                                referee_id: currentUser.id,
+                                referee_name: currentUser.name,
+                                package: planKey,
+                                earned: 0,
+                                level: 1,
+                                status: 'pending'
+                            });
+                        }
+                    } catch (refErr) {
+                        console.error('Referral bonus error:', refErr);
+                        // Don't fail the whole investment because of this
                     }
                 }
 
-                // Update local storage
+                // ---- 5. Update local state ----
                 currentUser.balance = (currentUser.balance || 0) - plan.price;
                 currentUser.ownedPlans = ownedPlans;
                 localStorage.setItem('agv_u', JSON.stringify(currentUser));
@@ -325,7 +298,6 @@
             }
         }
 
-        // ✅ FIX 5: Add a manual refresh button function
         function refreshPlans() {
             toast('🔄 Refreshing plans...');
             loadPlans();
