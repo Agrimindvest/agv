@@ -36,7 +36,6 @@
         .password-field .toggle-password:hover { color: var(--accent); }
         .form-input:focus { transform: translateY(-2px); }
 
-        /* ✅ NEW: Password match indicator */
         .password-match {
             font-size: 0.75em;
             margin-top: 4px;
@@ -46,7 +45,6 @@
         .password-match.match { color: var(--success); }
         .password-match.no-match { color: var(--danger); }
 
-        /* ✅ NEW: Error message styling */
         .register-error {
             background: rgba(244,67,54,0.1);
             border: 1px solid var(--danger);
@@ -72,7 +70,6 @@
         <h2 class="register-title">✨ Create Your Account</h2>
         <p class="register-subtitle">Start earning from agricultural knowledge</p>
 
-        <!-- ✅ NEW: Error display -->
         <div class="register-error" id="registerError"></div>
 
         <form id="registerForm" onsubmit="handleRegister(event)">
@@ -95,14 +92,12 @@
                     <i class="fas fa-eye toggle-password" onclick="togglePassword('regPassword', this)"></i>
                 </div>
             </div>
-            <!-- ✅ NEW: Confirm Password -->
             <div class="form-group">
                 <label>🔐 Confirm Password</label>
                 <div class="password-field">
                     <input type="password" class="form-input" id="regConfirmPassword" placeholder="Confirm your password" required minlength="4" autocomplete="new-password" oninput="checkPasswordMatch()">
                     <i class="fas fa-eye toggle-password" onclick="togglePassword('regConfirmPassword', this)"></i>
                 </div>
-                <!-- ✅ NEW: Password match indicator -->
                 <div class="password-match" id="passwordMatch"></div>
             </div>
             <div class="form-group">
@@ -121,32 +116,31 @@
         </p>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="assets/js/firebase.js"></script>
+    <!-- Supabase + app helpers -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase.js"></script>
     <script>
         function togglePassword(inputId, icon) {
             const input = document.getElementById(inputId);
-            if (input.type === 'password') { 
-                input.type = 'text'; 
-                icon.classList.replace('fa-eye', 'fa-eye-slash'); 
-            } else { 
-                input.type = 'password'; 
-                icon.classList.replace('fa-eye-slash', 'fa-eye'); 
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
-        // ✅ NEW: Check password match
         function checkPasswordMatch() {
             const password = document.getElementById('regPassword').value;
             const confirm = document.getElementById('regConfirmPassword').value;
             const matchEl = document.getElementById('passwordMatch');
-            
+
             if (confirm.length === 0) {
                 matchEl.classList.remove('show', 'match', 'no-match');
                 return;
             }
-            
+
             matchEl.classList.add('show');
             if (password === confirm) {
                 matchEl.textContent = '✅ Passwords match!';
@@ -157,7 +151,6 @@
             }
         }
 
-        // ✅ NEW: Show error message
         function showError(message) {
             const errorEl = document.getElementById('registerError');
             errorEl.textContent = message;
@@ -168,26 +161,26 @@
         }
 
         window.addEventListener('load', () => {
-            // Check URL for referral code
+            // Prefill referral code from URL
             const urlParams = new URLSearchParams(window.location.search);
-            let refCode = urlParams.get('ref');
+            const refCode = urlParams.get('ref');
             if (refCode) {
                 document.getElementById('regRefCode').value = refCode;
                 toast('🎁 Referral code applied: ' + refCode);
             }
-            // Check if already logged in
+            // Already logged in?
             const savedUser = localStorage.getItem('agv_u');
             if (savedUser) {
-                try { 
-                    const u = JSON.parse(savedUser); 
-                    if (u && u.id) window.location.href = 'home.html'; 
-                } catch(e) {}
+                try {
+                    const u = JSON.parse(savedUser);
+                    if (u && u.id) window.location.href = 'home.html';
+                } catch (e) {}
             }
         });
 
         async function handleRegister(event) {
             event.preventDefault();
-            
+
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim().toLowerCase();
             const phone = document.getElementById('regPhone').value.trim();
@@ -195,23 +188,18 @@
             const confirmPassword = document.getElementById('regConfirmPassword').value;
             let refCode = document.getElementById('regRefCode').value.trim();
 
-            // ✅ FIXED: Validate all fields
             if (!name || !email || !phone || !password || !confirmPassword) {
                 showError('Please fill all required fields');
                 return;
             }
-            
             if (password.length < 4) {
                 showError('Password must be at least 4 characters');
                 return;
             }
-            
-            // ✅ NEW: Check if passwords match
             if (password !== confirmPassword) {
                 showError('❌ Passwords do not match. Please try again.');
                 return;
             }
-            
             if (!refCode) refCode = 'ADMIN';
 
             const btn = document.getElementById('registerBtn');
@@ -220,110 +208,128 @@
             btn.textContent = '⏳ Creating Account...';
 
             try {
-                // Check duplicate email
-                const emailCheck = await db.collection('users').where('email', '==', email).get();
-                if (!emailCheck.empty) {
-                    btn.disabled = false; 
+                // 1. Duplicate email check
+                const { data: existingUser, error: checkError } = await sb
+                    .from('users').select('id').eq('email', email).maybeSingle();
+                if (checkError) throw checkError;
+                if (existingUser) {
+                    btn.disabled = false;
                     btn.textContent = originalText;
                     showError('⚠️ Email already registered. Please login.');
                     return;
                 }
 
-                // Generate AGV ID
+                // 2. Generate AGV ID
                 const userId = generateUserId();
 
-                // Check referral code
+                // 3. Resolve referral code to user id
                 let referredBy = 'ADMIN';
                 if (refCode && refCode !== 'ADMIN') {
-                    const refCheck = await db.collection('users').where('refCode', '==', refCode).get();
-                    if (!refCheck.empty) referredBy = refCheck.docs[0].id;
+                    const { data: refUser } = await sb
+                        .from('users').select('id').eq('ref_code', refCode).maybeSingle();
+                    if (refUser) referredBy = refUser.id;
                 }
 
-                // Create user with ₦300 welcome bonus
-                const newUser = {
-                    id: userId, 
-                    name, 
-                    email, 
-                    phone, 
-                    password,
-                    balance: WELCOME_BONUS, 
-                    totalEarned: WELCOME_BONUS, 
-                    tasksCompleted: 0,
-                    plan: 'none', 
-                    status: 'active', 
-                    refCode: userId, 
-                    referredBy,
-                    refEarnings: 0, 
-                    refCount: 0, 
-                    ownedPlans: [], 
+                // 4. Create user
+                const { error: insertErr } = await sb.from('users').insert({
+                    id: userId,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    password: password,
+                    balance: WELCOME_BONUS,
+                    total_earned: WELCOME_BONUS,
+                    tasks_completed: 0,
+                    plan: 'none',
+                    status: 'active',
+                    ref_code: userId,
+                    referred_by: referredBy,
+                    ref_earnings: 0,
+                    ref_count: 0,
+                    owned_plans: [],
                     invested: false,
-                    investmentAmount: 0, 
-                    createdAt: new Date().toISOString()
-                };
+                    investment_amount: 0
+                });
+                if (insertErr) throw insertErr;
 
-                await db.collection('users').doc(userId).set(newUser);
-
-                // Record referral
-                await db.collection('referrals').add({
-                    referrerId: referredBy, 
-                    refereeId: userId, 
-                    refereeName: name,
-                    date: new Date().toISOString(), 
-                    level: 1, 
-                    earned: 0, 
+                // 5. Record referral
+                const { error: refErr } = await sb.from('referrals').insert({
+                    referrer_id: referredBy,
+                    referee_id: userId,
+                    referee_name: name,
+                    level: 1,
+                    earned: 0,
                     status: 'pending'
                 });
+                if (refErr) console.warn('Referral record error:', refErr);
 
-                // Update referrer count
+                // 6. Bump referrer ref_count
                 if (referredBy !== 'ADMIN') {
-                    const refDoc = await db.collection('users').doc(referredBy).get();
-                    if (refDoc.exists) {
-                        await db.collection('users').doc(referredBy).update({
-                            refCount: (refDoc.data().refCount || 0) + 1
-                        });
+                    const { data: refDoc } = await sb
+                        .from('users').select('ref_count').eq('id', referredBy).maybeSingle();
+                    if (refDoc) {
+                        await sb.from('users')
+                            .update({ ref_count: (refDoc.ref_count || 0) + 1 })
+                            .eq('id', referredBy);
                     }
                 }
 
-                // Welcome bonus deposit record
-                await db.collection('deposits').add({
-                    userId, 
-                    userName: name, 
-                    amount: WELCOME_BONUS, 
+                // 7. Welcome bonus deposit record
+                const { error: depErr } = await sb.from('deposits').insert({
+                    user_id: userId,
+                    user_name: name,
+                    amount: WELCOME_BONUS,
                     channel: 'bonus',
-                    date: new Date().toISOString(), 
-                    status: 'approved', 
+                    status: 'approved',
                     ref: 'WELCOME-BONUS',
                     note: 'Welcome bonus on registration'
                 });
+                if (depErr) console.warn('Bonus deposit record error:', depErr);
 
-                // Save to localStorage
+                // 8. Save to localStorage and redirect
+                const newUser = {
+                    id: userId,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    balance: WELCOME_BONUS,
+                    totalEarned: WELCOME_BONUS,
+                    tasksCompleted: 0,
+                    plan: 'none',
+                    status: 'active',
+                    refCode: userId,
+                    referredBy: referredBy,
+                    refEarnings: 0,
+                    refCount: 0,
+                    ownedPlans: [],
+                    invested: false,
+                    investmentAmount: 0
+                };
                 localStorage.setItem('agv_u', JSON.stringify(newUser));
 
                 toast('🎉 Account created! ₦' + WELCOME_BONUS + ' welcome bonus added!');
                 btn.disabled = false;
                 btn.textContent = originalText;
-                
-                setTimeout(() => { 
-                    window.location.href = 'home.html'; 
+
+                setTimeout(() => {
+                    window.location.href = 'home.html';
                 }, 1000);
 
             } catch (error) {
                 console.error('Registration error:', error);
-                btn.disabled = false; 
+                btn.disabled = false;
                 btn.textContent = originalText;
-                
-                // ✅ FIXED: Better error messages
-                if (error.code === 'permission-denied') {
-                    showError('❌ Permission denied. Please check your Firestore rules.');
-                } else if (error.code === 'unavailable') {
-                    showError('❌ Service unavailable. Please check your connection.');
+
+                if (error.message && error.message.includes('duplicate key')) {
+                    showError('⚠️ Email already registered. Please login.');
+                } else if (error.message && error.message.includes('Failed to fetch')) {
+                    showError('❌ Network error. Please check your connection.');
                 } else {
                     showError('❌ Registration failed: ' + (error.message || 'Please try again.'));
                 }
             }
         }
 
-        // ✅ NEW: Auto-check password match on both fields
         document.getElementById('regPassword').addEventListener('input', checkPasswordMatch);
         document.getElementById('regConfirmPassword').addEventListener('input', checkPasswordMatch);
     </script>
