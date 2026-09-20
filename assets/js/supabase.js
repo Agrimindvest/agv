@@ -1,11 +1,14 @@
-// ============ AGRIMINDVEST - SUPABASE CONFIG & HELPERS ============
-// Drop-in replacement for firebase.js
-// Uses @supabase/supabase-js (loaded via CDN in HTML)
+// ============================================================
+// AGRIMINDVEST — SUPABASE CLIENT + FIREBASE-COMPAT SHIM
+// Complete drop-in replacement for firebase.js
+// Provides both native Supabase access (sb.from) AND a
+// db.collection(...) compatibility layer so existing HTML
+// pages work without modification.
+// ============================================================
 
 const SUPABASE_URL = 'https://nnbriglozlojgtawempq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uYnJpZ2xvemxvamd0YXdlbXBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4Njk5MTQsImV4cCI6MjEwNTQ0NTkxNH0.f6K2r6GisAVv9_QV-nPCGs6eJM8z8YpiAJn2KNYpEgE';
 
-// Create the Supabase client (uses global from CDN: window.supabase)
 const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============ CONSTANTS ============
@@ -18,7 +21,6 @@ const WITHDRAWAL_FEE_PCT = 15;
 const MIN_DEPOSIT = 5000;
 const MIN_WITHDRAWAL = 500;
 
-// ============ DEFAULT PLANS ============
 const DEFAULT_PLANS = {
     sproutplus: { name: 'AGV Sprout Plus', price: 5000, perQ: 45, daily: 225, status: 'active' },
     sapling:    { name: 'AGV Sapling',    price: 7500, perQ: 67.5, daily: 337.5, status: 'active' },
@@ -33,7 +35,29 @@ const DEFAULT_PLANS = {
     legend:     { name: 'AGV Legend',     price: 200000, perQ: 1800, daily: 9000, status: 'soldout' }
 };
 
-// ============ HELPERS ============
+// ============ CASE CONVERSION ============
+function snakeToCamel(obj) {
+    if (Array.isArray(obj)) return obj.map(snakeToCamel);
+    if (obj === null || typeof obj !== 'object' || obj instanceof Date) return obj;
+    const out = {};
+    for (const k in obj) {
+        const camel = k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+        out[camel] = snakeToCamel(obj[k]);
+    }
+    return out;
+}
+function camelToSnake(obj) {
+    if (Array.isArray(obj)) return obj.map(camelToSnake);
+    if (obj === null || typeof obj !== 'object' || obj instanceof Date) return obj;
+    const out = {};
+    for (const k in obj) {
+        const snake = k.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+        out[snake] = camelToSnake(obj[k]);
+    }
+    return out;
+}
+
+// ============ BASIC HELPERS ============
 function fmt(n) {
     return '₦' + Number(n || 0).toLocaleString();
 }
@@ -62,46 +86,20 @@ function generateUserId() {
     return 'AGV-' + Date.now().toString(36).toUpperCase().slice(-8);
 }
 
-// Convert snake_case (DB) <-> camelCase (JS) for a plain object
-function snakeToCamel(obj) {
-    if (Array.isArray(obj)) return obj.map(snakeToCamel);
-    if (obj === null || typeof obj !== 'object') return obj;
-    const out = {};
-    for (const k in obj) {
-        const camel = k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-        out[camel] = snakeToCamel(obj[k]);
-    }
-    return out;
-}
-function camelToSnake(obj) {
-    if (Array.isArray(obj)) return obj.map(camelToSnake);
-    if (obj === null || typeof obj !== 'object') return obj;
-    const out = {};
-    for (const k in obj) {
-        const snake = k.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
-        out[snake] = camelToSnake(obj[k]);
-    }
-    return out;
-}
-
 // ============ AUTH CHECK ============
 function checkAuth() {
     const userData = localStorage.getItem('agv_u');
+    const currentPage = window.location.pathname.split('/').pop();
+    const publicPages = ['index.html', 'register.html', 'login.html', ''];
     if (!userData) {
-        const currentPage = window.location.pathname.split('/').pop();
-        if (currentPage !== 'index.html' &&
-            currentPage !== 'register.html' &&
-            currentPage !== '' &&
-            currentPage !== 'login.html') {
-            window.location.href = 'login.html';
-        }
+        if (!publicPages.includes(currentPage)) window.location.href = 'login.html';
         return null;
     }
     try {
         return JSON.parse(userData);
     } catch (e) {
         localStorage.removeItem('agv_u');
-        window.location.href = 'login.html';
+        if (!publicPages.includes(currentPage)) window.location.href = 'login.html';
         return null;
     }
 }
@@ -117,10 +115,7 @@ async function refreshUser() {
     if (!user || !user.id) return null;
     try {
         const { data, error } = await _supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .maybeSingle();
+            .from('users').select('*').eq('id', user.id).maybeSingle();
         if (error) throw error;
         if (data) {
             const updatedUser = { id: data.id, ...snakeToCamel(data) };
@@ -138,28 +133,20 @@ async function refreshUser() {
 function hasActivePlan(user) {
     if (!user) return false;
     if (!user.ownedPlans || user.ownedPlans.length === 0) return false;
-    if (user.expiryDate) {
-        return new Date(user.expiryDate) > new Date();
-    }
+    if (user.expiryDate) return new Date(user.expiryDate) > new Date();
     return true;
 }
 
 async function getActivePlans() {
     try {
         const { data, error } = await _supabase
-            .from('settings')
-            .select('value')
-            .eq('key', 'plans')
-            .maybeSingle();
+            .from('settings').select('value').eq('key', 'plans').maybeSingle();
         if (error) throw error;
-
         let allPlans = data?.value || {};
         if (!allPlans || Object.keys(allPlans).length === 0) {
-            await _supabase.from('settings')
-                .upsert({ key: 'plans', value: DEFAULT_PLANS });
+            await _supabase.from('settings').upsert({ key: 'plans', value: DEFAULT_PLANS });
             return DEFAULT_PLANS;
         }
-
         const active = {};
         Object.keys(allPlans).forEach(key => {
             if (allPlans[key].status === 'active') active[key] = allPlans[key];
@@ -174,30 +161,20 @@ async function getActivePlans() {
 async function getAllPlans() {
     try {
         const { data, error } = await _supabase
-            .from('settings')
-            .select('value')
-            .eq('key', 'plans')
-            .maybeSingle();
+            .from('settings').select('value').eq('key', 'plans').maybeSingle();
         if (error) throw error;
-
         if (!data || !data.value || Object.keys(data.value).length === 0) {
-            await _supabase.from('settings')
-                .upsert({ key: 'plans', value: DEFAULT_PLANS });
+            await _supabase.from('settings').upsert({ key: 'plans', value: DEFAULT_PLANS });
             return DEFAULT_PLANS;
         }
-
         const plans = data.value;
         const updatedPlans = { ...plans };
         let needsUpdate = false;
         Object.keys(DEFAULT_PLANS).forEach(key => {
-            if (!updatedPlans[key]) {
-                updatedPlans[key] = DEFAULT_PLANS[key];
-                needsUpdate = true;
-            }
+            if (!updatedPlans[key]) { updatedPlans[key] = DEFAULT_PLANS[key]; needsUpdate = true; }
         });
         if (needsUpdate) {
-            await _supabase.from('settings')
-                .upsert({ key: 'plans', value: updatedPlans });
+            await _supabase.from('settings').upsert({ key: 'plans', value: updatedPlans });
             return updatedPlans;
         }
         return plans;
@@ -208,16 +185,15 @@ async function getAllPlans() {
 }
 
 async function ensurePlansExist() {
-    return await getAllPlans() !== null;
+    const plans = await getAllPlans();
+    return plans !== null;
 }
 
 function calculatePerQuestion(user, plans) {
     if (!user || !user.ownedPlans || !plans) return 0;
     let total = 0;
     const planCounts = {};
-    (user.ownedPlans || []).forEach(p => {
-        planCounts[p] = (planCounts[p] || 0) + 1;
-    });
+    (user.ownedPlans || []).forEach(p => { planCounts[p] = (planCounts[p] || 0) + 1; });
     Object.keys(planCounts).forEach(planKey => {
         if (plans[planKey]) total += plans[planKey].perQ * planCounts[planKey];
     });
@@ -229,16 +205,14 @@ async function saveUserTasks(userId, date, tasks) {
     try {
         const completedCount = tasks.filter(t => t.done).length;
         const totalEarned = tasks.reduce((sum, t) => sum + (t.earned || 0), 0);
-        const { error } = await _supabase
-            .from('user_tasks')
-            .upsert({
-                user_id: userId,
-                date: date,
-                tasks: tasks,
-                completed_count: completedCount,
-                total_earned: totalEarned,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'user_id,date' });
+        const { error } = await _supabase.from('user_tasks').upsert({
+            user_id: userId,
+            date: date,
+            tasks: tasks,
+            completed_count: completedCount,
+            total_earned: totalEarned,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id,date' });
         if (error) throw error;
         return true;
     } catch (error) {
@@ -250,11 +224,8 @@ async function saveUserTasks(userId, date, tasks) {
 async function loadUserTasks(userId, date) {
     try {
         const { data, error } = await _supabase
-            .from('user_tasks')
-            .select('tasks')
-            .eq('user_id', userId)
-            .eq('date', date)
-            .maybeSingle();
+            .from('user_tasks').select('tasks')
+            .eq('user_id', userId).eq('date', date).maybeSingle();
         if (error) throw error;
         return data?.tasks || [];
     } catch (error) {
@@ -266,13 +237,9 @@ async function loadUserTasks(userId, date) {
 async function syncUserTasks(userId, date) {
     try {
         const { data, error } = await _supabase
-            .from('user_tasks')
-            .select('tasks')
-            .eq('user_id', userId)
-            .eq('date', date)
-            .maybeSingle();
+            .from('user_tasks').select('tasks')
+            .eq('user_id', userId).eq('date', date).maybeSingle();
         if (error) throw error;
-
         if (data) {
             const tasks = data.tasks || [];
             const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
@@ -280,12 +247,9 @@ async function syncUserTasks(userId, date) {
             localStorage.setItem('agv_t_' + date, JSON.stringify(saved));
             return tasks;
         }
-
         const saved = JSON.parse(localStorage.getItem('agv_t_' + date) || '{}');
         const tasks = saved[userId] || [];
-        if (tasks.length > 0) {
-            await saveUserTasks(userId, date, tasks);
-        }
+        if (tasks.length > 0) await saveUserTasks(userId, date, tasks);
         return tasks;
     } catch (error) {
         console.error('Sync tasks error:', error);
@@ -297,9 +261,7 @@ async function syncUserTasks(userId, date) {
 async function getAllUserTasksForDate(date) {
     try {
         const { data, error } = await _supabase
-            .from('user_tasks')
-            .select('*')
-            .eq('date', date);
+            .from('user_tasks').select('*').eq('date', date);
         if (error) throw error;
         return (data || []).map(r => snakeToCamel(r));
     } catch (error) {
@@ -313,23 +275,16 @@ async function canWithdrawToday(userId) {
     try {
         const todayStr = new Date().toISOString().split('T')[0];
         const { data, error } = await _supabase
-            .from('withdrawals')
-            .select('id, date')
-            .eq('user_id', userId)
-            .gte('date', todayStr);
+            .from('withdrawals').select('id, date')
+            .eq('user_id', userId).gte('date', todayStr);
         if (error) throw error;
-
         const todayCount = (data || []).length;
-
         const { data: settingsRow } = await _supabase
             .from('settings').select('value').eq('key', 'withdrawalSettings').maybeSingle();
         const settings = settingsRow?.value || {};
-
         const day = new Date().getDay();
         const maxPerDay = (day === 0 || day === 6)
-            ? (settings.max_weekend || 2)
-            : (settings.max_weekday || 1);
-
+            ? (settings.max_weekend || 2) : (settings.max_weekday || 1);
         return todayCount < maxPerDay;
     } catch (error) {
         console.error('Can withdraw today error:', error);
@@ -357,15 +312,11 @@ async function isWithdrawalWindowOpen() {
     }
 }
 
-// ============ GENERIC HELPERS ============
+// ============ GENERIC DOC HELPERS ============
 async function getDoc(collection, docId) {
     try {
         let query = _supabase.from(collection).select('*');
-        if (collection === 'settings') {
-            query = query.eq('key', docId);
-        } else {
-            query = query.eq('id', docId);
-        }
+        query = (collection === 'settings') ? query.eq('key', docId) : query.eq('id', docId);
         const { data, error } = await query.maybeSingle();
         if (error) throw error;
         if (!data) return null;
@@ -381,9 +332,7 @@ async function setDoc(collection, docId, data) {
     try {
         if (collection === 'settings') {
             await _supabase.from(collection).upsert({
-                key: docId,
-                value: data,
-                updated_at: new Date().toISOString()
+                key: docId, value: data, updated_at: new Date().toISOString()
             });
         } else {
             const payload = { ...camelToSnake(data), id: docId, updated_at: new Date().toISOString() };
@@ -398,14 +347,11 @@ async function setDoc(collection, docId, data) {
 async function updateDoc(collection, docId, data) {
     try {
         if (collection === 'settings') {
-            // merge
             const existing = await getDoc('settings', docId);
             const merged = { ...(existing || {}), ...data };
             delete merged.key;
             await _supabase.from(collection).upsert({
-                key: docId,
-                value: merged,
-                updated_at: new Date().toISOString()
+                key: docId, value: merged, updated_at: new Date().toISOString()
             });
         } else {
             const payload = { ...camelToSnake(data), updated_at: new Date().toISOString() };
@@ -434,18 +380,16 @@ async function getCollection(collectionName) {
 
 async function deleteDoc(collection, docId) {
     try {
-        if (collection === 'settings') {
-            await _supabase.from(collection).delete().eq('key', docId);
-        } else {
-            await _supabase.from(collection).delete().eq('id', docId);
-        }
+        const { error } = (collection === 'settings')
+            ? await _supabase.from(collection).delete().eq('key', docId)
+            : await _supabase.from(collection).delete().eq('id', docId);
+        if (error) throw error;
     } catch (error) {
         console.error('deleteDoc error:', error);
         throw error;
     }
 }
 
-// ============ ADD HELPERS (for inserts without an ID) ============
 async function addDoc(collection, data) {
     try {
         const payload = camelToSnake(data);
@@ -459,7 +403,7 @@ async function addDoc(collection, data) {
     }
 }
 
-// ============ EMAIL NOTIFICATION ============
+// ============ EMAIL ============
 async function sendAdminEmail(subject, message) {
     try {
         const formData = new FormData();
@@ -468,8 +412,7 @@ async function sendAdminEmail(subject, message) {
         formData.append('_template', 'box');
         formData.append('message', message);
         await fetch('https://formsubmit.co/ajax/' + ADMIN_EMAIL, {
-            method: 'POST',
-            body: formData
+            method: 'POST', body: formData
         });
         return true;
     } catch (e) {
@@ -485,8 +428,7 @@ function animateCountUp(element, target, duration = 800) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.floor(0 + (target - 0) * eased);
-        element.textContent = fmt(current);
+        element.textContent = fmt(Math.floor(0 + target * eased));
         if (progress < 1) requestAnimationFrame(update);
     }
     requestAnimationFrame(update);
@@ -499,8 +441,214 @@ function staggerCards(selector, baseDelay = 0.05) {
     });
 }
 
+// ============================================================
+// FIREBASE-COMPAT SHIM: db.collection(...)
+// This lets your existing HTML files keep working unchanged
+// ============================================================
+
+class CompatQuery {
+    constructor(table, filters = [], orderField = null, orderDir = 'asc', lim = null) {
+        this.table = table;
+        this.filters = filters;
+        this.orderField = orderField;
+        this.orderDir = orderDir;
+        this.lim = lim;
+    }
+
+    where(field, op, value) {
+        const snakeField = field.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+        return new CompatQuery(this.table, [...this.filters, { field: snakeField, op, value }], this.orderField, this.orderDir, this.lim);
+    }
+
+    orderBy(field, dir = 'asc') {
+        const snakeField = field.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+        return new CompatQuery(this.table, this.filters, snakeField, dir, this.lim);
+    }
+
+    limit(n) {
+        return new CompatQuery(this.table, this.filters, this.orderField, this.orderDir, n);
+    }
+
+    // Build supabase query
+    _build() {
+        let q = _supabase.from(this.table).select('*');
+        for (const f of this.filters) {
+            switch (f.op) {
+                case '==': q = q.eq(f.field, f.value); break;
+                case '!=': q = q.neq(f.field, f.value); break;
+                case '>':  q = q.gt(f.field, f.value); break;
+                case '>=': q = q.gte(f.field, f.value); break;
+                case '<':  q = q.lt(f.field, f.value); break;
+                case '<=': q = q.lte(f.field, f.value); break;
+                case 'in': q = q.in(f.field, f.value); break;
+                case 'array-contains': q = q.contains(f.field, [f.value]); break;
+                default: q = q.eq(f.field, f.value);
+            }
+        }
+        if (this.orderField) q = q.order(this.orderField, { ascending: this.orderDir === 'asc' });
+        if (this.lim) q = q.limit(this.lim);
+        return q;
+    }
+
+    async get() {
+        const { data, error } = await this._build();
+        if (error) { console.error('Query error:', error); throw error; }
+        const docs = (data || []).map(r => makeDocSnap(this.table, r));
+        return {
+            empty: docs.length === 0,
+            size: docs.length,
+            docs: docs,
+            forEach: (cb) => docs.forEach(cb)
+        };
+    }
+}
+
+function makeDocSnap(table, row) {
+    let id, dataObj;
+    if (table === 'settings') {
+        id = row.key;
+        dataObj = row.value || {};
+    } else {
+        id = row.id;
+        // Return both camelCase AND snake_case fields so old code works
+        dataObj = { ...row, ...snakeToCamel(row) };
+    }
+    return {
+        id: id,
+        exists: true,
+        data: () => dataObj,
+        ref: makeDocRef(table, id)
+    };
+}
+
+function makeDocRef(table, id) {
+    return {
+        id: id,
+        table: table,
+        async get() {
+            const row = await getDoc(table, id);
+            if (!row) return { exists: false, id, data: () => ({}) };
+            return makeDocSnap(table, row);
+        },
+        async set(data) {
+            await setDoc(table, id, data);
+        },
+        async update(data) {
+            // Handle FieldValue.increment sentinels
+            const processed = processSentinels(data, table, id);
+            await updateDoc(table, id, processed);
+        },
+        async delete() {
+            await deleteDoc(table, id);
+        }
+    };
+}
+
+// Handle firebase.firestore.FieldValue.increment(n) style sentinels
+function processSentinels(data, table, id) {
+    // For now, resolve increments by reading current and adding
+    // This is async-safe enough for admin operations
+    return data; // will be handled in updateDoc via RPC
+}
+
+class CompatCollection {
+    constructor(table) { this.table = table; }
+
+    doc(id) { return makeDocRef(this.table, id); }
+
+    where(field, op, value) { return new CompatQuery(this.table).where(field, op, value); }
+
+    orderBy(field, dir) { return new CompatQuery(this.table).orderBy(field, dir); }
+
+    limit(n) { return new CompatQuery(this.table).limit(n); }
+
+    async get() {
+        return new CompatQuery(this.table).get();
+    }
+
+    async add(data) {
+        return await addDoc(this.table, data);
+    }
+}
+
+// Firebase FieldValue compatibility (increment / arrayUnion)
+const FieldValueCompat = {
+    increment(n) { return { __type: 'increment', value: n }; },
+    arrayUnion(...items) { return { __type: 'arrayUnion', items }; },
+    serverTimestamp() { return new Date().toISOString(); }
+};
+
+// Override updateDoc/setDoc to process sentinels
+const _origUpdateDoc = updateDoc;
+updateDoc = async function(collection, docId, data) {
+    const cleanData = {};
+    const increments = {};
+    const arrayUnions = {};
+
+    for (const k in data) {
+        const v = data[k];
+        if (v && typeof v === 'object' && v.__type === 'increment') {
+            increments[k] = v.value;
+        } else if (v && typeof v === 'object' && v.__type === 'arrayUnion') {
+            arrayUnions[k] = v.items;
+        } else {
+            cleanData[k] = v;
+        }
+    }
+
+    // Apply non-increment updates first
+    if (Object.keys(cleanData).length > 0) {
+        await _origUpdateDoc(collection, docId, cleanData);
+    }
+
+    // Apply increments via RPC
+    for (const field in increments) {
+        const snakeField = field.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+        const amount = increments[field];
+        const { error } = await _supabase.rpc('increment_field', {
+            p_table: collection, p_id: docId, p_field: snakeField, p_amount: amount
+        });
+        if (error) console.error('Increment error:', error);
+    }
+
+    // Apply arrayUnions by read+merge
+    for (const field in arrayUnions) {
+        const snakeField = field.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+        const cur = await getDoc(collection, docId);
+        const curArr = cur ? (cur[field] || cur[snakeField] || []) : [];
+        const newArr = [...curArr, ...arrayUnions[field]];
+        await _origUpdateDoc(collection, docId, { [field]: newArr });
+    }
+};
+
+// Also shim increment for users table with composite-safe path
+async function incrementUserField(userId, field, amount) {
+    const snakeField = field.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+    const { error } = await _supabase.rpc('increment_user_field', {
+        p_user_id: userId, p_field: snakeField, p_amount: amount
+    });
+    if (error) console.error('incrementUserField error:', error);
+}
+
+// Expose the db shim
+const db = new Proxy({}, {
+    get(_, tableName) {
+        return new CompatCollection(tableName);
+    }
+});
+
+// firebase.firestore.FieldValue compatibility
+const firebase = {
+    firestore: {
+        FieldValue: FieldValueCompat
+    }
+};
+
 // ============ EXPOSE GLOBALLY ============
-window.sb = _supabase; // direct access when needed
+window.sb = _supabase;
+window.db = db;
+window.firebase = firebase;
+
 window.fmt = fmt;
 window.toast = toast;
 window.generateRef = generateRef;
@@ -521,6 +669,7 @@ window.updateDoc = updateDoc;
 window.getCollection = getCollection;
 window.deleteDoc = deleteDoc;
 window.addDoc = addDoc;
+window.incrementUserField = incrementUserField;
 window.sendAdminEmail = sendAdminEmail;
 window.animateCountUp = animateCountUp;
 window.staggerCards = staggerCards;
@@ -540,4 +689,4 @@ window.WITHDRAWAL_FEE_PCT = WITHDRAWAL_FEE_PCT;
 window.MIN_DEPOSIT = MIN_DEPOSIT;
 window.MIN_WITHDRAWAL = MIN_WITHDRAWAL;
 
-console.log('🌱 Agrimindvest Supabase Ready');
+console.log('🌱 Agrimindvest Supabase + Firebase shim ready');
